@@ -17,3 +17,14 @@ Note:
 Currently, there seems to be a problem with detecting attribute usage while using a `using` statement.
 For the time being, the fully qualified attribute name `RhoMicro.ValueObjectGenerator.GeneratedValueObjectAttribute`
 or `RhoMicro.ValueObjectGenerator.GeneratedValueObject` must be used in order for the generator to detectits usage. See the `TestApp.Program.cs` file for an example.
+
+## Installation
+
+Nuget:
+```xml
+<PackageReference Include="RhoMicro.ValueObjectGenerator" Version="1.0.0">
+  <PrivateAssets>all</PrivateAssets>
+  <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+</PackageReference>
+```
+Or check out the [Nuget Repository](https://www.nuget.org/packages/RhoMicro.ValueObjectGenerator).
