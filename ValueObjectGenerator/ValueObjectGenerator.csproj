@@ -1,0 +1,52 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<PackageTargetFallback>portable-net45+win8+wp8+wpa81</PackageTargetFallback>
+		<IncludeBuildOutput>false</IncludeBuildOutput>
+		<developmentDependency>true</developmentDependency>
+		<NoPackageAnalysis>true</NoPackageAnalysis>
+		<IsRoslynComponent>true</IsRoslynComponent>
+		<CompilerGeneratedFilesOutputPath>Generated</CompilerGeneratedFilesOutputPath>
+		<AssemblyName>RhoMicro.$(MSBuildProjectName)</AssemblyName>
+		<RootNamespace>RhoMicro.$(MSBuildProjectName)</RootNamespace>
+		<EnableNETAnalyzers>true</EnableNETAnalyzers>
+		<AnalysisMode>All</AnalysisMode>
+		<EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+		<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<Authors>Paul Brätz</Authors>
+		<Description>A source generator for escaping primitive obsession by generating value object wrappings.</Description>
+		<Copyright>2023</Copyright>
+		<PackageTags>Rhomicro</PackageTags>
+		<Version>1.0.0</Version>
+		<PackageId>RhoMicro.ValueObjectGenerator</PackageId>
+		<Company>RhoMicro</Company>
+		<PackageProjectUrl>https://github.com/PaulBraetz/ValueObjectGenerator/</PackageProjectUrl>
+		<PackageLicenseExpression>gplv3</PackageLicenseExpression>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<WarningsAsErrors>$(WarningsAsErrors);NU1605;1591;1573;1712</WarningsAsErrors>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<WarningsAsErrors>$(WarningsAsErrors);NU1605;1591;1573;1712</WarningsAsErrors>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Update="NETStandard.Library" PrivateAssets="all" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.CodeAnalysis" Version="4.0.1" />
+	</ItemGroup>
+
+</Project>
