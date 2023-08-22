@@ -26,7 +26,7 @@
 		<PackageId>RhoMicro.ValueObjectGenerator</PackageId>
 		<Company>RhoMicro</Company>
 		<PackageProjectUrl>https://github.com/PaulBraetz/ValueObjectGenerator/</PackageProjectUrl>
-		<PackageLicenseExpression>gplv3</PackageLicenseExpression>
+		<PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
