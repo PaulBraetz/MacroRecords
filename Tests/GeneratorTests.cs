@@ -2,6 +2,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Editing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RhoMicro.ValueObjectGenerator;
 using System.Collections.Immutable;
@@ -24,7 +25,7 @@ namespace Tests
 			var compilation = CSharpCompilation.Create("TestCompilation")
 							  .AddReferences(
 								 MetadataReference.CreateFromFile(typeof(Object).Assembly.Location),
-								 MetadataReference.CreateFromFile(typeof(SyntaxContextReceiver).Assembly.Location))
+								 MetadataReference.CreateFromFile(typeof(Generator).Assembly.Location))
 							  .AddSyntaxTrees(tree);
 			var root = tree.GetRoot();
 			var declaration = root.DescendantNodes().OfType<StructDeclarationSyntax>().Single();

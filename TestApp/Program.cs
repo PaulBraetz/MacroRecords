@@ -1,42 +1,40 @@
-﻿namespace TestApp
+﻿using RhoMicro.ValueObjectGenerator;
+
+using System.IO;
+
+namespace TestApp
 {
-    [RhoMicro.ValueObjectGenerator.GeneratedValueObject(
-        typeof(Int32),
-        ValueSpecification = "Ages must be nonzero positive integers.")]
-    readonly partial struct Age
+    [GeneratedValueObject]
+    [GenerateValueObjectField(typeof(String), "Street")]
+    [GenerateValueObjectField(typeof(String), "City")]
+    internal partial class Address
     {
-        public static partial Boolean IsValid(Int32 value) => value > 0;
+        static partial void Validate(ValidateParameters parameters, ref ValidateResult result)
+        {
+            var (city, street) = parameters;
+            if(String.IsNullOrEmpty(city))
+            {
+                result.CityIsInvalid = true;
+                result.CityError = "A city may not be null or empty.";
+            }
+            if(String.IsNullOrEmpty(street))
+            {
+                result.StreetIsInvalid = true;
+                result.StreetError = "A street must be provided (may not be null or empty).";
+            }
+            if(street == "Baker")
+            {
+                result.StreetIsInvalid = true;
+                result.StreetError = "Baker Street is not real.";
+            }
+        }
     }
 
     internal partial class Program
     {
         static void Main(String[] _)
         {
-            Int32 age0 = Age.Create(4);
-            Age age1 = (Age)age0;
-            //equivalent expression:
-            var age2 = Age.Create(age0);
-
-            if(Age.TryCreate(5, out var age3))
-            {
-                //...
-            }
-
-            try
-            {
-                var age4 = Age.Create(-6);
-            } catch(ArgumentException ex)
-            {
-                //...
-            }
-
-            try
-            {
-                var age5 = (Age)(-6);
-            } catch(ArgumentException ex)
-            {
-                //...
-            }
+            var address = Address.Create("Main", "London");
         }
     }
 }

@@ -9,45 +9,55 @@ using System.Linq;
 
 namespace RhoMicro.ValueObjectGenerator
 {
-    internal sealed class SyntaxContextReceiver : ISyntaxContextReceiver
-    {
-        private readonly HashSet<ValueObjectGenerationInfo> _results = new HashSet<ValueObjectGenerationInfo>();
-        public IReadOnlyCollection<ValueObjectGenerationInfo> Results => _results;
+	internal sealed class SyntaxContextReceiver : ISyntaxContextReceiver
+	{
+		private readonly HashSet<ValueObjectGenerationInfo> _results = new HashSet<ValueObjectGenerationInfo>();
+		public IReadOnlyCollection<ValueObjectGenerationInfo> Results => _results;
 
-        void ISyntaxContextReceiver.OnVisitSyntaxNode(GeneratorSyntaxContext context)
-        {
-            var semanticModel = context.SemanticModel;
-            var node = context.Node;
-            OnVisitSyntaxNode(semanticModel, node);
-        }
+		void ISyntaxContextReceiver.OnVisitSyntaxNode(GeneratorSyntaxContext context)
+		{
+			var semanticModel = context.SemanticModel;
+			var node = context.Node;
+			OnVisitSyntaxNode(semanticModel, node);
+		}
 
-        internal void OnVisitSyntaxNode(SemanticModel semanticModel, SyntaxNode node)
-        {
-            var attributeUnit = AttributeUnits.GeneratedValueObject;
+		internal void OnVisitSyntaxNode(SemanticModel semanticModel, SyntaxNode node)
+		{
+			var generateUnit = AttributeUnits.GeneratedValueObject;
+			var fieldUnit = AttributeUnits.GeneratedValueObjectField;
 
-            if(node is StructDeclarationSyntax structDeclaration &&
-                structDeclaration.Identifier.ValueText != String.Empty)
-            {
-                if(!structDeclaration.HasAttributes(semanticModel, attributeUnit.GeneratedType.Identifier))
-                {
-                    return;
-                }
+			if (node is TypeDeclarationSyntax typeDeclaration &&
+			   (typeDeclaration is StructDeclarationSyntax ||
+				typeDeclaration is ClassDeclarationSyntax))
+			{
+				if (!typeDeclaration.HasAttributes(
+					semanticModel,
+					generateUnit.GeneratedType.Identifier,
+					fieldUnit.GeneratedType.Identifier))
+				{
+					return;
+				}
 
-                var attributes = structDeclaration.AttributeLists
-                                    .OfAttributeClasses(semanticModel, attributeUnit.GeneratedType.Identifier);
-                var attribute = attributes
-                    .Select(a => (success: attributeUnit.Factory.TryBuild(a, semanticModel, out var result), result))
-                    .Where(t => t.success)
-                    .Select(t => t.result)
-                    .FirstOrDefault();
+				var generateAttribute = typeDeclaration.AttributeLists
+					.OfAttributeClasses(semanticModel, generateUnit.GeneratedType.Identifier)
+					.Select(a => (success: generateUnit.Factory.TryBuild(a, semanticModel, out var result), result))
+					.Where(t => t.success)
+					.Select(t => t.result)
+					.FirstOrDefault();
+				var fieldAttributes = typeDeclaration.AttributeLists
+					.OfAttributeClasses(semanticModel, fieldUnit.GeneratedType.Identifier)
+					.Select(a => (success: fieldUnit.Factory.TryBuild(a, semanticModel, out var result), result))
+					.Where(t => t.success)
+					.Select(t => t.result)
+					.ToArray();
 
-                if(attribute == null)
-                {
-                    return;
-                }
+				if (generateAttribute == null || fieldAttributes.Length == 0)
+				{
+					return;
+				}
 
-                _results.Add(new ValueObjectGenerationInfo(structDeclaration, attribute, semanticModel));
-            }
-        }
-    }
+				_results.Add(new ValueObjectGenerationInfo(typeDeclaration, semanticModel, generateAttribute, fieldAttributes));
+			}
+		}
+	}
 }

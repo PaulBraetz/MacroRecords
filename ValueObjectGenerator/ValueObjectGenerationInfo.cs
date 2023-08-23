@@ -8,15 +8,22 @@ namespace RhoMicro.ValueObjectGenerator
 {
 	internal readonly partial struct ValueObjectGenerationInfo : IEquatable<ValueObjectGenerationInfo>
 	{
-		public ValueObjectGenerationInfo(StructDeclarationSyntax declaration, GeneratedValueObjectAttribute attribute, SemanticModel semanticModel)
+		private readonly TypeDeclarationSyntax _typeDeclaration;
+		private readonly SemanticModel _semanticModel;
+		private readonly GeneratedValueObjectAttribute _generateAttribute;
+		private readonly IReadOnlyList<GenerateValueObjectFieldAttribute> _fieldAttributes;
+
+		public ValueObjectGenerationInfo(
+			TypeDeclarationSyntax typeDeclaration,
+			SemanticModel semanticModel,
+			GeneratedValueObjectAttribute generateAttribute,
+			IReadOnlyList<GenerateValueObjectFieldAttribute> fieldAttributes)
 		{
-			Attribute = attribute;
-			Declaration = declaration;
-			SemanticModel = semanticModel;
+			_typeDeclaration = typeDeclaration;
+			_semanticModel = semanticModel;
+			_generateAttribute = generateAttribute;
+			_fieldAttributes = fieldAttributes;
 		}
-		public readonly GeneratedValueObjectAttribute Attribute;
-		public readonly StructDeclarationSyntax Declaration;
-		public readonly SemanticModel SemanticModel;
 
 		public override bool Equals(object obj)
 		{
@@ -25,12 +32,12 @@ namespace RhoMicro.ValueObjectGenerator
 
 		public bool Equals(ValueObjectGenerationInfo other)
 		{
-			return EqualityComparer<StructDeclarationSyntax>.Default.Equals(Declaration, other.Declaration);
+			return EqualityComparer<TypeDeclarationSyntax>.Default.Equals(_typeDeclaration, other._typeDeclaration);
 		}
 
 		public override int GetHashCode()
 		{
-			return 302405195 + EqualityComparer<StructDeclarationSyntax>.Default.GetHashCode(Declaration);
+			return EqualityComparer<TypeDeclarationSyntax>.Default.GetHashCode(_typeDeclaration);
 		}
 
 		public static bool operator ==(ValueObjectGenerationInfo left, ValueObjectGenerationInfo right)

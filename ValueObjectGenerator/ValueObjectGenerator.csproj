@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
@@ -8,7 +8,8 @@
 		<NoPackageAnalysis>true</NoPackageAnalysis>
 		<IsRoslynComponent>true</IsRoslynComponent>
 		<CompilerGeneratedFilesOutputPath>Generated</CompilerGeneratedFilesOutputPath>
-		<AssemblyName>RhoMicro.$(MSBuildProjectName)</AssemblyName>
+		<!--'.0' required for auto source gen updater-->
+		<AssemblyName>RhoMicro.$(MSBuildProjectName)2.0.29</AssemblyName>
 		<RootNamespace>RhoMicro.$(MSBuildProjectName)</RootNamespace>
 		<EnableNETAnalyzers>true</EnableNETAnalyzers>
 		<AnalysisMode>All</AnalysisMode>
@@ -22,7 +23,7 @@
 		<Description>A source generator for escaping primitive obsession by generating value object wrappings.</Description>
 		<Copyright>2023</Copyright>
 		<PackageTags>Rhomicro</PackageTags>
-		<Version>1.0.0</Version>
+		<Version>2.0.0</Version>
 		<PackageId>RhoMicro.ValueObjectGenerator</PackageId>
 		<Company>RhoMicro</Company>
 		<PackageProjectUrl>https://github.com/PaulBraetz/ValueObjectGenerator/</PackageProjectUrl>
@@ -49,4 +50,6 @@
 		<PackageReference Include="Microsoft.CodeAnalysis" Version="4.0.1" />
 	</ItemGroup>
 
+	<!--Required for source gen auto updater-->
+	<!--AutoUpdateAssemblyName-->
 </Project>

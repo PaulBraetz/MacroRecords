@@ -8,6 +8,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Xml.Linq;
 using System.Xml.Schema;
 
 namespace RhoMicro.CodeAnalysis
@@ -126,7 +127,8 @@ namespace RhoMicro.CodeAnalysis
 			}
 		}
 
-		public static INamedTypeSymbol GetSymbol(this Compilation compilation, TypeIdentifier identifier) => compilation.GetTypeByMetadataName(identifier.ToString());
+		public static INamedTypeSymbol GetSymbol(this Compilation compilation, TypeIdentifier identifier) =>
+			compilation.GetTypeByMetadataName(identifier.ToString());
 
 		public static TypeSyntax AsSyntax(this TypeIdentifier typeIdentifier)
 		{
@@ -244,15 +246,20 @@ namespace RhoMicro.CodeAnalysis
 
 		public static IEnumerable<AttributeSyntax> OfAttributeClasses(this IEnumerable<AttributeSyntax> attributes, SemanticModel semanticModel, params ITypeIdentifier[] identifiers)
 		{
-			var requiredTypes = new HashSet<String>(identifiers.SelectMany(GetVariations));
-			var foundAttributes = attributes.Where(a => requiredTypes.Contains(semanticModel.GetTypeInfo(a).Type?.ToDisplayString()));
-
-			return foundAttributes;
+			var requiredTypes = identifiers.SelectMany(GetVariations).ToImmutableHashSet();
+			foreach (var attribute in attributes)
+			{
+				var attributeTypeSymbol = semanticModel.GetTypeInfo(attribute).Type;
+				var identifier = TypeIdentifier.Create(attributeTypeSymbol);
+				if (requiredTypes.Contains(identifier))
+				{
+					yield return attribute;
+				}
+			}
 		}
 		public static IEnumerable<AttributeSyntax> OfAttributeClasses(this IEnumerable<AttributeListSyntax> attributeLists, SemanticModel semanticModel, params ITypeIdentifier[] identifiers)
 		{
-			var requiredTypes = new HashSet<String>(identifiers.SelectMany(GetVariations));
-			var foundAttributes = attributeLists.SelectMany(al => al.Attributes).Where(a => requiredTypes.Contains(semanticModel.GetTypeInfo(a).Type?.ToDisplayString()));
+			var foundAttributes = attributeLists.SelectMany(al => al.Attributes).OfAttributeClasses(semanticModel, identifiers);
 
 			return foundAttributes;
 		}
@@ -266,8 +273,8 @@ namespace RhoMicro.CodeAnalysis
 		public static Boolean IsType(this AttributeSyntax attribute, SemanticModel semanticModel, TypeIdentifier identifier)
 		{
 			var variations = GetVariations(identifier).ToImmutableHashSet();
-			var semanticName = semanticModel.GetTypeInfo(attribute).Type?.ToDisplayString();
-			var match = variations.Contains(semanticName);
+			var attributeIdentifier = TypeIdentifier.Create(semanticModel.GetTypeInfo(attribute).Type);
+			var match = variations.Contains(attributeIdentifier);
 
 			return match;
 		}
@@ -406,23 +413,29 @@ namespace RhoMicro.CodeAnalysis
 		#endregion
 
 		#region AttributeData Operations
-		public static IEnumerable<AttributeData> OfAttributeClasses(this IEnumerable<AttributeData> attributes, params ITypeIdentifier[] identifiers)
+		public static IEnumerable<AttributeData> OfAttributeClasses(this IEnumerable<AttributeData> attributes, SemanticModel semanticModel, params ITypeIdentifier[] identifiers)
 		{
-			var requiredTypes = new HashSet<String>(identifiers.SelectMany(GetVariations));
-			var foundAttributes = attributes.Where(a => requiredTypes.Contains(a.AttributeClass.ToDisplayString()));
-
-			return foundAttributes;
+			var variations = identifiers.SelectMany(GetVariations).ToImmutableHashSet();
+			foreach (var attribute in attributes)
+			{
+				var attributeTypeSymbol = attribute.AttributeClass.OriginalDefinition;
+				var identifier = TypeIdentifier.Create(attributeTypeSymbol);
+				if (variations.Contains(identifier))
+				{
+					yield return attribute;
+				}
+			}
 		}
 		public static Boolean HasAttributes(this SyntaxNode node, SemanticModel semanticModel, params ITypeIdentifier[] identifiers)
 		{
-			var match = semanticModel.GetDeclaredSymbol(node)?.HasAttributes(identifiers)
+			var match = semanticModel.GetDeclaredSymbol(node)?.HasAttributes(semanticModel, identifiers)
 				?? throw new ArgumentException($"{nameof(node)} was not declared in {nameof(semanticModel)}.");
 
 			return match;
 		}
-		public static Boolean HasAttributes(this ISymbol symbol, params ITypeIdentifier[] identifiers)
+		public static Boolean HasAttributes(this ISymbol symbol, SemanticModel semanticModel, params ITypeIdentifier[] identifiers)
 		{
-			var match = symbol.GetAttributes().OfAttributeClasses(identifiers).Any();
+			var match = symbol.GetAttributes().OfAttributeClasses(semanticModel, identifiers).Any();
 
 			return match;
 		}
@@ -498,14 +511,28 @@ namespace RhoMicro.CodeAnalysis
 			return positionalArgument;
 		}
 		#endregion
-		private static IEnumerable<String> GetVariations(ITypeIdentifier attributeIdentifier)
+		private static IEnumerable<ITypeIdentifier> GetVariations(ITypeIdentifier attributeIdentifier)
 		{
-			var baseVariation = attributeIdentifier.ToString();
-			var result = baseVariation.EndsWith("Attribute")
-				? (new[] { baseVariation, baseVariation.Substring(0, baseVariation.Length - "Attribute".Length) })
-				: (IEnumerable<String>)(new[] { baseVariation });
+			yield return attributeIdentifier;
 
-			return result;
+			var nameParts = attributeIdentifier.Name.Parts;
+			var name = nameParts.Last();
+
+			if (name.Kind != IdentifierParts.Kind.Name)
+			{
+				//throw instead?
+				yield break;
+			}
+
+			if (name.Value.EndsWith("Attribute"))
+			{
+				var shortNameValue = name.Value.Substring(0, name.Value.Length - "Attribute".Length);
+				var shortNamePart = IdentifierPart.Name(shortNameValue);
+				var shortNameParts = nameParts.RemoveAt(nameParts.Length - 1).Add(shortNamePart);
+				var shortName = TypeIdentifierName.Create(shortNameParts);
+				var shortIdentifier = TypeIdentifier.Create(shortName, attributeIdentifier.Namespace);
+				yield return shortIdentifier;
+			}
 		}
 	}
 }

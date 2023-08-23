@@ -6,7 +6,7 @@
 @"using {0};
 using RhoMicro.ValueObjectGenerator;
 
-namespace RhoMicro.ValueObjectGenerator.Tests
+namespace TestNamespace
 {
 	[GeneratedValueObject(typeof({1}), ValueSpecification = {2})]
 	{3} readonly partial struct {4}
@@ -21,7 +21,7 @@ namespace RhoMicro.ValueObjectGenerator.Tests
 @"using {0};
 using RhoMicro.ValueObjectGenerator;
 
-namespace RhoMicro.ValueObjectGenerator.Tests
+namespace TestNamespace
 {
 	[GeneratedValueObject(typeof({1}), ValueSpecification = {2})]
 	{3} readonly partial struct {4}
@@ -41,7 +41,7 @@ namespace RhoMicro.ValueObjectGenerator.Tests
 			.Replace("{4}", name);
 
 		private const String EXPECTED_GENERATED_SOURCE_WITH_TOSTRING =
-@"namespace RhoMicro.ValueObjectGenerator.Tests
+@"namespace TestNamespace
 {
     {0} partial struct {1} : IEquatable<{1}>
     {
@@ -120,7 +120,7 @@ namespace RhoMicro.ValueObjectGenerator.Tests
     }
 }";
 		private const String EXPECTED_GENERATED_SOURCE_WITHOUT_TOSTRING =
-@"namespace RhoMicro.ValueObjectGenerator.Tests
+@"namespace TestNamespace
 {
     {0} partial struct {1} : IEquatable<{1}>
     {
