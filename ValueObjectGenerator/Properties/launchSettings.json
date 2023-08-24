@@ -1,8 +1,12 @@
 {
   "profiles": {
-    "Profile 1": {
+    "TestApp": {
       "commandName": "DebugRoslynComponent",
       "targetProject": "..\\TestApp\\TestApp.csproj"
+    },
+    "Tests": {
+      "commandName": "DebugRoslynComponent",
+      "targetProject": "..\\ValueObjectGenerator.Tests\\ValueObjectGenerator.Tests.csproj"
     }
   }
 }

@@ -9,7 +9,7 @@
 		<IsRoslynComponent>true</IsRoslynComponent>
 		<CompilerGeneratedFilesOutputPath>Generated</CompilerGeneratedFilesOutputPath>
 		<!--'.0' required for auto source gen updater-->
-		<AssemblyName>RhoMicro.$(MSBuildProjectName)2.0.29</AssemblyName>
+		<AssemblyName>RhoMicro.$(MSBuildProjectName)2.0.72</AssemblyName>
 		<RootNamespace>RhoMicro.$(MSBuildProjectName)</RootNamespace>
 		<EnableNETAnalyzers>true</EnableNETAnalyzers>
 		<AnalysisMode>All</AnalysisMode>
@@ -20,7 +20,7 @@
 	<PropertyGroup>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<Authors>Paul Brätz</Authors>
-		<Description>A source generator for escaping primitive obsession by generating value object wrappings.</Description>
+		<Description>A source generator for escaping primitive obsession by easily generating value objects.</Description>
 		<Copyright>2023</Copyright>
 		<PackageTags>Rhomicro</PackageTags>
 		<Version>2.0.0</Version>

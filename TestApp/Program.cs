@@ -5,27 +5,25 @@ using System.IO;
 namespace TestApp
 {
     [GeneratedValueObject]
-    [GenerateValueObjectField(typeof(String), "Street")]
-    [GenerateValueObjectField(typeof(String), "City")]
-    internal partial class Address
+    [GenerateValueObjectField(
+        typeof(String),
+        "_value",
+        Visibility = GenerateValueObjectFieldAttribute.VisibilityModifier.Private,
+        GenerateOptions = GenerateValueObjectFieldAttribute.Options.Validated)]
+    internal readonly partial struct Name
     {
         static partial void Validate(ValidateParameters parameters, ref ValidateResult result)
         {
-            var (city, street) = parameters;
-            if(String.IsNullOrEmpty(city))
+        }
+    }
+
+    record T(String Value)
+    {
+        public T(String value)
+        {
+            if(value == String.Empty)
             {
-                result.CityIsInvalid = true;
-                result.CityError = "A city may not be null or empty.";
-            }
-            if(String.IsNullOrEmpty(street))
-            {
-                result.StreetIsInvalid = true;
-                result.StreetError = "A street must be provided (may not be null or empty).";
-            }
-            if(street == "Baker")
-            {
-                result.StreetIsInvalid = true;
-                result.StreetError = "Baker Street is not real.";
+                throw new ArgumentException();
             }
         }
     }
@@ -34,7 +32,8 @@ namespace TestApp
     {
         static void Main(String[] _)
         {
-            var address = Address.Create("Main", "London");
+            var a = Name.Create("Value1");
+            String b = a;
         }
     }
 }
