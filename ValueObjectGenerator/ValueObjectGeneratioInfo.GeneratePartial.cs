@@ -551,13 +551,62 @@ public static System.Boolean operator ==(")
         }
         #endregion
         #endregion
-        #region Nested Types
-        internal static void GetValidateParametersDeconstruction(ObjectInstructions instr, StringBuilder builder)
+        #region ValidateParameters Type
+        internal static void ValidateParametersType(ObjectInstructions instr, StringBuilder builder)
         {
             if(instr.ValidatedFieldInstructions.Count == 0)
             {
                 return;
             }
+
+            builder.Append(
+@"/// <summary>
+/// Wrapper type around possible construction parameters; used for validation.
+/// </summary>
+private readonly struct ValidateParameters : IEquatable<ValidateParameters>
+{{").Nl();
+
+            ValidateParametersConstructorsAndFields(instr, builder);
+            ValidateParametersDeconstruction(instr, builder);
+            ValidateParametersEqualityAndHashing(instr, builder);
+
+            builder.Append('}').Nl();
+        }
+        internal static void ValidateParametersConstructorsAndFields(ObjectInstructions instr, StringBuilder builder)
+        {
+            builder.Append(
+@"#region Constructors & Fields
+/// <summary>
+/// Initializes a new instance.
+/// </summary>")
+                .ForEach(instr.ValidatedFieldInstructions, (b, f) =>
+                    b.Append("/// <param name=\"").Append(f.InParamName).Append("\">").Nl()
+                    .Append("/// The value for <see cref=\"").Append(f.Attribute.Name).Append("\"/> to validate.").Nl()
+                    .Append("/// </param>")).Nl()
+                .Append("public ValidateParameters(")
+                .ForEach(instr.ValidatedFieldInstructions, ", ", (b, f) =>
+                    b.Append(f.Attribute.Type.FullName).Append(' ').Append(f.InParamName))
+                .Append(')').Nl()
+                .Append('{').Nl()
+                .ForEach(instr.ValidatedFieldInstructions, (b, f) =>
+                    b.Append(f.Attribute.Name).Append(" = ").Append(f.InParamName).Append(';')).Nl()
+                .Append('}').Nl()
+                .ForEach(instr.ValidatedFieldInstructions, (b, f) =>
+                    b.Append("/// <summary>").Nl()
+                    .Append("/// The value for <see cref=\"").Append(f.Attribute.Name).Append("\"/> to validate.").Nl()
+                    .Append("/// </summary>").Nl()
+                    .Append("public readonly ").Append(f.Attribute.Type.FullName).Append(' ')
+                    .Append(f.Attribute.Name)).Nl()
+                .Append("#endregion");
+        }
+        internal static void ValidateParametersDeconstruction(ObjectInstructions instr, StringBuilder builder)
+        {
+            if(instr.ValidatedFieldInstructions.Count == 0)
+            {
+                return;
+            }
+
+            builder.Append("#region Deconstruction");
 
             if(instr.ValidatedFieldInstructions.Count == 1)
             {
@@ -580,148 +629,133 @@ public static System.Boolean operator ==(")
                         .Append("\">").Nl()
                         .Append("/// The value contained in <see cref=\"")
                         .Append(f.Attribute.Name).Append("\"/>.").Nl()
-                        .Append("/// </param>").Nl()
-                        .Append("public void Deconstruct(")
-                        .ForEach(instr.ValidatedFieldInstructions, $",{Environment.NewLine}", (b_1, f_1) =>
-                            b_1.Append("out ").Append(f_1.Attribute.Type.FullName).Append(' ').Append("f.OutParamName"))
-                        .Append(')').Nl()
-                        .Append('{').Nl()
-                        .Append());
-            }
-            /*
-        
-{PFI(validatedFields, ",\r\n", f =>
-    $"				out {} {}")})
-        {{
-{PFI(validatedFields, "\r\n", f =>
-    $"				{f.OutParamName} = {f.Attribute.Name};")}
-        }}";
-        }
-            */
-        }
-        internal static void BuildValidateParametersType(IReadOnlyList<FieldInstructions> validatedFields, StringBuilder builder)
-        {
-            if(validatedFields.Count == 0)
-            {
-                return String.Empty;
+                        .Append("/// </param>")).Nl()
+                    .Append("public void Deconstruct(")
+                    .ForEach(instr.ValidatedFieldInstructions, ", ", (b, f) =>
+                        b.Append("out ").Append(f.Attribute.Type.FullName).Append(' ').Append(f.OutParamName))
+                    .Append(')').Nl()
+                    .Append('{').Nl()
+                    .ForEach(instr.ValidatedFieldInstructions, (b, f) =>
+                        b.Append(f.OutParamName).Append(" = ").Append(f.Attribute.Name).Append(';')).Nl()
+                    .Append('}').Nl();
             }
 
-            var result =
-        $@"		/// <summary>
-		/// Wrapper type around possible construction parameters; used for validation.
-		/// </summary>
-		private readonly struct ValidateParameters : IEquatable<ValidateParameters>
-		{{
-			#region Constructors & Fields
-			/// <summary>
-			/// Initializes a new instance.
-			/// </summary>
-{PFI(validatedFields, "\r\n", f =>
-        $@"			/// <param name=""{f.InParamName}"">
-			/// The value for <see cref=""{f.Attribute.Name}""/> to validate.
-			/// </param>")}
-			public ValidateParameters({PFI(validatedFields, ", ", f => $"{f.Attribute.Type.FullName} {f.InParamName}")})
-			{{
-{PFI(validatedFields, "\r\n", f =>
-        $"				{f.Attribute.Name} = {f.InParamName};")}
-			}}
-{PFI(validatedFields, "\r\n", f =>
-        $@"			/// <summary>
-			/// The value for <see cref=""{f.Attribute.Name}""/> to validate.
-			/// </summary>
-			public readonly {f.Attribute.Type.FullName} {f.Attribute.Name};")}
-			#endregion
-			#region Deconstruction
-{GetValidateParametersDeconstruction(validatedFields)}
-			#endregion
-			#region Equality & Hashing
-			/// <inheritdoc/>
-			public override System.Boolean Equals(System.Object obj)
-			{{
-				return obj is ValidateParameters address && Equals(address);
-			}}
-			/// <inheritdoc/>
-			public System.Boolean Equals(ValidateParameters other)
-			{{
-				return ({PFI(validatedFields, ", ", f => f.Attribute.Name)}).Equals(({PFI(validatedFields, ", ", f => $"other.{f.Attribute.Name}")}));
-			}}
-			/// <inheritdoc/>
-			public override System.Int32 GetHashCode()
-			{{
-				return ({PFI(validatedFields, ", ", f => f.Attribute.Name)}).GetHashCode();
-			}}
-			/// <summary>
-			/// Indicates whether two instances of <see cref=""ValidateParameters""/> are equal.
-			/// </summary>
-			/// <param name=""left"">The left operand.</param>
-			/// <param name=""left"">The right operand.</param>
-			/// <returns>
-			/// <see langword=""true""/> if <paramref name=""left""/> and <paramref name=""right""/> are
-			/// equal; otherwise, <see langword=""false""/>.
-			/// </returns>
-			public static System.Boolean operator ==(ValidateParameters left, ValidateParameters right)
-			{{
-				return left.Equals(right);
-			}}
-			/// <summary>
-			/// Indicates whether two instances of <see cref=""ValidateParameters""/> are <em>not</em> equal.
-			/// </summary>
-			/// <param name=""left"">The left operand.</param>
-			/// <param name=""left"">The right operand.</param>
-			/// <returns>
-			/// <see langword=""true""/> if <paramref name=""left""/> and <paramref name=""right""/> are
-			/// <em>not</em> equal; otherwise, <see langword=""false""/>.
-			/// </returns>
-			public static System.Boolean operator !=(ValidateParameters left, ValidateParameters right)
-			{{
-				return !(left == right);
-			}}
-			#endregion
-		}}";
-
-            return result;
+            builder.Append("#endregion");
         }
-        internal static void BuildValidateResultType(IReadOnlyList<FieldInstructions> validatedFields, IEnumerable<FieldInstructions> allFields, StringBuilder builder)
+        internal static void ValidateParametersEqualityAndHashing(ObjectInstructions instr, StringBuilder builder)
         {
-            if(validatedFields.Count == 0)
+            builder.Append(
+@"#region Equality & Hashing
+/// <inheritdoc/>
+public override System.Boolean Equals(System.Object obj)
+{{
+	return obj is ValidateParameters address && Equals(address);
+}}
+/// <inheritdoc/>
+public System.Boolean Equals(ValidateParameters other)
+{{").Nl()
+                .Append("return (")
+                .ForEach(instr.ValidatedFieldInstructions, ", ", (b, f) =>
+                    b.Append(f.Attribute.Name))
+                .Append(").Equals((")
+                .ForEach(instr.ValidatedFieldInstructions, ", ", (b, f) =>
+                    b.Append("other.").Append(f.Attribute.Name))
+                .Append("));").Nl()
+                .Append('}').Nl()
+                .Append(
+@"/// <inheritdoc/>
+public override System.Int32 GetHashCode()
+{{").Nl()
+                .Append("return (")
+                .ForEach(instr.ValidatedFieldInstructions, ", ", (b, f) =>
+                    b.Append(f.Attribute.Name))
+                .Append(").GetHashCode();").Nl()
+                .Append('}').Nl()
+                .Append(
+@"/// <summary>
+/// Indicates whether two instances of <see cref=""ValidateParameters""/> are equal.
+/// </summary>
+/// <param name=""left"">The left operand.</param>
+/// <param name=""left"">The right operand.</param>
+/// <returns>
+/// <see langword=""true""/> if <paramref name=""left""/> and <paramref name=""right""/> are
+/// equal; otherwise, <see langword=""false""/>.
+/// </returns>
+public static System.Boolean operator ==(ValidateParameters left, ValidateParameters right)
+{{
+	return left.Equals(right);
+}}
+/// <summary>
+/// Indicates whether two instances of <see cref=""ValidateParameters""/> are <em>not</em> equal.
+/// </summary>
+/// <param name=""left"">The left operand.</param>
+/// <param name=""left"">The right operand.</param>
+/// <returns>
+/// <see langword=""true""/> if <paramref name=""left""/> and <paramref name=""right""/> are
+/// <em>not</em> equal; otherwise, <see langword=""false""/>.
+/// </returns>
+public static System.Boolean operator !=(ValidateParameters left, ValidateParameters right)
+{{
+	return !(left == right);
+}}
+#endregion");
+        }
+        #endregion
+        #region ValidateResult Type
+        internal static void ValidateResultFieldsAndProperties(ObjectInstructions instr, StringBuilder builder)
+        {
+            builder.Append("#region Fields & Properties").Nl()
+                .ForEach(instr.ValidatedFieldInstructions, (b, f) =>
+                    b.Append("/// <summary>").Nl()
+                    .Append("/// Indicates whether the value provided by <see cref=\"ValidateParameters.")
+                    .Append(f.Attribute.Name).Append("\"/> is invalid.").Nl()
+                    .Append("/// </summary>").Nl()
+                    .Append("public System.Boolean ").Append(f.Attribute.Name).Append("IsInvalid;").Nl()
+                    .Append(
+@"/// <summary>
+/// Contains the error message to include in instances of <see cref=""System.ArgumentException""/> thrown 
+/// by <see cref=""Create(")
+                    .ForEach(instr.ValidatedFieldInstructions, ", ", (b_1, f_1) =>
+                        b_1.Append(f_1.Attribute.Type.FullName))
+                    .Append(")\"/> if <see cref=\"")
+                    .Append(f.Attribute.Name)
+                    .Append("IsInvalid\"/> is set to <see langword=\"true\"/>.").Nl()
+                    .Append("/// </summary>").Nl()
+                    .Append("public System.String ").Append(f.Attribute.Name).Append("Error;").Nl())
+                .Append(
+@"/// <summary>
+/// Gets a default (valid) instance.
+/// </summary>
+public static ValidateResult Valid => default;
+
+/// <summary>
+/// Gets a value indicating whether none of the validation fields have been set to <see langword=""true""/>.
+/// </summary>
+public System.Boolean IsValid =>")
+                .ForEach(instr.ValidatedFieldInstructions, "&& ", (b, f) =>
+                    b.Append('!').Append(f.Attribute.Name).Append("IsInvalid"))
+                .Append(';').Nl();
+        }
+        internal static void BuildValidateResultType(ObjectInstructions instr, StringBuilder builder)
+        {
+            if(instr.ValidatedFieldInstructions.Count == 0)
             {
                 return;
             }
 
-            builder.Append("/// <summary>\r\n/// Communicates detailed validation results.\r\n/// </summary>\r\nprivate ref struct ValidateResult\r\n{\r\n#region Fields & Properties");
-
-            PFI(validatedFields, "\r\n", f =>
-        $@"			/// <summary>
-			/// Indicates whether the value provided by <see cref=""ValidateParameters.{f.Attribute.Name}""/> is invalid.
-			/// </summary>
-			public System.Boolean {f.Attribute.Name}IsInvalid;
-			/// <summary>
-			/// Contains the error message to include in instances of <see cref=""System.ArgumentException""/> thrown 
-			/// by <see cref=""Create({PFI(allFields, ", ", g => g.Attribute.Type.FullName)})""/> if <see cref=""{f.Attribute.Name}IsInvalid""/> is set to <see langword=""true""/>.
-			/// </summary>
-			public System.String {f.Attribute.Name}Error;")
-
-
-
-
-
-
+            builder.Append(
+@"/// <summary>
+/// Communicates detailed validation results.
+/// </summary>
+/// private ref struct ValidateResult
+{").Nl();
+            ValidateResultFieldsAndProperties(instr, builder);
+            /*
+            
 
             var result =
 $@"
-{}
-
-			/// <summary>
-			/// Gets a default (valid) instance.
-			/// </summary>
-			public static ValidateResult Valid => default;
-
-			/// <summary>
-			/// Gets a value indicating whether none of the validation fields have been set to <see langword=""true""/>.
-			/// </summary>
-			public System.Boolean IsValid =>
-{PFI(validatedFields, "&&\r\n", f => $"!{f.Attribute.Name}IsInvalid")};
-			#endregion
+			
 			#region Conversion Operators
 			/// <summary>
 			/// Implicitly converts a mutable instance of <see cref=""ValidateResult""/> to 
@@ -751,9 +785,9 @@ $@"
 			}}
 			#endregion
 		}}";
-
-            return result;
+            */
         }
+        #endregion
         #region IsValidResult Type
         internal static void GetIsValidResultCtor(IReadOnlyList<FieldInstructions> validatedFields)
         {
@@ -916,7 +950,6 @@ $@"
 
             return result;
         }
-        #endregion
         #endregion
     }
 }
