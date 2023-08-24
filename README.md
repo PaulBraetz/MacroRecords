@@ -28,3 +28,7 @@ Nuget:
 </PackageReference>
 ```
 Or check out the [Nuget Repository](https://www.nuget.org/packages/RhoMicro.ValueObjectGenerator).
+
+## Version 2
+
+Version 2 of the generator is currently in the works.
