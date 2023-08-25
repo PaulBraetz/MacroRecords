@@ -9,7 +9,7 @@
 		<IsRoslynComponent>true</IsRoslynComponent>
 		<CompilerGeneratedFilesOutputPath>Generated</CompilerGeneratedFilesOutputPath>
 		<!--'.0' required for auto source gen updater-->
-		<AssemblyName>RhoMicro.$(MSBuildProjectName)</AssemblyName>
+		<AssemblyName>RhoMicro.$(MSBuildProjectName).0</AssemblyName>
 		<RootNamespace>RhoMicro.$(MSBuildProjectName)</RootNamespace>
 		<EnableNETAnalyzers>true</EnableNETAnalyzers>
 		<AnalysisMode>All</AnalysisMode>
