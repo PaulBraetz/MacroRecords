@@ -6,7 +6,7 @@
 		<Nullable>enable</Nullable>
 		<OutputType>exe</OutputType>
 		<IsPackable>false</IsPackable>
-		<!--<IsTestProject>true</IsTestProject>-->
+		<IsTestProject>true</IsTestProject>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -19,6 +19,5 @@
 	<ItemGroup>
 		<ProjectReference Include="..\ValueObjectGenerator\ValueObjectGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="true" />
 	</ItemGroup>
-
 
 </Project>

@@ -9,8 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ValueObjectGenerator.Tests"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestApp", "TestApp\TestApp.csproj", "{026872FC-B8AF-43F8-8C77-BA4EDCC64336}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "V2", "V2\V2.csproj", "{9A32273B-C1FF-4896-AD04-8E0DFE13F32B}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2A60855C-70D6-4AF5-BAFC-2B3CC7504148}"
 	ProjectSection(SolutionItems) = preProject
 		AutoUpdateAssemblyName.txt = AutoUpdateAssemblyName.txt
@@ -34,10 +32,6 @@ Global
 		{026872FC-B8AF-43F8-8C77-BA4EDCC64336}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{026872FC-B8AF-43F8-8C77-BA4EDCC64336}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{026872FC-B8AF-43F8-8C77-BA4EDCC64336}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9A32273B-C1FF-4896-AD04-8E0DFE13F32B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9A32273B-C1FF-4896-AD04-8E0DFE13F32B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9A32273B-C1FF-4896-AD04-8E0DFE13F32B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9A32273B-C1FF-4896-AD04-8E0DFE13F32B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

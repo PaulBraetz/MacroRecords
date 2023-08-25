@@ -6,14 +6,13 @@ namespace RhoMicro.ValueObjectGenerator
 {
 	internal static class Extensions
 	{
-		public static StringBuilder Nl(this StringBuilder builder) => builder.Append(Environment.NewLine);
 		public static StringBuilder ForEach<T>(
 			this StringBuilder builder,
 			IEnumerable<T> values,
 			String separator,
 			Action<StringBuilder, T> append)
 		{
-			Boolean appendSeparator = false;
+            var appendSeparator = false;
 			foreach (var value in values)
 			{
 				if (appendSeparator)

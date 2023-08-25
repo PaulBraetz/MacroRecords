@@ -17,8 +17,7 @@ namespace RhoMicro.ValueObjectGenerator
             }
 
             var sources = receiver.Results
-                .Select(i => i.GeneratePartial())
-                .Select(t => t.Source);
+                .Select(b => b.AddParentType().Build().Source);
 
             context.AddSources(sources);
         }

@@ -1,3 +1,1 @@
-﻿using System.Runtime.CompilerServices;
-
-[assembly:InternalsVisibleTo("ValueObjectGenerator.Tests")]
+﻿[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("ValueObjectGenerator.Tests")]
