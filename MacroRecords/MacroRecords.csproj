@@ -8,7 +8,7 @@
 		<NoPackageAnalysis>true</NoPackageAnalysis>
 		<IsRoslynComponent>true</IsRoslynComponent>
 		<!--'.0' required for auto source gen updater-->
-		<AssemblyName>RhoMicro.$(MSBuildProjectName).19</AssemblyName>
+		<AssemblyName>RhoMicro.$(MSBuildProjectName).22</AssemblyName>
 		<RootNamespace>RhoMicro.$(MSBuildProjectName)</RootNamespace>
 		<EnableNETAnalyzers>true</EnableNETAnalyzers>
 		<AnalysisMode>All</AnalysisMode>
@@ -24,7 +24,7 @@
 		</Description>
 		<Copyright>2023</Copyright>
 		<PackageTags>DDD;Value Objects;Records;Source Generator</PackageTags>
-		<Version>1.0.0-alpha.4</Version>
+		<Version>1.0.0-alpha.7</Version>
 		<PackageId>RhoMicro.MacroRecords</PackageId>
 		<Company>RhoMicro</Company>
 		<PackageProjectUrl>https://github.com/PaulBraetz/MacroRecords/</PackageProjectUrl>

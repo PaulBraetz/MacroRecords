@@ -325,7 +325,7 @@ namespace RhoMicro.MacroRecords
             _builder.ForEach(_fieldInstructions, (b, f) =>
                 b.AppendLine("/// <summary>")
                 .Append("/// ").AppendLine(f.Attribute.Summary)
-                .AppendLine("/// <summary>")
+                .AppendLine("/// </summary>")
                 .Append(Util.GetString(f.Attribute.Visibility))
                 .Append(" readonly ")
                 .Append(f.Attribute.Type.FullName)
@@ -614,6 +614,7 @@ string paramName = null;")
                 .AppendLine("/// <returns>")
                 .Append("/// A shallow copy of this instance with the <see cref=\"")
                 .Append(f.Attribute.Name).Append("\"/> value replaced by <paramref name=\"")
+                .Append(f.InParamName)
                 .AppendLine("\"/>.")
                 .AppendLine("/// </returns>")
                 .Append(Util.GetString(f.Attribute.Visibility)).Append(' ')
@@ -1241,7 +1242,7 @@ public static implicit operator bool(IsValidResult result) =>
                     .AppendLine("/// </param>"))
                 .Append("public void Deconstruct(")
                 .ForEach(_validatedFieldInstructions, (b, f) =>
-                    b.Append("bool ").Append(f.OutParamName).Append("IsInvalid, string ").Append(f.OutParamName).Append("Error"))
+                    b.Append("out bool ").Append(f.OutParamName).Append("IsInvalid, out string ").Append(f.OutParamName).Append("Error"))
                 .Append("){")
                 .ForEach(_validatedFieldInstructions, (b, f) =>
                     b.Append(f.OutParamName).Append("IsInvalid = ")

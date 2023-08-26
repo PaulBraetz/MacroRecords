@@ -1,3 +1,4 @@
-﻿using RhoMicro.MacroRecords;
-[MacroRecord(GenerateDebugDisplay = false)]
+﻿[MacroRecord]
+[Field(typeof(String), "MyStringField",
+    Options = FieldOptions.Validated | FieldOptions.Deconstructable)]
 partial class MyClass { }
