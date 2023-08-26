@@ -17,7 +17,7 @@ namespace RhoMicro.MacroRecords
 		/// Gets or sets additional options for the generated record.
 		/// </summary>
 		public RecordOptions Options { get; set; } =
-			RecordOptions.GenerateDebugDisplay |
+			RecordOptions.DebuggerDisplay |
 			RecordOptions.Constructor;
 	}
 }
