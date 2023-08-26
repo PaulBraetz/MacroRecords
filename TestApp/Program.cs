@@ -4,24 +4,24 @@ using System.Text.RegularExpressions;
 
 namespace TestApp
 {
-    [MacroRecord]
-    [Field(typeof(String), "_value", Visibility = Visibility.Private,
-        Options = FieldOptions.Deconstructable | FieldOptions.Validated)]
+    [MacroRecord()]
+    [Field(typeof(String), "Value", Options = FieldOptions.Validated)]
     internal readonly partial struct Name
     {
         static partial void Validate(ValidateParameters parameters, ref ValidateResult result)
         {
-            result._valueIsInvalid = Regex.IsMatch(parameters._value, @"[a-zA-Z0-9]+");
-            result._valueError = "Name must be alphanumeric";
+            result.ValueIsInvalid = Regex.IsMatch(parameters.Value, @"[a-zA-Z0-9]+");
+            result.ValueError = "Name must be alphanumeric";
         }
     }
-
     record NameR(String Value1, Int32 Value2);
 
     internal partial class Program
     {
         static void Main(String[] _)
         {
+            var nr = new NameR("", 6);
+            var n = Name.Create("");
         }
     }
 }
