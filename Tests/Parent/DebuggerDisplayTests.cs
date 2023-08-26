@@ -49,7 +49,7 @@ namespace MacroRecords.Tests
                         [Field(
                             typeof(int), 
                             "Field1", 
-                            Options = FieldOptions.ExcludedFromDebuggerDisplay)]
+                            Options = FieldOptions.None)]
                         partial class TVO
                         {
                         }
@@ -101,11 +101,11 @@ namespace MacroRecords.Tests
                         [Field(
                             typeof(int), 
                             "Field1", 
-                            Options = FieldOptions.ExcludedFromDebuggerDisplay)]
+                            Options = FieldOptions.None)]
                         [Field(
                             typeof(int), 
                             "Field2", 
-                            Options = FieldOptions.ExcludedFromDebuggerDisplay)]
+                            Options = FieldOptions.None)]
                         partial class TVO
                         {
                         }
@@ -122,7 +122,7 @@ namespace MacroRecords.Tests
                         [Field(
                             typeof(int), 
                             "Field1", 
-                            Options = FieldOptions.ExcludedFromDebuggerDisplay)]
+                            Options = FieldOptions.None)]
                         [Field(
                             typeof(int), 
                             "Field2")]
@@ -145,7 +145,7 @@ namespace MacroRecords.Tests
                         [Field(
                             typeof(int), 
                             "Field2", 
-                            Options = FieldOptions.ExcludedFromDebuggerDisplay)]
+                            Options = FieldOptions.None)]
                         partial class TVO
                         {
                         }
@@ -179,11 +179,11 @@ namespace MacroRecords.Tests
                         [Field(
                             typeof(int), 
                             "Field1", 
-                            Options = FieldOptions.ExcludedFromDebuggerDisplay)]
+                            Options = FieldOptions.None)]
                         [Field(
                             typeof(int), 
                             "Field2", 
-                            Options = FieldOptions.ExcludedFromDebuggerDisplay)]
+                            Options = FieldOptions.None)]
                         partial class TVO
                         {
                         }
@@ -198,7 +198,7 @@ namespace MacroRecords.Tests
                         [Field(
                             typeof(int), 
                             "Field1", 
-                            Options = FieldOptions.ExcludedFromDebuggerDisplay)]
+                            Options = FieldOptions.None)]
                         [Field(
                             typeof(int), 
                             "Field2")]
@@ -219,7 +219,7 @@ namespace MacroRecords.Tests
                         [Field(
                             typeof(int), 
                             "Field2", 
-                            Options = FieldOptions.ExcludedFromDebuggerDisplay)]
+                            Options = FieldOptions.None)]
                         partial class TVO
                         {
                         }
