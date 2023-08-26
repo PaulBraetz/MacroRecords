@@ -1,6 +1,7 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+
 using RhoMicro.MacroRecords;
 
 namespace MacroRecords.Tests
@@ -16,7 +17,6 @@ namespace MacroRecords.Tests
                                  MetadataReference.CreateFromFile(typeof(Object).Assembly.Location),
                                  MetadataReference.CreateFromFile(typeof(MacroRecordAttribute).Assembly.Location))
                               .AddSyntaxTrees(tree);
-
 
             var root = tree.GetRoot();
             var declaration = root.DescendantNodes().OfType<TypeDeclarationSyntax>().Single();
