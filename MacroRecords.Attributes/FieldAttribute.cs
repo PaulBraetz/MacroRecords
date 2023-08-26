@@ -42,7 +42,7 @@ namespace RhoMicro.MacroRecords
         public Boolean IsValidated => Options.HasFlag(FieldOptions.Validated);
         public Boolean IsDeconstructable => Options.HasFlag(FieldOptions.Deconstructable);
         public Boolean SupportsWith => Options.HasFlag(FieldOptions.SupportsWith);
-        public Boolean ExcludedFromDebugDisplay => Options.HasFlag(FieldOptions.ExcludedFromDebuggerDisplay);
+        public Boolean IncludedInDebuggerDisplay => Options.HasFlag(FieldOptions.DebuggerDisplay);
 
         /// <summary>
         /// This method is not intended for use outside of the generator.

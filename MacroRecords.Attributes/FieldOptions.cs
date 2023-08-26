@@ -40,8 +40,8 @@ namespace RhoMicro.MacroRecords
 		/// </summary>
 		Validated = 4,
 		/// <summary>
-		/// The field name and value will be excluded from the <see cref="System.Diagnostics.DebuggerDisplayAttribute"/>.
+		/// The field name and value will be included in the <see cref="System.Diagnostics.DebuggerDisplayAttribute"/>.
 		/// </summary>
-		ExcludedFromDebuggerDisplay = 8
+		DebuggerDisplay = 8
 	}
 }

@@ -258,7 +258,7 @@ namespace RhoMicro.MacroRecords
 				.Append(_typeSymbol.Name);
 
 			var includedFields = _fieldInstructions
-				.Where(f => !f.Attribute.ExcludedFromDebugDisplay)
+				.Where(f => !f.Attribute.IncludedInDebuggerDisplay)
 				.ToArray();
 
 			if(includedFields.Length > 0)
