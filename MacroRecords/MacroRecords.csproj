@@ -22,7 +22,7 @@
 		<Description>A source generator for escaping primitive obsession by easily generating value objects.</Description>
 		<Copyright>2023</Copyright>
 		<PackageTags>DDD;Value Objects;Records;Source Generator</PackageTags>
-		<Version>2.0.0-alpha.2</Version>
+		<Version>1.0.0-alpha.1</Version>
 		<PackageId>RhoMicro.MacroRecords</PackageId>
 		<Company>RhoMicro</Company>
 		<PackageProjectUrl>https://github.com/PaulBraetz/MacroRecords/</PackageProjectUrl>
