@@ -8,7 +8,7 @@
 		<NoPackageAnalysis>true</NoPackageAnalysis>
 		<IsRoslynComponent>true</IsRoslynComponent>
 		<!--'.0' required for auto source gen updater-->
-		<AssemblyName>RhoMicro.$(MSBuildProjectName).22</AssemblyName>
+		<AssemblyName>RhoMicro.$(MSBuildProjectName).24</AssemblyName>
 		<RootNamespace>RhoMicro.$(MSBuildProjectName)</RootNamespace>
 		<EnableNETAnalyzers>true</EnableNETAnalyzers>
 		<AnalysisMode>All</AnalysisMode>
@@ -43,6 +43,7 @@
 	  <Compile Include="..\MacroRecords.Attributes\FieldAttribute.cs" Link="Attributes\FieldAttribute.cs" />
 	  <Compile Include="..\MacroRecords.Attributes\FieldOptions.cs" Link="Attributes\FieldOptions.cs" />
 	  <Compile Include="..\MacroRecords.Attributes\MacroRecordAttribute.cs" Link="Attributes\MacroRecordAttribute.cs" />
+	  <Compile Include="..\MacroRecords.Attributes\RecordOptions.cs" Link="Attributes\RecordOptions.cs" />
 	  <Compile Include="..\MacroRecords.Attributes\Visibility.cs" Link="Attributes\Visibility.cs" />
 	  <Compile Include="..\MacroRecords.Core\CodeAnalysis\AttributeAnalysisUnit.cs" Link="CodeAnalysis\AttributeAnalysisUnit.cs" />
 	  <Compile Include="..\MacroRecords.Core\CodeAnalysis\AttributeFactory.cs" Link="CodeAnalysis\AttributeFactory.cs" />
