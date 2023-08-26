@@ -18,7 +18,8 @@ namespace RhoMicro.MacroRecords
 		/// </summary>
 		public RecordOptions Options { get; set; } =
 			RecordOptions.DebuggerDisplay |
-			RecordOptions.Constructor;
+			RecordOptions.Constructor |
+			RecordOptions.EmptyMember;
 
 		public Boolean GenerateDebuggerDisplay => Options.HasFlag(RecordOptions.DebuggerDisplay);
 		public Boolean GenerateConstructor => Options.HasFlag(RecordOptions.Constructor);
