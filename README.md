@@ -16,4 +16,12 @@ To get started, take a look at the `TestApp` project. It includes a sample value
 
 Check out the [Nuget Repository](https://www.nuget.org/packages/RhoMicro.MacroRecords).
 
+## TODO
+
+- detailed introduction
+- benefits/motivation
+- funny intro quote
+- better installation instructions
+- fix attribute compilation clash
+
 Credits for the name MacroRecords go to [knight](https://github.com/muhamedkarajic).
