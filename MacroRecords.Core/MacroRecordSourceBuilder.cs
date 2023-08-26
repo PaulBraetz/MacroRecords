@@ -249,7 +249,7 @@ namespace RhoMicro.MacroRecords
         }
         public MacroRecordSourceBuilder AddParentDebuggerDisplayAttribute()
         {
-            if(!_attribute.GenerateDebugDisplay)
+            if(!_attribute.GenerateDebuggerDisplay)
             {
                 return this;
             }
