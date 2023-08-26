@@ -27,7 +27,7 @@ namespace MacroRecords.Tests.Parent
                     {
                         """
                         using RhoMicro.MacroRecords;
-                        [MacroRecord(GenerateConstructor = false)]
+                        [MacroRecord(Options = RecordOptions.None)]
                         partial class TVO
                         {
                         }
@@ -36,9 +36,9 @@ namespace MacroRecords.Tests.Parent
                     },
                     new Object[]
                     {
-                        """
+						"""
                         using RhoMicro.MacroRecords;
-                        [MacroRecord(GenerateConstructor = true)]
+                        [MacroRecord(Options = RecordOptions.Constructor)]
                         partial class TVO
                         {
                         }
