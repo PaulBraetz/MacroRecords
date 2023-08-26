@@ -2,6 +2,8 @@
 
 *Create detailed C# record types without the boilerplate.*
 
+#
+
 ## Feature Overview
 
 Addressing some of what I believe to be are shortcomings of C# record types, these are the features `MacroRecords` support:
@@ -30,6 +32,8 @@ The source code generated (depending on your definitions) includes:
 - overrides for `Equals(object)`, `GetHashCode()`
 - implementations for `Equals(T)`, `==`, `!=`
 
+#
+
 ## Installation
 
 *All releases are marked as prerelease until I am confident in their robustness.*
@@ -37,6 +41,8 @@ The source code generated (depending on your definitions) includes:
 In order to use `MacroRecords`, install the source generator from its Nuget repository: [RhoMicro.MacroRecords](https://www.nuget.org/packages/RhoMicro.MacroRecords/).
 
 The attributes required for instructing the source generator may be found in their own Nuget repository: [RhoMicro.MacroRecords.Attributes](https://www.nuget.org/packages/RhoMicro.MacroRecords/)
+
+#
 
 ## Feature Examples
 
@@ -474,15 +480,18 @@ The `FieldOptions` enum is annotated with the `FlagsAttribute`. You may thus fre
 partial class MyClass { }
 ```
 
+#
+
 ## Notes
 
 The generator is still in the development phase. I have implemented some tests already, however there is bound to be some generation bugs. If you encounter *any* issue when generating code using `MacroRecords`, posting an issue explaining your usecase and problem would be greatly appreciated.
 
 I am open to expanding the functionality offered. If you have any ideas, feel free to present them in an issue or pull request.
 
+#
+
 ## TODO
 
 - add abstract support
-- better installation instructions
 
 Credits for the name `MacroRecords` go to [knight](https://github.com/muhamedkarajic).
