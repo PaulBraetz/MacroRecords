@@ -25,15 +25,15 @@ namespace RhoMicro.MacroRecords
 		/// methods to compile correctly.
 		/// </para>
 		/// </summary>
-		GenerateConstructor = 1,
+		Constructor = 1,
 		/// <summary>
 		/// The generated type definition should be annotated with the <see cref="System.Diagnostics.DebuggerDisplayAttribute"/>.
 		/// </summary>
-		GenerateDebugDisplay = 2,
+		DebuggerDisplay = 2,
 		/// <summary>
 		/// The generated type definition should include a static readonly field containing the type default value.
 		/// This option only affects struct definitions.
 		/// </summary>
-		GenerateEmptyMember = 4
+		EmptyMember = 4
 	}
 }

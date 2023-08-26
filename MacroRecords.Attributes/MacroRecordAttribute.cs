@@ -18,6 +18,6 @@ namespace RhoMicro.MacroRecords
 		/// </summary>
 		public RecordOptions Options { get; set; } =
 			RecordOptions.GenerateDebugDisplay |
-			RecordOptions.GenerateConstructor;
+			RecordOptions.Constructor;
 	}
 }
