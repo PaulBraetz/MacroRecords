@@ -10,7 +10,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\MacroRecords\MacroRecords.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-		<ProjectReference Include="..\MacroRecords.Attributes\MacroRecords.Attributes.csproj"  />
+		<ProjectReference Include="..\MacroRecords.Attributes\MacroRecords.Attributes.csproj" />
 	</ItemGroup>
 
 </Project>

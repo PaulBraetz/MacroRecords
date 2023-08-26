@@ -192,7 +192,7 @@ namespace RhoMicro.MacroRecords
         public MacroRecordSourceBuilder AddParentOpen()
         {
             var ns = _typeSymbol.ContainingNamespace;
-            if(ns != null)
+            if(ns != null && !ns.IsGlobalNamespace)
             {
                 _builder.Append("namespace ").Append(ns).Append('{');
             }
@@ -214,7 +214,7 @@ namespace RhoMicro.MacroRecords
         public MacroRecordSourceBuilder AddParentClose()
         {
             var ns = _typeSymbol.ContainingNamespace;
-            if(ns != null)
+            if(ns != null && !ns.IsGlobalNamespace)
             {
                 _builder.Append('}');
             }

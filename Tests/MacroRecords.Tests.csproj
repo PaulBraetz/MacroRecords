@@ -18,7 +18,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\MacroRecords\MacroRecords.csproj" />
+		<ProjectReference Include="..\MacroRecords.Core\MacroRecords.Core.csproj" />
 		<ProjectReference Include="..\MacroRecords.Attributes\MacroRecords.Attributes.csproj" />
 	</ItemGroup>
 

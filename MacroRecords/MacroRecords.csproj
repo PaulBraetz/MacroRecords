@@ -8,7 +8,7 @@
 		<NoPackageAnalysis>true</NoPackageAnalysis>
 		<IsRoslynComponent>true</IsRoslynComponent>
 		<!--'.0' required for auto source gen updater-->
-		<AssemblyName>RhoMicro.$(MSBuildProjectName).14</AssemblyName>
+		<AssemblyName>RhoMicro.$(MSBuildProjectName).17</AssemblyName>
 		<RootNamespace>RhoMicro.$(MSBuildProjectName)</RootNamespace>
 		<EnableNETAnalyzers>true</EnableNETAnalyzers>
 		<AnalysisMode>All</AnalysisMode>
@@ -24,7 +24,7 @@
 		</Description>
 		<Copyright>2023</Copyright>
 		<PackageTags>DDD;Value Objects;Records;Source Generator</PackageTags>
-		<Version>1.0.0-alpha.2</Version>
+		<Version>1.0.0-alpha.3</Version>
 		<PackageId>RhoMicro.MacroRecords</PackageId>
 		<Company>RhoMicro</Company>
 		<PackageProjectUrl>https://github.com/PaulBraetz/MacroRecords/</PackageProjectUrl>
@@ -44,10 +44,43 @@
 	  <Compile Include="..\MacroRecords.Attributes\FieldOptions.cs" Link="Attributes\FieldOptions.cs" />
 	  <Compile Include="..\MacroRecords.Attributes\MacroRecordAttribute.cs" Link="Attributes\MacroRecordAttribute.cs" />
 	  <Compile Include="..\MacroRecords.Attributes\Visibility.cs" Link="Attributes\Visibility.cs" />
+	  <Compile Include="..\MacroRecords.Core\CodeAnalysis\AttributeAnalysisUnit.cs" Link="CodeAnalysis\AttributeAnalysisUnit.cs" />
+	  <Compile Include="..\MacroRecords.Core\CodeAnalysis\AttributeFactory.cs" Link="CodeAnalysis\AttributeFactory.cs" />
+	  <Compile Include="..\MacroRecords.Core\CodeAnalysis\AttributeFactoryCollection.cs" Link="CodeAnalysis\AttributeFactoryCollection.cs" />
+	  <Compile Include="..\MacroRecords.Core\CodeAnalysis\AttributeFactoryStrategy.cs" Link="CodeAnalysis\AttributeFactoryStrategy.cs" />
+	  <Compile Include="..\MacroRecords.Core\CodeAnalysis\Error.cs" Link="CodeAnalysis\Error.cs" />
+	  <Compile Include="..\MacroRecords.Core\CodeAnalysis\Extensions.cs" Link="CodeAnalysis\Extensions.cs" />
+	  <Compile Include="..\MacroRecords.Core\CodeAnalysis\GeneratedSource.cs" Link="CodeAnalysis\GeneratedSource.cs" />
+	  <Compile Include="..\MacroRecords.Core\CodeAnalysis\GeneratedType.cs" Link="CodeAnalysis\GeneratedType.cs" />
+	  <Compile Include="..\MacroRecords.Core\CodeAnalysis\IAttributeFactory.cs" Link="CodeAnalysis\IAttributeFactory.cs" />
+	  <Compile Include="..\MacroRecords.Core\CodeAnalysis\IdentifierPart.cs" Link="CodeAnalysis\IdentifierPart.cs" />
+	  <Compile Include="..\MacroRecords.Core\CodeAnalysis\IdentifierPartEqualityComparer.cs" Link="CodeAnalysis\IdentifierPartEqualityComparer.cs" />
+	  <Compile Include="..\MacroRecords.Core\CodeAnalysis\IdentifierParts.cs" Link="CodeAnalysis\IdentifierParts.cs" />
+	  <Compile Include="..\MacroRecords.Core\CodeAnalysis\IHasTypeParameter.cs" Link="CodeAnalysis\IHasTypeParameter.cs" />
+	  <Compile Include="..\MacroRecords.Core\CodeAnalysis\IHasTypeProperty.cs" Link="CodeAnalysis\IHasTypeProperty.cs" />
+	  <Compile Include="..\MacroRecords.Core\CodeAnalysis\IIdentifierPart.cs" Link="CodeAnalysis\IIdentifierPart.cs" />
+	  <Compile Include="..\MacroRecords.Core\CodeAnalysis\ImmutableArrayEqualityComparer.cs" Link="CodeAnalysis\ImmutableArrayEqualityComparer.cs" />
+	  <Compile Include="..\MacroRecords.Core\CodeAnalysis\INamespace.cs" Link="CodeAnalysis\INamespace.cs" />
+	  <Compile Include="..\MacroRecords.Core\CodeAnalysis\ITypeIdentifier.cs" Link="CodeAnalysis\ITypeIdentifier.cs" />
+	  <Compile Include="..\MacroRecords.Core\CodeAnalysis\ITypeIdentifierName.cs" Link="CodeAnalysis\ITypeIdentifierName.cs" />
+	  <Compile Include="..\MacroRecords.Core\CodeAnalysis\Namespace.cs" Link="CodeAnalysis\Namespace.cs" />
+	  <Compile Include="..\MacroRecords.Core\CodeAnalysis\NamespaceEqualityComparer.cs" Link="CodeAnalysis\NamespaceEqualityComparer.cs" />
+	  <Compile Include="..\MacroRecords.Core\CodeAnalysis\TypeIdentifier.cs" Link="CodeAnalysis\TypeIdentifier.cs" />
+	  <Compile Include="..\MacroRecords.Core\CodeAnalysis\TypeIdentifierEqualityComparer.cs" Link="CodeAnalysis\TypeIdentifierEqualityComparer.cs" />
+	  <Compile Include="..\MacroRecords.Core\CodeAnalysis\TypeIdentifierName.cs" Link="CodeAnalysis\TypeIdentifierName.cs" />
+	  <Compile Include="..\MacroRecords.Core\CodeAnalysis\TypeIdentifierNameEqualityComparer.cs" Link="CodeAnalysis\TypeIdentifierNameEqualityComparer.cs" />
+	  <Compile Include="..\MacroRecords.Core\Extensions.cs" Link="Extensions.cs" />
+	  <Compile Include="..\MacroRecords.Core\FieldInstructions.cs" Link="FieldInstructions.cs" />
+	  <Compile Include="..\MacroRecords.Core\Generator.cs" Link="Generator.cs" />
+	  <Compile Include="..\MacroRecords.Core\MacroRecordSourceBuilder.cs" Link="MacroRecordSourceBuilder.cs" />
+	  <Compile Include="..\MacroRecords.Core\SyntaxContextReceiver.cs" Link="SyntaxContextReceiver.cs" />
+	  <Compile Include="..\MacroRecords.Core\Units.cs" Link="Units.cs" />
+	  <Compile Include="..\MacroRecords.Core\Util.cs" Link="Util.cs" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Update="NETStandard.Library" PrivateAssets="all" />
+		<PackageReference Include="Microsoft.CodeAnalysis" Version="4.0.1" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -55,11 +88,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.CodeAnalysis" Version="4.0.1" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <Folder Include="Attributes\" />
+	  <Folder Include="CodeAnalysis\" />
 	</ItemGroup>
 
 	<!--Required for source gen auto updater-->

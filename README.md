@@ -40,14 +40,23 @@ The attributes required for instructing the source generator may be found in the
 
 ## Feature Examples
 
-TODO
-
-The `MacroRecords` source generator works by generating a partial type declaration 
+The `MacroRecords` source generator works by generating a partial type declaration. To instruct the generator, annotate your partial type with the `MacroRecordAttribute` found in the `RhoMicro.MacroRecord.Attributes` package.
 
 ### Using `MacroRecordAttribute`
 
-The ``MacroRecordAttribute` is the primary 
+The ``MacroRecordAttribute` is the primary annotation required to instruct the source generator.
+
+The most primitive record you can define using `MacroRecords` therefore looks like this:
+
 ```cs
+using RhoMicro.MacroRecords.Attributes;
+[MacroRecord]
+partial class MyClass{}
+```
+
+The source code generated for the above definition will look something like this:
+```cs
+
 ```
 
 ## TODO
