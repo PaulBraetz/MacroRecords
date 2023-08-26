@@ -1,4 +1,3 @@
 ﻿using RhoMicro.MacroRecords;
-[MacroRecord]
+[MacroRecord(GenerateDebugDisplay = false)]
 partial class MyClass { }
-

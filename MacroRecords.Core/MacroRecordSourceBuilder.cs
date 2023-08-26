@@ -277,11 +277,6 @@ namespace RhoMicro.MacroRecords
         #region Constructor & Fields
         public MacroRecordSourceBuilder AddParentConstructorAndFields()
         {
-            if(_fieldInstructions.Count == 0)
-            {
-                return this;
-            }
-
             _builder.AppendLine("#region Constructor & Fields");
             AddParentConstructor();
             AddParentFields();
@@ -292,7 +287,9 @@ namespace RhoMicro.MacroRecords
         }
         public MacroRecordSourceBuilder AddParentConstructor()
         {
-            if(!_attribute.GenerateConstructor)
+            if(!_attribute.GenerateConstructor ||
+               _fieldInstructions.Count == 0 && 
+               _structOrClass == "struct")
             {
                 return this;
             }

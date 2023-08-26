@@ -1,5 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-namespace MacroRecords.Tests.Parent
+﻿namespace MacroRecords.Tests.Parent
 {
     [TestClass]
     public class ConstructorParametersTests
