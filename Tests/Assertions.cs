@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ValueObjectGenerator.Tests
+namespace MacroRecords.Tests
 {
     internal static class Assertions
     {

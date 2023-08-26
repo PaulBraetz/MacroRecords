@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RhoMicro.ValueObjectGenerator
+namespace RhoMicro.MacroRecords
 {
     internal sealed class FieldInstructions
     {

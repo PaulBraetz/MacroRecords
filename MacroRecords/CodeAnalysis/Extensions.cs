@@ -503,6 +503,7 @@ namespace RhoMicro.CodeAnalysis
             return positionalArgument;
         }
         #endregion
+
         private static IEnumerable<ITypeIdentifier> GetVariations(ITypeIdentifier attributeIdentifier)
         {
             yield return attributeIdentifier;

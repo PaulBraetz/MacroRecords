@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ValueObjectGenerator.Tests.Parent
+namespace MacroRecords.Tests.Parent
 {
     [TestClass]
     public class TransformationTests
@@ -20,8 +20,8 @@ namespace ValueObjectGenerator.Tests.Parent
                     new Object[]
                     {
                         """
-                        using RhoMicro.ValueObjectGenerator;
-                        [GeneratedValueObject]
+                        using RhoMicro.MacroRecords;
+                        [MacroRecord]
                         [Field(typeof(int), "Field1")]
                         partial class TVO
                         {
@@ -32,8 +32,8 @@ namespace ValueObjectGenerator.Tests.Parent
                     new Object[]
                     {
                         """
-                        using RhoMicro.ValueObjectGenerator;
-                        [GeneratedValueObject,
+                        using RhoMicro.MacroRecords;
+                        [MacroRecord,
                         Field(typeof(int), "Field1"),
                         Field(typeof(int), "Field2")]
                         partial class TVO
@@ -45,9 +45,9 @@ namespace ValueObjectGenerator.Tests.Parent
                     new Object[]
                     {
                         """
-                        using RhoMicro.ValueObjectGenerator;
-                        [GeneratedValueObject]
-                        [Field(typeof(int), "Field1", GenerateOptions = FieldAttribute.Options.SupportsWith)]
+                        using RhoMicro.MacroRecords;
+                        [MacroRecord]
+                        [Field(typeof(int), "Field1", Options = FieldOptions.SupportsWith)]
                         partial class TVO
                         {
                         }
@@ -60,9 +60,9 @@ namespace ValueObjectGenerator.Tests.Parent
                     new Object[]
                     {
                         """
-                        using RhoMicro.ValueObjectGenerator;
-                        [GeneratedValueObject,
-                        Field(typeof(int), "Field1", GenerateOptions = FieldAttribute.Options.SupportsWith),
+                        using RhoMicro.MacroRecords;
+                        [MacroRecord,
+                        Field(typeof(int), "Field1", Options = FieldOptions.SupportsWith),
                         Field(typeof(int), "Field2")]
                         partial class TVO
                         {
@@ -76,10 +76,10 @@ namespace ValueObjectGenerator.Tests.Parent
                     new Object[]
                     {
                         """
-                        using RhoMicro.ValueObjectGenerator;
-                        [GeneratedValueObject,
-                        Field(typeof(int), "Field1", GenerateOptions = FieldAttribute.Options.SupportsWith),
-                        Field(typeof(string), "Field2", GenerateOptions = FieldAttribute.Options.SupportsWith)]
+                        using RhoMicro.MacroRecords;
+                        [MacroRecord,
+                        Field(typeof(int), "Field1", Options = FieldOptions.SupportsWith),
+                        Field(typeof(string), "Field2", Options = FieldOptions.SupportsWith)]
                         partial class TVO
                         {
                         }

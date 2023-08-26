@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ValueObjectGenerator.Tests
+namespace MacroRecords.Tests
 {
     [TestClass]
     public class DebuggerDisplayTests
@@ -20,8 +20,8 @@ namespace ValueObjectGenerator.Tests
                     new Object[]
                     {
                         """
-                        using RhoMicro.ValueObjectGenerator;
-                        [GeneratedValueObject]
+                        using RhoMicro.MacroRecords;
+                        [MacroRecord]
                         partial class TVO
                         {
                         }
@@ -33,8 +33,8 @@ namespace ValueObjectGenerator.Tests
                     new Object[]
                     {
                         """
-                        using RhoMicro.ValueObjectGenerator;
-                        [GeneratedValueObject(GenerateDebugDisplay = false)]
+                        using RhoMicro.MacroRecords;
+                        [MacroRecord(GenerateDebugDisplay = false)]
                         partial class TVO
                         {
                         }
@@ -44,12 +44,12 @@ namespace ValueObjectGenerator.Tests
                     new Object[]
                     {
                         """
-                        using RhoMicro.ValueObjectGenerator;
-                        [GeneratedValueObject]
+                        using RhoMicro.MacroRecords;
+                        [MacroRecord]
                         [Field(
                             typeof(int), 
                             "Field1", 
-                            GenerateOptions = FieldAttribute.Options.ExcludedFromDebuggerDisplay)]
+                            Options = FieldOptions.ExcludedFromDebuggerDisplay)]
                         partial class TVO
                         {
                         }
@@ -61,8 +61,8 @@ namespace ValueObjectGenerator.Tests
                     new Object[]
                     {
                         """
-                        using RhoMicro.ValueObjectGenerator;
-                        [GeneratedValueObject]
+                        using RhoMicro.MacroRecords;
+                        [MacroRecord]
                         [Field(
                             typeof(int), 
                             "Field1")]
@@ -77,8 +77,8 @@ namespace ValueObjectGenerator.Tests
                     new Object[]
                     {
                         """
-                        using RhoMicro.ValueObjectGenerator;
-                        [GeneratedValueObject]
+                        using RhoMicro.MacroRecords;
+                        [MacroRecord]
                         [Field(
                             typeof(int), 
                             "Field1")]
@@ -96,16 +96,16 @@ namespace ValueObjectGenerator.Tests
                     new Object[]
                     {
                         """
-                        using RhoMicro.ValueObjectGenerator;
-                        [GeneratedValueObject]
+                        using RhoMicro.MacroRecords;
+                        [MacroRecord]
                         [Field(
                             typeof(int), 
                             "Field1", 
-                            GenerateOptions = FieldAttribute.Options.ExcludedFromDebuggerDisplay)]
+                            Options = FieldOptions.ExcludedFromDebuggerDisplay)]
                         [Field(
                             typeof(int), 
                             "Field2", 
-                            GenerateOptions = FieldAttribute.Options.ExcludedFromDebuggerDisplay)]
+                            Options = FieldOptions.ExcludedFromDebuggerDisplay)]
                         partial class TVO
                         {
                         }
@@ -117,12 +117,12 @@ namespace ValueObjectGenerator.Tests
                     new Object[]
                     {
                         """
-                        using RhoMicro.ValueObjectGenerator;
-                        [GeneratedValueObject]
+                        using RhoMicro.MacroRecords;
+                        [MacroRecord]
                         [Field(
                             typeof(int), 
                             "Field1", 
-                            GenerateOptions = FieldAttribute.Options.ExcludedFromDebuggerDisplay)]
+                            Options = FieldOptions.ExcludedFromDebuggerDisplay)]
                         [Field(
                             typeof(int), 
                             "Field2")]
@@ -137,15 +137,15 @@ namespace ValueObjectGenerator.Tests
                     new Object[]
                     {
                         """
-                        using RhoMicro.ValueObjectGenerator;
-                        [GeneratedValueObject]
+                        using RhoMicro.MacroRecords;
+                        [MacroRecord]
                         [Field(
                             typeof(int), 
                             "Field1")]
                         [Field(
                             typeof(int), 
                             "Field2", 
-                            GenerateOptions = FieldAttribute.Options.ExcludedFromDebuggerDisplay)]
+                            Options = FieldOptions.ExcludedFromDebuggerDisplay)]
                         partial class TVO
                         {
                         }
@@ -157,8 +157,8 @@ namespace ValueObjectGenerator.Tests
                     new Object[]
                     {
                         """
-                        using RhoMicro.ValueObjectGenerator;
-                        [GeneratedValueObject(GenerateDebugDisplay = false)]
+                        using RhoMicro.MacroRecords;
+                        [MacroRecord(GenerateDebugDisplay = false)]
                         [Field(
                             typeof(int), 
                             "Field1")]
@@ -174,16 +174,16 @@ namespace ValueObjectGenerator.Tests
                     new Object[]
                     {
                         """
-                        using RhoMicro.ValueObjectGenerator;
-                        [GeneratedValueObject(GenerateDebugDisplay = false)]
+                        using RhoMicro.MacroRecords;
+                        [MacroRecord(GenerateDebugDisplay = false)]
                         [Field(
                             typeof(int), 
                             "Field1", 
-                            GenerateOptions = FieldAttribute.Options.ExcludedFromDebuggerDisplay)]
+                            Options = FieldOptions.ExcludedFromDebuggerDisplay)]
                         [Field(
                             typeof(int), 
                             "Field2", 
-                            GenerateOptions = FieldAttribute.Options.ExcludedFromDebuggerDisplay)]
+                            Options = FieldOptions.ExcludedFromDebuggerDisplay)]
                         partial class TVO
                         {
                         }
@@ -193,12 +193,12 @@ namespace ValueObjectGenerator.Tests
                     new Object[]
                     {
                         """
-                        using RhoMicro.ValueObjectGenerator;
-                        [GeneratedValueObject(GenerateDebugDisplay = false)]
+                        using RhoMicro.MacroRecords;
+                        [MacroRecord(GenerateDebugDisplay = false)]
                         [Field(
                             typeof(int), 
                             "Field1", 
-                            GenerateOptions = FieldAttribute.Options.ExcludedFromDebuggerDisplay)]
+                            Options = FieldOptions.ExcludedFromDebuggerDisplay)]
                         [Field(
                             typeof(int), 
                             "Field2")]
@@ -211,15 +211,15 @@ namespace ValueObjectGenerator.Tests
                     new Object[]
                     {
                         """
-                        using RhoMicro.ValueObjectGenerator;
-                        [GeneratedValueObject(GenerateDebugDisplay = false)]
+                        using RhoMicro.MacroRecords;
+                        [MacroRecord(GenerateDebugDisplay = false)]
                         [Field(
                             typeof(int), 
                             "Field1")]
                         [Field(
                             typeof(int), 
                             "Field2", 
-                            GenerateOptions = FieldAttribute.Options.ExcludedFromDebuggerDisplay)]
+                            Options = FieldOptions.ExcludedFromDebuggerDisplay)]
                         partial class TVO
                         {
                         }

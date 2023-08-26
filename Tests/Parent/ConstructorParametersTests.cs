@@ -1,5 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-namespace ValueObjectGenerator.Tests.Parent
+namespace MacroRecords.Tests.Parent
 {
     [TestClass]
     public class ConstructorParametersTests
@@ -13,8 +13,8 @@ namespace ValueObjectGenerator.Tests.Parent
                     new Object[]
                     {
                         """
-                        using RhoMicro.ValueObjectGenerator;
-                        [GeneratedValueObject]
+                        using RhoMicro.MacroRecords;
+                        [MacroRecord]
                         [Field(typeof(int), "Field1")]
                         partial class TVO
                         {
@@ -30,8 +30,8 @@ namespace ValueObjectGenerator.Tests.Parent
                     new Object[]
                     {
                         """
-                        using RhoMicro.ValueObjectGenerator;
-                        [GeneratedValueObject,
+                        using RhoMicro.MacroRecords;
+                        [MacroRecord,
                         Field(typeof(int), "Field1"),
                         Field(typeof(int), "Field2")]
                         partial class TVO
@@ -49,8 +49,8 @@ namespace ValueObjectGenerator.Tests.Parent
                     new Object[]
                     {
                         """
-                        using RhoMicro.ValueObjectGenerator;
-                        [GeneratedValueObject,
+                        using RhoMicro.MacroRecords;
+                        [MacroRecord,
                         Field(typeof(int), "Field1"),
                         Field(typeof(System.String), "Field2")]
                         partial class TVO
@@ -68,8 +68,8 @@ namespace ValueObjectGenerator.Tests.Parent
                     new Object[]
                     {
                         """
-                        using RhoMicro.ValueObjectGenerator;
-                        [GeneratedValueObject]
+                        using RhoMicro.MacroRecords;
+                        [MacroRecord]
                         partial class TVO
                         {
                         }
@@ -83,8 +83,8 @@ namespace ValueObjectGenerator.Tests.Parent
                     new Object[]
                     {
                         """
-                        using RhoMicro.ValueObjectGenerator;
-                        [GeneratedValueObject,
+                        using RhoMicro.MacroRecords;
+                        [MacroRecord,
                         Field(typeof(object), "ObjectField"),
                         Field(typeof(string), "StringField")]
                         partial class TVO

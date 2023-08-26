@@ -1,15 +1,22 @@
-﻿using RhoMicro.ValueObjectGenerator;
+﻿using RhoMicro.MacroRecords;
 
-using System.IO;
+using System.Text.RegularExpressions;
 
 namespace TestApp
 {
-    [GeneratedValueObject(ConstructorVisibility = GeneratedValueObjectAttribute.VisibilityModifier.Protected),
-    Field(typeof(String), "Value1"),
-    Field(typeof(Int32), "Value2")]
-    internal partial class Name
+    [MacroRecord]
+    [Field(typeof(String), "_value", Visibility = Visibility.Private,
+        Options = FieldOptions.Deconstructable | FieldOptions.Validated)]
+    internal readonly partial struct Name
     {
+        static partial void Validate(ValidateParameters parameters, ref ValidateResult result)
+        {
+            result._valueIsInvalid = Regex.IsMatch(parameters._value, @"[a-zA-Z0-9]+");
+            result._valueError = "Name must be alphanumeric";
+        }
     }
+
+    record NameR(String Value1, Int32 Value2);
 
     internal partial class Program
     {
@@ -18,4 +25,3 @@ namespace TestApp
         }
     }
 }
-

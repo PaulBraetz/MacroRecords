@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace RhoMicro.ValueObjectGenerator
+namespace RhoMicro.MacroRecords
 {
     internal static class Util
     {
@@ -15,13 +15,7 @@ namespace RhoMicro.ValueObjectGenerator
                 { 4, "protected internal"},
                 { 5, "private protected"}
             };
-        public static String GetString(FieldAttribute.VisibilityModifier visibility)
-        {
-            var result = _visibilities[(Int32)visibility];
-
-            return result;
-        }
-        public static String GetString(GeneratedValueObjectAttribute.VisibilityModifier visibility)
+        public static String GetString(Visibility visibility)
         {
             var result = _visibilities[(Int32)visibility];
 

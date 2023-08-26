@@ -8,19 +8,19 @@ using Microsoft.CodeAnalysis.CSharp;
 using System.Xml.Linq;
 using System.Text;
 
-namespace RhoMicro.ValueObjectGenerator
+namespace RhoMicro.MacroRecords
 {
-    internal sealed class ValueObjectSourceBuilder
+    internal sealed class MacroRecordSourceBuilder
     {
         #region Constructor
-        private ValueObjectSourceBuilder(
+        private MacroRecordSourceBuilder(
             String visibility,
             String structOrClass,
             String defaultOrNull,
             Boolean generateToString,
             IReadOnlyList<FieldInstructions> fieldInstructions,
             String nullPropagatingToken,
-            GeneratedValueObjectAttribute attribute,
+            MacroRecordAttribute attribute,
             INamedTypeSymbol typeSymbol)
         {
             _visibility = visibility;
@@ -37,7 +37,7 @@ namespace RhoMicro.ValueObjectGenerator
             _builder = new StringBuilder();
         }
 
-        private readonly GeneratedValueObjectAttribute _attribute;
+        private readonly MacroRecordAttribute _attribute;
         private readonly String _visibility;
         private readonly String _structOrClass;
         private readonly String _defaultOrNull;
@@ -52,7 +52,7 @@ namespace RhoMicro.ValueObjectGenerator
         public static Boolean TryCreate(
             TypeDeclarationSyntax declaration,
             SemanticModel semanticModel,
-            out ValueObjectSourceBuilder builder)
+            out MacroRecordSourceBuilder builder)
         {
             builder = null;
             if(!(declaration is StructDeclarationSyntax || declaration is ClassDeclarationSyntax))
@@ -69,13 +69,13 @@ namespace RhoMicro.ValueObjectGenerator
             builder = CreateBuilder(declaration, semanticModel, head, fields);
             return true;
         }
-        private static ValueObjectSourceBuilder CreateBuilder(
+        private static MacroRecordSourceBuilder CreateBuilder(
             TypeDeclarationSyntax declaration,
             SemanticModel semanticModel,
-            GeneratedValueObjectAttribute head,
+            MacroRecordAttribute head,
             IReadOnlyList<FieldAttribute> fields)
         {
-            ValueObjectSourceBuilder builder;
+            MacroRecordSourceBuilder builder;
             var declarationSymbol = semanticModel.GetDeclaredSymbol(declaration);
             var visibility = GetVisibility(declaration);
             var (structOrClass, defaultOrNull) = GetStructOrClass(declaration);
@@ -88,7 +88,7 @@ namespace RhoMicro.ValueObjectGenerator
             var nullPropagatingToken = structOrClass == "class" ?
                 "?" :
                 String.Empty;
-            builder = new ValueObjectSourceBuilder(
+            builder = new MacroRecordSourceBuilder(
                 visibility,
                 structOrClass,
                 defaultOrNull,
@@ -125,22 +125,22 @@ namespace RhoMicro.ValueObjectGenerator
             token.IsKind(SyntaxKind.PrivateKeyword) ||
             token.IsKind(SyntaxKind.InternalKeyword) ||
             token.IsKind(SyntaxKind.ProtectedKeyword);
-        private static (GeneratedValueObjectAttribute head, IReadOnlyList<FieldAttribute> fields) GetAttributes(TypeDeclarationSyntax declaration, SemanticModel semanticModel)
+        private static (MacroRecordAttribute head, IReadOnlyList<FieldAttribute> fields) GetAttributes(TypeDeclarationSyntax declaration, SemanticModel semanticModel)
         {
             var attributes = declaration.AttributeLists
                 .OfAttributeClasses(
                 semanticModel,
-                AttributeUnits.GeneratedValueObject.GeneratedType.Identifier,
-                AttributeUnits.GeneratedValueObjectField.GeneratedType.Identifier);
+                Units.MacroAttribute.GeneratedType.Identifier,
+                Units.FieldAttribute.GeneratedType.Identifier);
 
             var head = attributes
-                .Select(a => (success: AttributeUnits.GeneratedValueObject.Factory.TryBuild(a, semanticModel, out var result), result))
+                .Select(a => (success: Units.MacroAttribute.Factory.TryBuild(a, semanticModel, out var result), result))
                 .Where(t => t.success)
                 .Select(t => t.result)
                 .FirstOrDefault();
 
             var fields = attributes
-                .Select(a => (success: AttributeUnits.GeneratedValueObjectField.Factory.TryBuild(a, semanticModel, out var result), result))
+                .Select(a => (success: Units.FieldAttribute.Factory.TryBuild(a, semanticModel, out var result), result))
                 .Where(t => t.success)
                 .Select(t => t.result)
                 .ToArray();
@@ -159,7 +159,7 @@ namespace RhoMicro.ValueObjectGenerator
         public String BuildCore() => _builder.ToString();
         #endregion
         #region Parent Type
-        public ValueObjectSourceBuilder AddParentType()
+        public MacroRecordSourceBuilder AddParentType()
         {
             AddParentOpen();
             AddParentTypeSignatureAndAttributes();
@@ -174,7 +174,7 @@ namespace RhoMicro.ValueObjectGenerator
 
             return this;
         }
-        public ValueObjectSourceBuilder AddNestedTypes()
+        public MacroRecordSourceBuilder AddNestedTypes()
         {
             if(_validatedFieldInstructions.Count == 0)
             {
@@ -189,7 +189,7 @@ namespace RhoMicro.ValueObjectGenerator
 
             return this;
         }
-        public ValueObjectSourceBuilder AddParentOpen()
+        public MacroRecordSourceBuilder AddParentOpen()
         {
             var ns = _typeSymbol.ContainingNamespace;
             if(ns != null)
@@ -211,7 +211,7 @@ namespace RhoMicro.ValueObjectGenerator
 
             return this;
         }
-        public ValueObjectSourceBuilder AddParentClose()
+        public MacroRecordSourceBuilder AddParentClose()
         {
             var ns = _typeSymbol.ContainingNamespace;
             if(ns != null)
@@ -230,12 +230,12 @@ namespace RhoMicro.ValueObjectGenerator
             return this;
         }
         #region Type Signature & Attributes
-        public ValueObjectSourceBuilder AddParentTypeSignatureAndAttributes()
+        public MacroRecordSourceBuilder AddParentTypeSignatureAndAttributes()
         {
             return AddParentDebuggerDisplayAttribute()
                 .AddParentTypeSignature();
         }
-        public ValueObjectSourceBuilder AddParentTypeSignature()
+        public MacroRecordSourceBuilder AddParentTypeSignature()
         {
             _builder.Append("partial ")
                 .Append(_structOrClass)
@@ -247,7 +247,7 @@ namespace RhoMicro.ValueObjectGenerator
 
             return this;
         }
-        public ValueObjectSourceBuilder AddParentDebuggerDisplayAttribute()
+        public MacroRecordSourceBuilder AddParentDebuggerDisplayAttribute()
         {
             if(!_attribute.GenerateDebugDisplay)
             {
@@ -275,7 +275,7 @@ namespace RhoMicro.ValueObjectGenerator
         }
         #endregion
         #region Constructor & Fields
-        public ValueObjectSourceBuilder AddParentConstructorAndFields()
+        public MacroRecordSourceBuilder AddParentConstructorAndFields()
         {
             if(_fieldInstructions.Count == 0)
             {
@@ -290,7 +290,7 @@ namespace RhoMicro.ValueObjectGenerator
 
             return this;
         }
-        public ValueObjectSourceBuilder AddParentConstructor()
+        public MacroRecordSourceBuilder AddParentConstructor()
         {
             if(!_attribute.GenerateConstructor)
             {
@@ -318,7 +318,7 @@ namespace RhoMicro.ValueObjectGenerator
 
             return this;
         }
-        public ValueObjectSourceBuilder AddParentFields()
+        public MacroRecordSourceBuilder AddParentFields()
         {
             if(_fieldInstructions.Count == 0)
             {
@@ -338,7 +338,7 @@ namespace RhoMicro.ValueObjectGenerator
 
             return this;
         }
-        public ValueObjectSourceBuilder AddParentEmptyField()
+        public MacroRecordSourceBuilder AddParentEmptyField()
         {
             if(_structOrClass != "struct")
             {
@@ -356,7 +356,7 @@ namespace RhoMicro.ValueObjectGenerator
         }
         #endregion
         #region Validation & Factories
-        public ValueObjectSourceBuilder AddParentValidationAndFactories()
+        public MacroRecordSourceBuilder AddParentValidationAndFactories()
         {
             _builder.AppendLine("#region Validation & Factories");
             AddParentValidateMethod();
@@ -367,7 +367,7 @@ namespace RhoMicro.ValueObjectGenerator
 
             return this;
         }
-        public ValueObjectSourceBuilder AddParentValidateMethod()
+        public MacroRecordSourceBuilder AddParentValidateMethod()
         {
             if(_validatedFieldInstructions.Count == 0)
             {
@@ -383,7 +383,7 @@ namespace RhoMicro.ValueObjectGenerator
 
             return this;
         }
-        public ValueObjectSourceBuilder AddParentIsValidMethod()
+        public MacroRecordSourceBuilder AddParentIsValidMethod()
         {
             if(_validatedFieldInstructions.Count == 0)
             {
@@ -418,7 +418,7 @@ return result;
 
             return this;
         }
-        public ValueObjectSourceBuilder AddParentTryCreateMethod()
+        public MacroRecordSourceBuilder AddParentTryCreateMethod()
         {
             if(_validatedFieldInstructions.Count == 0)
             {
@@ -430,10 +430,10 @@ return result;
                 .AppendLine("/// </summary>")
                 .ForEach(_fieldInstructions, (b, f) =>
                     b.Append("/// <param name=\"").Append(f.InParamName).AppendLine("\">")
-                    .Append("/// The value to assign to the new instances <see cref=\"").Append(f.Attribute.Name).AppendLine("/>.")
+                    .Append("/// The value to assign to the new instances <see cref=\"").Append(f.Attribute.Name).AppendLine("\"/>.")
                     .AppendLine("/// </param>"))
                 .AppendLine("/// <param name=\"result\">")
-                .Append("/// Upon returning, will contain a new instance of <see cref=\"").Append(_typeSymbol.Name).AppendLine("/> if")
+                .Append("/// Upon returning, will contain a new instance of <see cref=\"").Append(_typeSymbol.Name).AppendLine("\"/> if")
                 .Append("/// one could be constructed using the parameters passed; otherwise, <see langword=\"")
                 .Append(_defaultOrNull)
                 .AppendLine("\"/>.")
@@ -450,7 +450,7 @@ return result;
 {
 var validateResult = ValidateResult.Valid;
 var validateParameters = new ValidateParameters(")
-                .ForEach(_fieldInstructions, ", ", (b, f) =>
+                .ForEach(_validatedFieldInstructions, ", ", (b, f) =>
                     b.Append(f.InParamName))
                 .Append(
 @");
@@ -472,7 +472,7 @@ return validateResult;
 
             return this;
         }
-        public ValueObjectSourceBuilder AddParentCreateMethod()
+        public MacroRecordSourceBuilder AddParentCreateMethod()
         {
             _builder.AppendLine("/// <summary>")
                 .Append("/// Creates a new instance of <see cref = \"").Append(_typeSymbol.Name).AppendLine("\"/>.")
@@ -500,7 +500,7 @@ return validateResult;
                 _builder.Append(
 @"var validateResult = ValidateResult.Valid;
 var validateParameters = new ValidateParameters(")
-                .ForEach(_fieldInstructions, ", ", (b, f) => b.Append(f.InParamName))
+                .ForEach(_validatedFieldInstructions, ", ", (b, f) => b.Append(f.InParamName))
                 .Append(
 @");
 Validate(validateParameters, ref validateResult);
@@ -508,7 +508,7 @@ if (!validateResult.IsValid)
 {
 string reasonMessage = null;
 string paramName = null;")
-                .ForEach(_fieldInstructions, $"{Environment.NewLine} else ", (b, f) =>
+                .ForEach(_validatedFieldInstructions, $"{Environment.NewLine} else ", (b, f) =>
                     b.Append("if (validateResult.").Append(f.Attribute.Name).Append("IsInvalid)")
                     .Append('{')
                     .Append("reasonMessage = validateResult.").Append(f.Attribute.Name).Append("Error;")
@@ -533,7 +533,7 @@ string paramName = null;")
         }
         #endregion
         #region Deconstruction & Transformation
-        public ValueObjectSourceBuilder AddParentDeconstructionAndTransformation()
+        public MacroRecordSourceBuilder AddParentDeconstructionAndTransformation()
         {
             var anyEligible = _fieldInstructions
                  .Where(f => f.Attribute.IsDeconstructable || f.Attribute.SupportsWith)
@@ -551,7 +551,7 @@ string paramName = null;")
 
             return this;
         }
-        public ValueObjectSourceBuilder AddParentDeconstruction()
+        public MacroRecordSourceBuilder AddParentDeconstruction()
         {
             var deconstructableFields = _fieldInstructions
                  .Where(f => f.Attribute.IsDeconstructable)
@@ -595,7 +595,7 @@ string paramName = null;")
 
             return this;
         }
-        public ValueObjectSourceBuilder AddParentTransformation()
+        public MacroRecordSourceBuilder AddParentTransformation()
         {
             var transformableFields = _fieldInstructions
                 .Where(f => f.Attribute.SupportsWith)
@@ -631,7 +631,7 @@ string paramName = null;")
         }
         #endregion
         #region Equality & Hashing
-        public ValueObjectSourceBuilder AddParentEqualityAndHashing()
+        public MacroRecordSourceBuilder AddParentEqualityAndHashing()
         {
             var result = AddParentEqualsMethods()
                 .AddParentGetHashCodeMethod()
@@ -640,7 +640,7 @@ string paramName = null;")
 
             return result;
         }
-        public ValueObjectSourceBuilder AddParentInequalityOperator()
+        public MacroRecordSourceBuilder AddParentInequalityOperator()
         {
             _builder.AppendLine("/// <summary>")
                 .Append("/// Indicates whether two instances of <see cref=\"")
@@ -660,7 +660,7 @@ public static bool operator !=(")
 
             return this;
         }
-        public ValueObjectSourceBuilder AddParentGetHashCodeMethod()
+        public MacroRecordSourceBuilder AddParentGetHashCodeMethod()
         {
             _builder.AppendLine("/// <inheritdoc/>")
                 .Append("public override int GetHashCode() =>");
@@ -689,7 +689,7 @@ public static bool operator !=(")
 
             return this;
         }
-        public ValueObjectSourceBuilder AddParentEqualsMethods()
+        public MacroRecordSourceBuilder AddParentEqualsMethods()
         {
 
             _builder.Append(
@@ -733,7 +733,7 @@ public override bool Equals(System.Object obj) => obj is ")
 
             return this;
         }
-        public ValueObjectSourceBuilder AddParentEqualityOperator()
+        public MacroRecordSourceBuilder AddParentEqualityOperator()
         {
             _builder.AppendLine("/// <summary>")
                 .Append("/// Indicates whether two instances of <see cref=\"")
@@ -790,7 +790,7 @@ public static bool operator ==(")
         #endregion
         #endregion
         #region ValidateParameters Type
-        public ValueObjectSourceBuilder AddValidateParametersType()
+        public MacroRecordSourceBuilder AddValidateParametersType()
         {
             if(_validatedFieldInstructions.Count == 0)
             {
@@ -812,7 +812,7 @@ private readonly struct ValidateParameters : IEquatable<ValidateParameters>
 
             return this;
         }
-        public ValueObjectSourceBuilder AddValidateParametersConstructorsAndFields()
+        public MacroRecordSourceBuilder AddValidateParametersConstructorsAndFields()
         {
             if(_validatedFieldInstructions.Count == 0)
             {
@@ -846,7 +846,7 @@ private readonly struct ValidateParameters : IEquatable<ValidateParameters>
 
             return this;
         }
-        public ValueObjectSourceBuilder AddValidateParametersDeconstruction()
+        public MacroRecordSourceBuilder AddValidateParametersDeconstruction()
         {
             if(_validatedFieldInstructions.Count == 0)
             {
@@ -891,7 +891,7 @@ private readonly struct ValidateParameters : IEquatable<ValidateParameters>
 
             return this;
         }
-        public ValueObjectSourceBuilder AddValidateParametersEqualityAndHashing()
+        public MacroRecordSourceBuilder AddValidateParametersEqualityAndHashing()
         {
             if(_validatedFieldInstructions.Count == 0)
             {
@@ -958,7 +958,7 @@ public static bool operator !=(ValidateParameters left, ValidateParameters right
         }
         #endregion
         #region ValidateResult Type
-        public ValueObjectSourceBuilder AddValidateResultType()
+        public MacroRecordSourceBuilder AddValidateResultType()
         {
             if(_validatedFieldInstructions.Count == 0)
             {
@@ -979,7 +979,7 @@ private ref struct ValidateResult
 
             return this;
         }
-        public ValueObjectSourceBuilder AddValidateResultFieldsAndProperties()
+        public MacroRecordSourceBuilder AddValidateResultFieldsAndProperties()
         {
             _builder.AppendLine("#region Fields & Properties")
                 .ForEach(_validatedFieldInstructions, (b, f) =>
@@ -1016,7 +1016,7 @@ public bool IsValid =>")
 
             return this;
         }
-        public ValueObjectSourceBuilder AddValidateResultConversionOperators()
+        public MacroRecordSourceBuilder AddValidateResultConversionOperators()
         {
             if(_validatedFieldInstructions.Count == 0)
             {
@@ -1042,7 +1042,7 @@ public static implicit operator IsValidResult(ValidateResult result) =>
 
             return this;
         }
-        public ValueObjectSourceBuilder AddValidateResultEqualityAndHashing()
+        public MacroRecordSourceBuilder AddValidateResultEqualityAndHashing()
         {
             if(_validatedFieldInstructions.Count == 0)
             {
@@ -1075,7 +1075,7 @@ public override int GetHashCode()
         }
         #endregion
         #region IsValidResult Type
-        public ValueObjectSourceBuilder AddIsValidResultType()
+        public MacroRecordSourceBuilder AddIsValidResultType()
         {
             if(_validatedFieldInstructions.Count == 0)
             {
@@ -1096,7 +1096,7 @@ public readonly struct IsValidResult : IEquatable<IsValidResult>
             return this;
         }
         #region Constructor & Fields
-        public ValueObjectSourceBuilder AddIsValidResultConstructorAndFields()
+        public MacroRecordSourceBuilder AddIsValidResultConstructorAndFields()
         {
             if(_validatedFieldInstructions.Count == 0)
             {
@@ -1110,7 +1110,7 @@ public readonly struct IsValidResult : IEquatable<IsValidResult>
 
             return this;
         }
-        public ValueObjectSourceBuilder AddIsValidResultConstructor()
+        public MacroRecordSourceBuilder AddIsValidResultConstructor()
         {
             if(_validatedFieldInstructions.Count == 0)
             {
@@ -1140,7 +1140,7 @@ public readonly struct IsValidResult : IEquatable<IsValidResult>
 
             return this;
         }
-        public ValueObjectSourceBuilder AddIsValidResultFields()
+        public MacroRecordSourceBuilder AddIsValidResultFields()
         {
             if(_validatedFieldInstructions.Count == 0)
             {
@@ -1167,7 +1167,7 @@ public readonly string ").Append(f.Attribute.Name).AppendLine("Error;"));
         }
         #endregion
         #region Conversion & Deconstruction
-        public ValueObjectSourceBuilder AddIsValidResultConversionAndDeconstruction()
+        public MacroRecordSourceBuilder AddIsValidResultConversionAndDeconstruction()
         {
             var eligibleFields = _fieldInstructions
                 .Where(f => f.Attribute.IsDeconstructable || f.Attribute.IsValidated)
@@ -1185,7 +1185,7 @@ public readonly string ").Append(f.Attribute.Name).AppendLine("Error;"));
 
             return this;
         }
-        public ValueObjectSourceBuilder AddIsValidResultConversion()
+        public MacroRecordSourceBuilder AddIsValidResultConversion()
         {
             if(_validatedFieldInstructions.Count == 0)
             {
@@ -1224,43 +1224,40 @@ public static implicit operator bool(IsValidResult result) =>
 
             return this;
         }
-        public ValueObjectSourceBuilder AddIsValidResultDeconstruction()
+        public MacroRecordSourceBuilder AddIsValidResultDeconstruction()
         {
-            var deconstructableFields = _fieldInstructions
-                .Where(f => f.Attribute.IsDeconstructable)
-                .ToArray();
-
-            if(deconstructableFields.Length == 0)
+            if(_validatedFieldInstructions.Count == 0)
             {
                 return this;
             }
 
-            _builder.Append(
+            _builder.AppendLine(
 @"/// <summary>
 /// Deconstructs this instance into its constituent values.
 /// </summary>")
-                .ForEach(deconstructableFields, (b, f) =>
-                    b.Append("/// <param name=\"").Append(f.OutParamName).Append("IsInvalid\">")
-                    .Append("/// The value contained in <see cref=\"").Append(f.Attribute.Name).Append("IsInvalid\"/>.")
-                    .Append("/// </param>")
-                    .Append("/// <param name=\"").Append(f.OutParamName).Append("Error\">")
-                    .Append("/// The value contained in <see cref=\"").Append(f.Attribute.Name).Append("Error\"/>.")
-                    .Append("/// </param>"))
-                .Append("public ValueObjectSourceBuilder Deconstruct(")
-                .ForEach(deconstructableFields, (b, f) =>
+                .ForEach(_validatedFieldInstructions, (b, f) =>
+                    b.Append("/// <param name=\"").Append(f.OutParamName).AppendLine("IsInvalid\">")
+                    .Append("/// The value contained in <see cref=\"").Append(f.Attribute.Name).AppendLine("IsInvalid\"/>.")
+                    .AppendLine("/// </param>")
+                    .Append("/// <param name=\"").Append(f.OutParamName).AppendLine("Error\">")
+                    .Append("/// The value contained in <see cref=\"").Append(f.Attribute.Name).AppendLine("Error\"/>.")
+                    .AppendLine("/// </param>"))
+                .Append("public void Deconstruct(")
+                .ForEach(_validatedFieldInstructions, (b, f) =>
                     b.Append("bool ").Append(f.OutParamName).Append("IsInvalid, string ").Append(f.OutParamName).Append("Error"))
-                .Append(')')
-                .Append('{')
-                .ForEach(deconstructableFields, (b, f) =>
+                .Append("){")
+                .ForEach(_validatedFieldInstructions, (b, f) =>
                     b.Append(f.OutParamName).Append("IsInvalid = ")
-                    .Append(f.Attribute.Name).Append("IsInvalid;"))
+                    .Append(f.Attribute.Name).Append("IsInvalid;")
+                    .Append(f.OutParamName).Append("Error = ")
+                    .Append(f.Attribute.Name).Append("Error;"))
                 .Append('}');
 
             return this;
         }
         #endregion
         #region Equality & Hashing
-        public ValueObjectSourceBuilder AddIsValidResultEqualityAndHashing()
+        public MacroRecordSourceBuilder AddIsValidResultEqualityAndHashing()
         {
             if(_validatedFieldInstructions.Count == 0)
             {
@@ -1274,7 +1271,7 @@ public static implicit operator bool(IsValidResult result) =>
 
             return this;
         }
-        public ValueObjectSourceBuilder AddIsValidResultEqualityOperators()
+        public MacroRecordSourceBuilder AddIsValidResultEqualityOperators()
         {
             if(_validatedFieldInstructions.Count == 0)
             {
@@ -1311,7 +1308,7 @@ public static bool operator !=(IsValidResult left, IsValidResult right)
 
             return this;
         }
-        public ValueObjectSourceBuilder AddIsValidResultEquals()
+        public MacroRecordSourceBuilder AddIsValidResultEquals()
         {
             if(_validatedFieldInstructions.Count == 0)
             {
@@ -1338,7 +1335,7 @@ public bool Equals(IsValidResult other) =>
 
             return this;
         }
-        public ValueObjectSourceBuilder AddIsValidResultGetHashcode()
+        public MacroRecordSourceBuilder AddIsValidResultGetHashcode()
         {
             if(_validatedFieldInstructions.Count == 0)
             {

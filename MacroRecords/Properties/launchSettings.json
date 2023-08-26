@@ -6,7 +6,7 @@
     },
     "Tests": {
       "commandName": "DebugRoslynComponent",
-      "targetProject": "..\\ValueObjectGenerator.Tests\\ValueObjectGenerator.Tests.csproj"
+      "targetProject": "..\\MacroRecords.Tests\\MacroRecords.Tests.csproj"
     }
   }
 }

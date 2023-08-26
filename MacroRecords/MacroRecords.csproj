@@ -7,9 +7,8 @@
 		<developmentDependency>true</developmentDependency>
 		<NoPackageAnalysis>true</NoPackageAnalysis>
 		<IsRoslynComponent>true</IsRoslynComponent>
-		<CompilerGeneratedFilesOutputPath>Generated</CompilerGeneratedFilesOutputPath>
 		<!--'.0' required for auto source gen updater-->
-		<AssemblyName>RhoMicro.$(MSBuildProjectName).0</AssemblyName>
+		<AssemblyName>RhoMicro.$(MSBuildProjectName).12</AssemblyName>
 		<RootNamespace>RhoMicro.$(MSBuildProjectName)</RootNamespace>
 		<EnableNETAnalyzers>true</EnableNETAnalyzers>
 		<AnalysisMode>All</AnalysisMode>
@@ -22,11 +21,11 @@
 		<Authors>Paul Brätz</Authors>
 		<Description>A source generator for escaping primitive obsession by easily generating value objects.</Description>
 		<Copyright>2023</Copyright>
-		<PackageTags>Rhomicro</PackageTags>
-		<Version>2.0.0-alpha</Version>
-		<PackageId>RhoMicro.ValueObjectGenerator</PackageId>
+		<PackageTags>DDD;Value Objects;Records;Source Generator</PackageTags>
+		<Version>2.0.0-alpha.2</Version>
+		<PackageId>RhoMicro.MacroRecords</PackageId>
 		<Company>RhoMicro</Company>
-		<PackageProjectUrl>https://github.com/PaulBraetz/ValueObjectGenerator/</PackageProjectUrl>
+		<PackageProjectUrl>https://github.com/PaulBraetz/MacroRecords/</PackageProjectUrl>
 		<PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
 	</PropertyGroup>
 
@@ -39,6 +38,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Include="..\MacroRecords.Attributes\FieldAttribute.cs" Link="Attributes\FieldAttribute.cs" />
+	  <Compile Include="..\MacroRecords.Attributes\FieldOptions.cs" Link="Attributes\FieldOptions.cs" />
+	  <Compile Include="..\MacroRecords.Attributes\MacroRecordAttribute.cs" Link="Attributes\MacroRecordAttribute.cs" />
+	  <Compile Include="..\MacroRecords.Attributes\Visibility.cs" Link="Attributes\Visibility.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Update="NETStandard.Library" PrivateAssets="all" />
 	</ItemGroup>
 
@@ -48,6 +54,10 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.CodeAnalysis" Version="4.0.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Attributes\" />
 	</ItemGroup>
 
 	<!--Required for source gen auto updater-->

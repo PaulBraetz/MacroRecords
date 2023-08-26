@@ -4,7 +4,7 @@ using RhoMicro.CodeAnalysis;
 
 using System.Linq;
 
-namespace RhoMicro.ValueObjectGenerator
+namespace RhoMicro.MacroRecords
 {
     [Generator]
     internal sealed class Generator : ISourceGenerator

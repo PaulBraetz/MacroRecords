@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+	  <AssemblyName>RhoMicro.$(MSBuildProjectName)</AssemblyName>
+	  <RootNamespace>RhoMicro.$(MSBuildProjectName)</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup>
+	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	  <Authors>Paul Brätz</Authors>
+	  <Description>Contains the attributes required by the RhoMicro.MacroRecords source generator.</Description>
+	  <Copyright>2023</Copyright>
+	  <PackageTags>DDD;Value Objects;Records;Source Generator</PackageTags>
+	  <PackageTags>Rhomicro</PackageTags>
+	  <Version>1.0.0-alpha</Version>
+	  <PackageId>RhoMicro.MacroRecords.Attributes</PackageId>
+	  <Company>RhoMicro</Company>
+	  <PackageProjectUrl>https://github.com/PaulBraetz/MacroRecords/</PackageProjectUrl>
+	  <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
+  </PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<WarningsAsErrors>$(WarningsAsErrors);NU1605;1591;1573;1712</WarningsAsErrors>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<WarningsAsErrors>$(WarningsAsErrors);NU1605;1591;1573;1712</WarningsAsErrors>
+	</PropertyGroup>
+
+</Project>

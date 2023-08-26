@@ -3,9 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33815.320
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ValueObjectGenerator", "ValueObjectGenerator\ValueObjectGenerator.csproj", "{EAA38CEB-D287-466A-BCED-66E0B749BD78}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ValueObjectGenerator.Tests", "Tests\ValueObjectGenerator.Tests.csproj", "{B217F452-93D4-47CE-B54E-D44444EB03D9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MacroRecords.Tests", "Tests\MacroRecords.Tests.csproj", "{B217F452-93D4-47CE-B54E-D44444EB03D9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestApp", "TestApp\TestApp.csproj", "{026872FC-B8AF-43F8-8C77-BA4EDCC64336}"
 EndProject
@@ -14,16 +12,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		AutoUpdateAssemblyName.txt = AutoUpdateAssemblyName.txt
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MacroRecords", "MacroRecords\MacroRecords.csproj", "{EB7B2AEC-EC00-47FA-B8BC-094BB5931AD0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MacroRecords.Attributes", "MacroRecords.Attributes\MacroRecords.Attributes.csproj", "{3A4149E4-7A65-47F6-A293-939C544CA149}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{EAA38CEB-D287-466A-BCED-66E0B749BD78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EAA38CEB-D287-466A-BCED-66E0B749BD78}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EAA38CEB-D287-466A-BCED-66E0B749BD78}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EAA38CEB-D287-466A-BCED-66E0B749BD78}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B217F452-93D4-47CE-B54E-D44444EB03D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B217F452-93D4-47CE-B54E-D44444EB03D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B217F452-93D4-47CE-B54E-D44444EB03D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -32,6 +30,14 @@ Global
 		{026872FC-B8AF-43F8-8C77-BA4EDCC64336}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{026872FC-B8AF-43F8-8C77-BA4EDCC64336}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{026872FC-B8AF-43F8-8C77-BA4EDCC64336}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB7B2AEC-EC00-47FA-B8BC-094BB5931AD0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB7B2AEC-EC00-47FA-B8BC-094BB5931AD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB7B2AEC-EC00-47FA-B8BC-094BB5931AD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB7B2AEC-EC00-47FA-B8BC-094BB5931AD0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A4149E4-7A65-47F6-A293-939C544CA149}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A4149E4-7A65-47F6-A293-939C544CA149}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A4149E4-7A65-47F6-A293-939C544CA149}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A4149E4-7A65-47F6-A293-939C544CA149}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

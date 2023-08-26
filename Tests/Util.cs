@@ -1,29 +1,30 @@
 ﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis;
+using RhoMicro.MacroRecords;
 
-using RhoMicro.ValueObjectGenerator;
-
-namespace ValueObjectGenerator.Tests
+namespace MacroRecords.Tests
 {
     internal static class Util
     {
-        public static ValueObjectSourceBuilder CreateBuilder(String source)
+        public static MacroRecordSourceBuilder CreateBuilder(String source)
         {
             var tree = CSharpSyntaxTree.ParseText(source);
 
             var compilation = CSharpCompilation.Create("TestCompilation")
                               .AddReferences(
                                  MetadataReference.CreateFromFile(typeof(Object).Assembly.Location),
-                                 MetadataReference.CreateFromFile(typeof(Generator).Assembly.Location))
+                                 MetadataReference.CreateFromFile(typeof(MacroRecordAttribute).Assembly.Location))
                               .AddSyntaxTrees(tree);
+
+
             var root = tree.GetRoot();
             var declaration = root.DescendantNodes().OfType<TypeDeclarationSyntax>().Single();
             var semanticModel = compilation.GetSemanticModel(tree);
 
             //suppressed for debuggability
 #pragma warning disable IDE0046 // Convert to conditional expression
-            if(ValueObjectSourceBuilder.TryCreate(declaration, semanticModel, out var builder))
+            if(MacroRecordSourceBuilder.TryCreate(declaration, semanticModel, out var builder))
             {
                 return builder;
             }

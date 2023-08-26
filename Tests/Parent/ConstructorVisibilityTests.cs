@@ -1,4 +1,4 @@
-﻿namespace ValueObjectGenerator.Tests.Parent
+﻿namespace MacroRecords.Tests.Parent
 {
     [TestClass]
     public class ConstructorVisibilityTests
@@ -12,8 +12,8 @@
                     new Object[]
                     {
                         """
-                        using RhoMicro.ValueObjectGenerator;
-                        [GeneratedValueObject]
+                        using RhoMicro.MacroRecords;
+                        [MacroRecord]
                         partial class TVO
                         {
                         }
@@ -28,8 +28,8 @@
                     new Object[]
                     {
                         """
-                        using RhoMicro.ValueObjectGenerator;
-                        [GeneratedValueObject(ConstructorVisibility = GeneratedValueObjectAttribute.VisibilityModifier.Public)]
+                        using RhoMicro.MacroRecords;
+                        [MacroRecord(ConstructorVisibility = Visibility.Public)]
                         partial class TVO
                         {
                         }
@@ -44,8 +44,8 @@
                     new Object[]
                     {
                         """
-                        using RhoMicro.ValueObjectGenerator;
-                        [GeneratedValueObject(ConstructorVisibility = GeneratedValueObjectAttribute.VisibilityModifier.Protected)]
+                        using RhoMicro.MacroRecords;
+                        [MacroRecord(ConstructorVisibility = Visibility.Protected)]
                         partial class TVO
                         {
                         }
@@ -60,8 +60,8 @@
                     new Object[]
                     {
                         """
-                        using RhoMicro.ValueObjectGenerator;
-                        [GeneratedValueObject(ConstructorVisibility = GeneratedValueObjectAttribute.VisibilityModifier.Internal)]
+                        using RhoMicro.MacroRecords;
+                        [MacroRecord(ConstructorVisibility = Visibility.Internal)]
                         partial class TVO
                         {
                         }
@@ -76,8 +76,8 @@
                     new Object[]
                     {
                         """
-                        using RhoMicro.ValueObjectGenerator;
-                        [GeneratedValueObject(ConstructorVisibility = GeneratedValueObjectAttribute.VisibilityModifier.PrivateProtected)]
+                        using RhoMicro.MacroRecords;
+                        [MacroRecord(ConstructorVisibility = Visibility.PrivateProtected)]
                         partial class TVO
                         {
                         }
@@ -92,8 +92,8 @@
                     new Object[]
                     {
                         """
-                        using RhoMicro.ValueObjectGenerator;
-                        [GeneratedValueObject(ConstructorVisibility = GeneratedValueObjectAttribute.VisibilityModifier.ProtectedInternal)]
+                        using RhoMicro.MacroRecords;
+                        [MacroRecord(ConstructorVisibility = Visibility.ProtectedInternal)]
                         partial class TVO
                         {
                         }
