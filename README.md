@@ -6,7 +6,7 @@
 
 ## Feature Overview
 
-Addressing some of what I believe to be are shortcomings of C# record types, these are the features `MacroRecords` support:
+Addressing some of what I believe to be shortcomings of C# record types, these are the features `MacroRecords` support:
 
 You may:
 - configure the generated constructors visibility
