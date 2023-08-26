@@ -32,9 +32,9 @@ namespace MacroRecords.Tests
                     },
                     new Object[]
                     {
-                        """
+						"""
                         using RhoMicro.MacroRecords;
-                        [MacroRecord(GenerateDebugDisplay = false)]
+                        [MacroRecord(Options = RecordOptions.None)]
                         partial class TVO
                         {
                         }
@@ -156,9 +156,9 @@ namespace MacroRecords.Tests
                     },
                     new Object[]
                     {
-                        """
+						"""
                         using RhoMicro.MacroRecords;
-                        [MacroRecord(GenerateDebugDisplay = false)]
+                        [MacroRecord(Options = RecordOptions.None)]
                         [Field(
                             typeof(int), 
                             "Field1")]
@@ -173,9 +173,9 @@ namespace MacroRecords.Tests
                     },
                     new Object[]
                     {
-                        """
+						"""
                         using RhoMicro.MacroRecords;
-                        [MacroRecord(GenerateDebugDisplay = false)]
+                        [MacroRecord(Options = RecordOptions.None)]
                         [Field(
                             typeof(int), 
                             "Field1", 
@@ -192,9 +192,9 @@ namespace MacroRecords.Tests
                     },
                     new Object[]
                     {
-                        """
+						"""
                         using RhoMicro.MacroRecords;
-                        [MacroRecord(GenerateDebugDisplay = false)]
+                        [MacroRecord(Options = RecordOptions.None)]
                         [Field(
                             typeof(int), 
                             "Field1", 
@@ -212,7 +212,7 @@ namespace MacroRecords.Tests
                     {
                         """
                         using RhoMicro.MacroRecords;
-                        [MacroRecord(GenerateDebugDisplay = false)]
+                        [MacroRecord(Options = RecordOptions.None)]
                         [Field(
                             typeof(int), 
                             "Field1")]
