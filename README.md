@@ -32,4 +32,6 @@ Or check out the [Nuget Repository](https://www.nuget.org/packages/RhoMicro.Valu
 ## Version 2
 
 Version 2 of the generator is currently in the works.
+Until then, version 2.0.0-alpha is available for preview using the old name.
+
 Version 2 will be named MacroRecords, credits to __(TODO).
