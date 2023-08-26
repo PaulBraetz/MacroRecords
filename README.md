@@ -1,4 +1,4 @@
-# ValueObjectGenerator
+# MacroRecords
 
 "Primitive obsession is the tendency to represent domain concepts as language primitives."
 
@@ -12,26 +12,8 @@ The advantages to this approach include:
 
 To get started, take a look at the `TestApp` project. It includes a sample value object named `Age`.
 
-Note: 
-
-Currently, there seems to be a problem with detecting attribute usage while using a `using` statement.
-For the time being, the fully qualified attribute name `RhoMicro.ValueObjectGenerator.GeneratedValueObjectAttribute`
-or `RhoMicro.ValueObjectGenerator.GeneratedValueObject` must be used in order for the generator to detectits usage. See the `TestApp.Program.cs` file for an example.
-
 ## Installation
 
-Nuget:
-```xml
-<PackageReference Include="RhoMicro.ValueObjectGenerator" Version="1.0.0">
-  <PrivateAssets>all</PrivateAssets>
-  <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-</PackageReference>
-```
-Or check out the [Nuget Repository](https://www.nuget.org/packages/RhoMicro.ValueObjectGenerator).
+Check out the [Nuget Repository](https://www.nuget.org/packages/RhoMicro.MacroRecords).
 
-## Version 2
-
-Version 2 of the generator is currently in the works.
-Until then, version 2.0.0-alpha is available for preview using the old name.
-
-Version 2 will be named MacroRecords, credits to __(TODO).
+Credits for the name MacroRecords go to [knight](https://github.com/muhamedkarajic).
