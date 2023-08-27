@@ -8,43 +8,43 @@ using System.Threading.Tasks;
 
 namespace MacroRecords.Tests.Parent
 {
-    [TestClass]
-    public class TransformationTests
-    {
-        private static Object[][] Data
-        {
-            get
-            {
-                return new Object[][]
-                {
-                    new Object[]
-                    {
-                        """
+	[TestClass]
+	public class TransformationTests
+	{
+		private static Object[][] Data
+		{
+			get
+			{
+				return new Object[][]
+				{
+					new Object[]
+					{
+						"""
                         using RhoMicro.MacroRecords;
                         [MacroRecord]
-                        [Field(typeof(int), "Field1")]
+                        [Field(typeof(int), "Field1", Options = FieldOptions.None)]
                         partial class TVO
                         {
                         }
                         """,
-                        String.Empty
-                    },
-                    new Object[]
-                    {
-                        """
+						String.Empty
+					},
+					new Object[]
+					{
+						"""
                         using RhoMicro.MacroRecords;
                         [MacroRecord,
-                        Field(typeof(int), "Field1"),
-                        Field(typeof(int), "Field2")]
+                        Field(typeof(int), "Field1", Options = FieldOptions.None),
+                        Field(typeof(int), "Field2", Options = FieldOptions.None)]
                         partial class TVO
                         {
                         }
                         """,
-                        String.Empty
-                    },
-                    new Object[]
-                    {
-                        """
+						String.Empty
+					},
+					new Object[]
+					{
+						"""
                         using RhoMicro.MacroRecords;
                         [MacroRecord]
                         [Field(typeof(int), "Field1", Options = FieldOptions.SupportsWith)]
@@ -52,30 +52,30 @@ namespace MacroRecords.Tests.Parent
                         {
                         }
                         """,
-                        """
+						"""
                         public TVO WithField1(System.Int32 in_Field1) =>
                             Create(in_Field1);
                         """
-                    },
-                    new Object[]
-                    {
-                        """
+					},
+					new Object[]
+					{
+						"""
                         using RhoMicro.MacroRecords;
                         [MacroRecord,
                         Field(typeof(int), "Field1", Options = FieldOptions.SupportsWith),
-                        Field(typeof(int), "Field2")]
+                        Field(typeof(int), "Field2", Options = FieldOptions.None)]
                         partial class TVO
                         {
                         }
                         """,
-                        """
+						"""
                         public TVO WithField1(System.Int32 in_Field1) =>
                             Create(in_Field1, Field2);
                         """
-                    },
-                    new Object[]
-                    {
-                        """
+					},
+					new Object[]
+					{
+						"""
                         using RhoMicro.MacroRecords;
                         [MacroRecord,
                         Field(typeof(int), "Field1", Options = FieldOptions.SupportsWith),
@@ -84,30 +84,79 @@ namespace MacroRecords.Tests.Parent
                         {
                         }
                         """,
-                        """
+						"""
                         public TVO WithField1(System.Int32 in_Field1) =>
                             Create(in_Field1, Field2);
                         public TVO WithField2(System.String in_Field2) =>
                             Create(Field1, in_Field2);
                         """
-                    }
-                };
-            }
-        }
+					},
+					new Object[]
+					{
+						"""
+                        using RhoMicro.MacroRecords;
+                        [MacroRecord]
+                        [Field(typeof(int), "Field1")]
+                        partial class TVO
+                        {
+                        }
+                        """,
+						"""
+                        public TVO WithField1(System.Int32 in_Field1) =>
+                            Create(in_Field1);
+                        """
+					},
+					new Object[]
+					{
+						"""
+                        using RhoMicro.MacroRecords;
+                        [MacroRecord,
+                        Field(typeof(int), "Field1"),
+                        Field(typeof(int), "Field2", Options = FieldOptions.None)]
+                        partial class TVO
+                        {
+                        }
+                        """,
+						"""
+                        public TVO WithField1(System.Int32 in_Field1) =>
+                            Create(in_Field1, Field2);
+                        """
+					},
+					new Object[]
+					{
+						"""
+                        using RhoMicro.MacroRecords;
+                        [MacroRecord,
+                        Field(typeof(int), "Field1"),
+                        Field(typeof(string), "Field2")]
+                        partial class TVO
+                        {
+                        }
+                        """,
+						"""
+                        public TVO WithField1(System.Int32 in_Field1) =>
+                            Create(in_Field1, Field2);
+                        public TVO WithField2(System.String in_Field2) =>
+                            Create(Field1, in_Field2);
+                        """
+					}
+				};
+			}
+		}
 
-        [TestMethod]
-        [DynamicData(nameof(Data))]
-        public void GeneratesTransformatorsCorrectly(String consumer, String expected)
-        {
-            //Arrange
-            var builder = Util.CreateBuilder(consumer);
+		[TestMethod]
+		[DynamicData(nameof(Data))]
+		public void GeneratesTransformatorsCorrectly(String consumer, String expected)
+		{
+			//Arrange
+			var builder = Util.CreateBuilder(consumer);
 
-            //Act
-            var actual = builder.AddParentTransformation()
-                .BuildCore();
+			//Act
+			var actual = builder.AddParentTransformation()
+				.BuildCore();
 
-            //Assert
-            Assertions.AreEquivalent(expected, actual);
-        }
-    }
+			//Assert
+			Assertions.AreEquivalent(expected, actual);
+		}
+	}
 }
