@@ -56,11 +56,11 @@
                     },
                     new Object[]
                     {
-                        """
+						"""
                         using RhoMicro.MacroRecords;
                         [MacroRecord]
                         [Field(typeof(int), "Field1", Options = FieldOptions.Deconstructable)]
-                        [Field(typeof(int), "Field2")]
+                        [Field(typeof(int), "Field2", Options = FieldOptions.None)]
                         partial class TVO
                         {
                         }
@@ -72,10 +72,10 @@
                     },
                     new Object[]
                     {
-                        """
+						"""
                         using RhoMicro.MacroRecords;
                         [MacroRecord]
-                        [Field(typeof(int), "Field1")]
+                        [Field(typeof(int), "Field1", Options = FieldOptions.None)]
                         [Field(typeof(string), "Field2", Options = FieldOptions.Deconstructable)]
                         partial class TVO
                         {
@@ -88,10 +88,10 @@
                     },
                     new Object[]
                     {
-                        """
+						"""
                         using RhoMicro.MacroRecords;
                         [MacroRecord]
-                        [Field(typeof(int), "Field1")]
+                        [Field(typeof(int), "Field1", Options = FieldOptions.None)]
                         [Field(typeof(string), "Field2", Options = FieldOptions.Deconstructable)]
                         [Field(typeof(object), "ObjectField", Options = FieldOptions.Deconstructable)]
                         partial class TVO
