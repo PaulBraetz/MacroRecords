@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using RhoMicro.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using System.Xml.Linq;
 using System.Text;
 
 namespace RhoMicro.MacroRecords
@@ -353,6 +352,44 @@ namespace RhoMicro.MacroRecords
 		}
 		#endregion
 		#region Validation & Factories
+		public MacroRecordSourceBuilder AddExplicitConversion()
+		{
+			if(!_attribute.GenerateExplicitConversion)
+			{
+				return this;
+			}
+
+			_builder.AppendLine("/// <summary>")
+				.Append("/// Explicitly converts the constituents of a <see cref=\"").Append(_typeSymbol.Name)
+				.Append("\"/> to an instance of <see cref=\"").Append(_typeSymbol.Name).AppendLine("\"/>.")
+				.AppendLine("/// </summary>");
+
+			if(_fieldInstructions.Count == 1)
+			{
+				var field = _fieldInstructions[0];
+				_builder.Append("/// <param name=\"").Append(field.InParamName).AppendLine("\">")
+					.Append("/// The value to assign to the new instances <see cref=\"").Append(field.Attribute.Name).AppendLine("\"/>.")
+					.AppendLine("/// </param>")
+					.Append("public static explicit operator ").Append(_typeSymbol.Name)
+					.Append('(').Append(field.Attribute.Type.FullName).Append(' ').Append(field.InParamName)
+					.Append(") => Create(").Append(field.InParamName).Append(");");
+			} else if(_fieldInstructions.Count > 1)
+			{
+				_builder.AppendLine("/// <param name=\"values\">")
+					.Append("/// The values from which to construct an instance of <see cref=\"").Append(_typeSymbol.Name).AppendLine("\"/>.")
+					.AppendLine("/// </param>")
+					.Append("public static explicit operator ")
+					.Append(_typeSymbol.Name).Append("((")
+					.ForEach(_fieldInstructions, ", ", (b, f) =>
+						b.Append(f.Attribute.Type.FullName))
+					.Append(") values) => Create(")
+					.ForEach(Enumerable.Range(1, _fieldInstructions.Count), ", ", (b, i) =>
+						b.Append("values.Item").Append(i))
+					.Append(");");
+			}
+
+			return this;
+		}
 		public MacroRecordSourceBuilder AddParentValidationAndFactories()
 		{
 			_builder.AppendLine("#region Validation & Factories");
@@ -360,6 +397,7 @@ namespace RhoMicro.MacroRecords
 			AddParentIsValidMethod();
 			AddParentTryCreateMethod();
 			AddParentCreateMethod();
+			AddExplicitConversion();
 			_builder.AppendLine("#endregion");
 
 			return this;
