@@ -34,6 +34,12 @@ namespace RhoMicro.MacroRecords
 		/// The generated type definition should include a static readonly field containing the type default value.
 		/// This option only affects struct definitions.
 		/// </summary>
-		EmptyMember = 4
+		EmptyMember = 4,
+		/// <summary>
+		/// The generated type definition should include an explicit conversion operator. If only a single field is defined, the
+		/// explicit conversion operator will expect an argument of its type. 
+		/// Otherwise, the operator will expect a value tuple corresponding to the fields defined.
+		/// </summary>
+		ExplicitConversion = 8
 	}
 }

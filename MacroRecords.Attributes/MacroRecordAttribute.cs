@@ -19,10 +19,12 @@ namespace RhoMicro.MacroRecords
 		public RecordOptions Options { get; set; } =
 			RecordOptions.DebuggerDisplay |
 			RecordOptions.Constructor |
-			RecordOptions.EmptyMember;
+			RecordOptions.EmptyMember |
+			RecordOptions.ExplicitConversion;
 
 		public Boolean GenerateDebuggerDisplay => Options.HasFlag(RecordOptions.DebuggerDisplay);
 		public Boolean GenerateConstructor => Options.HasFlag(RecordOptions.Constructor);
 		public Boolean GenerateEmptyMember => Options.HasFlag(RecordOptions.EmptyMember);
+		public Boolean GenerateExplicitConversion => Options.HasFlag(RecordOptions.ExplicitConversion);
 	}
 }
