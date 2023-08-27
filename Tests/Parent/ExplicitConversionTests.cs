@@ -87,6 +87,49 @@ namespace MacroRecords.Tests.Parent
                         }
                         """,
 						String.Empty
+					},
+					new Object[]
+					{
+						"""
+						using RhoMicro.MacroRecords;
+						[MacroRecord]
+						[Field(typeof(int), "Field1")]
+						[Field(typeof(string), "Field2")]
+						partial class TVO
+						{
+						}
+						""",
+						"""
+						public static explicit operator TVO((System.Int32, System.String) values) => Create(values.Item1, values.Item2);
+						"""
+					},
+					new Object[]
+					{
+						"""
+						using RhoMicro.MacroRecords;
+						[MacroRecord(Options = RecordOptions.ExplicitConversion)]
+						[Field(typeof(int), "Field1")]
+						[Field(typeof(string), "Field2")]
+						partial class TVO
+						{
+						}
+						""",
+						"""
+						public static explicit operator TVO((System.Int32, System.String) values) => Create(values.Item1, values.Item2);
+						"""
+					},
+					new Object[]
+					{
+						"""
+                        using RhoMicro.MacroRecords;
+                        [MacroRecord(Options = RecordOptions.None)]
+                        [Field(typeof(int), "Field1")]
+                        [Field(typeof(string), "Field2")]
+                        partial class TVO
+                        {
+                        }
+                        """,
+						String.Empty
 					}
 				};
 			}
