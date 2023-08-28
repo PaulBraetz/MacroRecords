@@ -33,7 +33,7 @@ namespace RhoMicro.MacroRecords
 
 			_validatedFieldInstructions = _fieldInstructions.Where(f => f.Attribute.IsValidated).ToArray();
 
-			_builder = new StringBuilder();
+			_builder = new SourceBuilder();
 		}
 
 		private readonly MacroRecordAttribute _attribute;
@@ -45,7 +45,7 @@ namespace RhoMicro.MacroRecords
 		private readonly IReadOnlyList<FieldInstructions> _validatedFieldInstructions;
 		private readonly String _nullPropagatingToken;
 		private readonly INamedTypeSymbol _typeSymbol;
-		private readonly StringBuilder _builder;
+		private readonly SourceBuilder _builder;
 		#endregion
 		#region Factory
 		public static Boolean TryCreate(
@@ -147,7 +147,7 @@ namespace RhoMicro.MacroRecords
 			return (head, fields);
 		}
 		#endregion
-		#region Build Method
+		#region Build Methods
 		public GeneratedType Build()
 		{
 			var identifier = TypeIdentifier.Create(_typeSymbol);
@@ -193,7 +193,7 @@ namespace RhoMicro.MacroRecords
 			var ns = _typeSymbol.ContainingNamespace;
 			if(ns != null && !ns.IsGlobalNamespace)
 			{
-				_builder.Append("namespace ").Append(ns).Append('{');
+				_builder.Append("namespace ").Append(ns.Name).AppendLine('{');
 			}
 
 			var parent = _typeSymbol.ContainingType;
@@ -203,7 +203,7 @@ namespace RhoMicro.MacroRecords
 					"class" :
 					"struct";
 
-				_builder.Append("partial ").Append(classOrStruct).Append(' ').Append(parent.Name).Append('{');
+				_builder.Append("partial ").Append(classOrStruct).Append(' ').Append(parent.Name).AppendLine('{');
 
 				parent = parent.ContainingType;
 			}
@@ -215,13 +215,13 @@ namespace RhoMicro.MacroRecords
 			var ns = _typeSymbol.ContainingNamespace;
 			if(ns != null && !ns.IsGlobalNamespace)
 			{
-				_builder.Append('}');
+				_builder.AppendLine('}');
 			}
 
 			var parent = _typeSymbol.ContainingType;
 			while(parent != null)
 			{
-				_builder.Append('}');
+				_builder.AppendLine('}');
 
 				parent = parent.ContainingType;
 			}

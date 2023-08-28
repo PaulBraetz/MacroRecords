@@ -8,7 +8,7 @@
 		<NoPackageAnalysis>true</NoPackageAnalysis>
 		<IsRoslynComponent>true</IsRoslynComponent>
 		<!--'.0' required for auto source gen updater-->
-		<AssemblyName>RhoMicro.$(MSBuildProjectName).26</AssemblyName>
+		<AssemblyName>RhoMicro.$(MSBuildProjectName).34</AssemblyName>
 		<RootNamespace>RhoMicro.$(MSBuildProjectName)</RootNamespace>
 		<EnableNETAnalyzers>true</EnableNETAnalyzers>
 		<AnalysisMode>All</AnalysisMode>
@@ -24,7 +24,7 @@
 		</Description>
 		<Copyright>2023</Copyright>
 		<PackageTags>DDD;Value Objects;Records;Source Generator</PackageTags>
-		<Version>1.0.0-alpha.9</Version>
+		<Version>1.0.0-alpha.10</Version>
 		<PackageId>RhoMicro.MacroRecords</PackageId>
 		<Company>RhoMicro</Company>
 		<PackageProjectUrl>https://github.com/PaulBraetz/MacroRecords/</PackageProjectUrl>
@@ -70,13 +70,13 @@
 	  <Compile Include="..\MacroRecords.Core\CodeAnalysis\TypeIdentifierEqualityComparer.cs" Link="CodeAnalysis\TypeIdentifierEqualityComparer.cs" />
 	  <Compile Include="..\MacroRecords.Core\CodeAnalysis\TypeIdentifierName.cs" Link="CodeAnalysis\TypeIdentifierName.cs" />
 	  <Compile Include="..\MacroRecords.Core\CodeAnalysis\TypeIdentifierNameEqualityComparer.cs" Link="CodeAnalysis\TypeIdentifierNameEqualityComparer.cs" />
-	  <Compile Include="..\MacroRecords.Core\Extensions.cs" Link="Extensions.cs" />
-	  <Compile Include="..\MacroRecords.Core\FieldInstructions.cs" Link="FieldInstructions.cs" />
-	  <Compile Include="..\MacroRecords.Core\Generator.cs" Link="Generator.cs" />
-	  <Compile Include="..\MacroRecords.Core\MacroRecordSourceBuilder.cs" Link="MacroRecordSourceBuilder.cs" />
-	  <Compile Include="..\MacroRecords.Core\SyntaxContextReceiver.cs" Link="SyntaxContextReceiver.cs" />
-	  <Compile Include="..\MacroRecords.Core\Units.cs" Link="Units.cs" />
-	  <Compile Include="..\MacroRecords.Core\Util.cs" Link="Util.cs" />
+	  <Compile Include="..\MacroRecords.Core\FieldInstructions.cs" Link="Core\FieldInstructions.cs" />
+	  <Compile Include="..\MacroRecords.Core\Generator.cs" Link="Core\Generator.cs" />
+	  <Compile Include="..\MacroRecords.Core\MacroRecordSourceBuilder.cs" Link="Core\MacroRecordSourceBuilder.cs" />
+	  <Compile Include="..\MacroRecords.Core\SourceBuilder.cs" Link="Core\SourceBuilder.cs" />
+	  <Compile Include="..\MacroRecords.Core\SyntaxContextReceiver.cs" Link="Core\SyntaxContextReceiver.cs" />
+	  <Compile Include="..\MacroRecords.Core\Units.cs" Link="Core\Units.cs" />
+	  <Compile Include="..\MacroRecords.Core\Util.cs" Link="Core\Util.cs" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -91,6 +91,7 @@
 	<ItemGroup>
 	  <Folder Include="Attributes\" />
 	  <Folder Include="CodeAnalysis\" />
+	  <Folder Include="Core\" />
 	</ItemGroup>
 
 	<!--Required for source gen auto updater-->
