@@ -927,7 +927,7 @@ private readonly struct ValidateParameters : IEquatable<ValidateParameters>
                         .Append("/// The value contained in <see cref=\"")
                         .Append(f.Attribute.Name).AppendLine("\"/>.")
                         .AppendLine("/// </param>"))
-                    .Append("public ValueObjectSourceBuilder Deconstruct(")
+                    .Append("public void Deconstruct(")
                     .ForEach(_validatedFieldInstructions, ", ", (b, f) =>
                         b.Append("out ").Append(f.Attribute.GetTypeSymbol()).Append(' ').Append(f.OutParamName))
                     .Append(')')
@@ -1293,7 +1293,7 @@ public static implicit operator bool(IsValidResult result) =>
                     .Append("/// The value contained in <see cref=\"").Append(f.Attribute.Name).AppendLine("Error\"/>.")
                     .AppendLine("/// </param>"))
                 .Append("public void Deconstruct(")
-                .ForEach(_validatedFieldInstructions, (b, f) =>
+                .ForEach(_validatedFieldInstructions, ", ", (b, f) =>
                     b.Append("out bool ").Append(f.OutParamName).Append("IsInvalid, out string ").Append(f.OutParamName).Append("Error"))
                 .Append("){")
                 .ForEach(_validatedFieldInstructions, (b, f) =>
