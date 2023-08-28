@@ -193,7 +193,8 @@ namespace RhoMicro.MacroRecords
 			var ns = _typeSymbol.ContainingNamespace;
 			if(ns != null && !ns.IsGlobalNamespace)
 			{
-				_builder.Append("namespace ").Append(ns.Name).AppendLine('{');
+				var fullNamespace = ns.ToDisplayString();
+				_builder.Append("namespace ").Append(fullNamespace).AppendLine('{');
 			}
 
 			var parent = _typeSymbol.ContainingType;
