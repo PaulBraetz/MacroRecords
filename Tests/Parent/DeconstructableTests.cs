@@ -40,6 +40,42 @@
                         """
                         using RhoMicro.MacroRecords;
                         [MacroRecord]
+                        [Field(typeof(System.IComparable), "Field1", Options = FieldOptions.Deconstructable)]
+                        partial class TVO
+                        {
+                        }
+                        """,
+                        String.Empty
+                    },
+                    new Object[]
+                    {
+                        """
+                        using RhoMicro.MacroRecords;
+                        [MacroRecord]
+                        [Field(typeof(System.IComparable), "Field1", Options = FieldOptions.None)]
+                        partial class TVO
+                        {
+                        }
+                        """,
+                        String.Empty
+                    },
+                    new Object[]
+                    {
+                        """
+                        using RhoMicro.MacroRecords;
+                        [MacroRecord]
+                        [Field(typeof(System.IComparable), "Field1")]
+                        partial class TVO
+                        {
+                        }
+                        """,
+                        String.Empty
+                    },
+                    new Object[]
+                    {
+                        """
+                        using RhoMicro.MacroRecords;
+                        [MacroRecord]
                         [Field(typeof(int), "Field1", Options = FieldOptions.Deconstructable)]
                         [Field(typeof(int), "Field2", Options = FieldOptions.Deconstructable)]
                         partial class TVO
