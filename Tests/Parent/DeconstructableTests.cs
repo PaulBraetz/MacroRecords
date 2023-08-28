@@ -1,4 +1,4 @@
-﻿namespace MacroRecords.Tests.Parent
+﻿namespace RhoMicro.MacroRecords.Tests.Parent
 {
     [TestClass]
     public class DeconstructableTests

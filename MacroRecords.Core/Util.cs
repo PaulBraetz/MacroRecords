@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace RhoMicro.MacroRecords
+namespace RhoMicro.MacroRecords.Core
 {
     internal static class Util
     {

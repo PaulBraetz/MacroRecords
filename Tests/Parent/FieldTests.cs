@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MacroRecords.Tests.Parent
+namespace RhoMicro.MacroRecords.Tests.Parent
 {
     [TestClass]
     public class FieldTests
@@ -27,6 +27,43 @@ namespace MacroRecords.Tests.Parent
                         """,
                         """
                         public readonly System.IComparable Field1;
+                        """
+                    },
+                    new Object[]
+                    {
+                        """
+                        using RhoMicro.MacroRecords;
+                        [MacroRecord]
+                        [Field(typeof(ITestInterface), "Field")]
+                        partial struct TVO { }
+
+                        interface ITestInterface
+                        {
+                            public String Value { get; set; }
+                        }
+                        """,
+                        """
+                        public readonly ITestInterface Field;
+                        """
+                    },
+                    new Object[]
+                    {
+                        """
+                        using RhoMicro.MacroRecords;
+                        [MacroRecord]
+                        [Field(typeof(TestNamespace.ITestInterface), "Field")]
+                        partial struct TVO { }
+
+                        namespace TestNamespace
+                        {                        
+                            interface ITestInterface
+                            {
+                                public String Value { get; set; }
+                            }
+                        }
+                        """,
+                        """
+                        public readonly TestNamespace.ITestInterface Field;
                         """
                     },
                     new Object[]

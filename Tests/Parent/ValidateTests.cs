@@ -1,4 +1,4 @@
-﻿namespace MacroRecords.Tests.Parent
+﻿namespace RhoMicro.MacroRecords.Tests.Parent
 {
     [TestClass]
     public class ValidateMethodTests
@@ -108,7 +108,7 @@
                         }
                         """,
                         """
-
+                        static partial void Validate(ValidateParameters parameters, ref ValidateResult result);
                         """
                     }
                 };

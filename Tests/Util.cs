@@ -2,9 +2,9 @@
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-using RhoMicro.MacroRecords;
+using RhoMicro.MacroRecords.Core;
 
-namespace MacroRecords.Tests
+namespace RhoMicro.MacroRecords.Tests
 {
     internal static class Util
     {
@@ -19,7 +19,10 @@ namespace MacroRecords.Tests
                               .AddSyntaxTrees(tree);
 
             var root = tree.GetRoot();
-            var declaration = root.DescendantNodes().OfType<TypeDeclarationSyntax>().Single();
+            var declaration = root.DescendantNodes()
+                .OfType<TypeDeclarationSyntax>()
+                .Where(n => n is StructDeclarationSyntax || n is ClassDeclarationSyntax)
+                .Single();
             var semanticModel = compilation.GetSemanticModel(tree);
 
             //suppressed for debuggability

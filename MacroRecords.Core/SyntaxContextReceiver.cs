@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace RhoMicro.MacroRecords
+namespace RhoMicro.MacroRecords.Core
 {
     internal sealed class SyntaxContextReceiver : ISyntaxContextReceiver
     {

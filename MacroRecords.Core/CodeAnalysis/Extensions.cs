@@ -202,7 +202,7 @@ namespace RhoMicro.CodeAnalysis
                     }
 
                     if(unmatchedArgument.Expression is TypeOfExpressionSyntax &&
-                        !constructor.DeclaringType.ImplementsMethodsSemantically<IHasTypeParameter>())
+                        !constructor.DeclaringType.ImplementsMethodsSemantically<IHasTypeConstructorParameter>())
                     {
                         return false;
                     }
@@ -222,7 +222,7 @@ namespace RhoMicro.CodeAnalysis
                 var allValid = arguments.Where(a => a.NameEquals != null)
                     .All(a =>
                         properties.ContainsKey(a.NameEquals.Name.Identifier.ToString()) &&
-                        (!(a.Expression is TypeOfExpressionSyntax) || constructor.DeclaringType.ImplementsMethodsSemantically<IHasTypeProperty>()));
+                        (!(a.Expression is TypeOfExpressionSyntax) || constructor.DeclaringType.ImplementsMethodsSemantically<IHasTypePropertySetter>()));
 
                 return allValid;
             }
@@ -277,7 +277,13 @@ namespace RhoMicro.CodeAnalysis
 
             return match;
         }
-        public static Boolean TryParseArgument<T>(this AttributeSyntax attribute, SemanticModel semanticModel, out T value, Int32 position = -1, String propertyName = null, String parameterName = null)
+        public static Boolean TryParseArgument<T>(
+            this AttributeSyntax attribute,
+            SemanticModel semanticModel,
+            out T value,
+            Int32 position = -1,
+            String propertyName = null,
+            String parameterName = null)
         {
             var arg = attribute.GetArgument(semanticModel, position, propertyName, parameterName);
 
@@ -393,7 +399,9 @@ namespace RhoMicro.CodeAnalysis
                         result = new Optional<Object>(new Object());
                     } else if(argument.Expression is TypeOfExpressionSyntax typeOfExpression)
                     {
-                        result = new Optional<Object>(TypeIdentifier.Create(typeOfExpression.Type, semanticModel));
+                        var symbol = semanticModel.GetTypeInfo(typeOfExpression.Type).Type;
+
+                        result = new Optional<Object>(symbol);
                     }
 
                     return result;

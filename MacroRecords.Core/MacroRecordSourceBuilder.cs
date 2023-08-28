@@ -7,7 +7,7 @@ using RhoMicro.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using System.Text;
 
-namespace RhoMicro.MacroRecords
+namespace RhoMicro.MacroRecords.Core
 {
 	internal sealed class MacroRecordSourceBuilder
 	{
@@ -306,7 +306,7 @@ namespace RhoMicro.MacroRecords
 				.Append(_typeSymbol.Name)
 				.Append('(')
 				.ForEach(_fieldInstructions, ", ", (b, f) =>
-					b.Append(f.Attribute.Type.FullName).Append(' ').Append(f.InParamName))
+					b.Append(f.Attribute.GetTypeSymbol()).Append(' ').Append(f.InParamName))
 				.Append(')')
 				.Append('{')
 				.ForEach(_fieldInstructions, (b, f) =>
@@ -328,7 +328,7 @@ namespace RhoMicro.MacroRecords
 				.AppendLine("/// </summary>")
 				.Append(Util.GetString(f.Attribute.Visibility))
 				.Append(" readonly ")
-				.Append(f.Attribute.Type.FullName)
+				.Append(f.Attribute.GetTypeSymbol())
 				.Append(' ')
 				.Append(f.Attribute.Name)
 				.Append(';'));
@@ -372,7 +372,7 @@ namespace RhoMicro.MacroRecords
 					.Append("/// The value to assign to the new instances <see cref=\"").Append(field.Attribute.Name).AppendLine("\"/>.")
 					.AppendLine("/// </param>")
 					.Append("public static explicit operator ").Append(_typeSymbol.Name)
-					.Append('(').Append(field.Attribute.Type.FullName).Append(' ').Append(field.InParamName)
+					.Append('(').Append(field.Attribute.GetTypeSymbol()).Append(' ').Append(field.InParamName)
 					.Append(") => Create(").Append(field.InParamName).Append(");");
 			} else if(_fieldInstructions.Count > 1)
 			{
@@ -382,7 +382,7 @@ namespace RhoMicro.MacroRecords
 					.Append("public static explicit operator ")
 					.Append(_typeSymbol.Name).Append("((")
 					.ForEach(_fieldInstructions, ", ", (b, f) =>
-						b.Append(f.Attribute.Type.FullName))
+						b.Append(f.Attribute.GetTypeSymbol()))
 					.Append(") values) => Create(")
 					.ForEach(Enumerable.Range(1, _fieldInstructions.Count), ", ", (b, i) =>
 						b.Append("values.Item").Append(i))
@@ -439,7 +439,7 @@ namespace RhoMicro.MacroRecords
 				.AppendLine("/// </returns>")
 				.Append("public static IsValidResult IsValid(")
 				.ForEach(_validatedFieldInstructions, ", ", (b, f) =>
-					b.Append(f.Attribute.Type.FullName).Append(' ').Append(f.InParamName))
+					b.Append(f.Attribute.GetTypeSymbol()).Append(' ').Append(f.InParamName))
 				.Append(
 @")
 {
@@ -479,7 +479,7 @@ return result;
 				.AppendLine("/// </returns>")
 				.Append("public static IsValidResult TryCreate(")
 				.ForEach(_fieldInstructions, ", ", (b, f) =>
-					b.Append(f.Attribute.Type.FullName).Append(' ').Append(f.InParamName))
+					b.Append(f.Attribute.GetTypeSymbol()).Append(' ').Append(f.InParamName))
 				.Append(", out ").Append(_typeSymbol.Name).Append(_nullPropagatingToken)
 				.Append(
 @" result)
@@ -527,7 +527,7 @@ return validateResult;
 				.AppendLine("/// </exception>")
 				.Append("public static ").Append(_typeSymbol.Name).Append(" Create(")
 				.ForEach(_fieldInstructions, ", ", (b, f) =>
-					b.Append(f.Attribute.Type.FullName).Append(' ').Append(f.InParamName))
+					b.Append(f.Attribute.GetTypeSymbol()).Append(' ').Append(f.InParamName))
 				.Append(
 @")
 {");
@@ -606,7 +606,7 @@ string paramName = null;")
 					.Append("\"/> to its single constituent, <see cref=\"")
 					.Append(_typeSymbol.Name).Append('.').Append(field.Attribute.Name).AppendLine("\"/>.")
 					.AppendLine("/// </summary>")
-					.Append("public static implicit operator ").Append(field.Attribute.Type.FullName)
+					.Append("public static implicit operator ").Append(field.Attribute.GetTypeSymbol())
 					.Append('(')
 					.Append(_typeSymbol.Name).Append(" instance) =>")
 					.Append("instance.").Append(field.Attribute.Name).Append(';');
@@ -621,7 +621,7 @@ string paramName = null;")
 						.AppendLine("/// </param>"))
 					.Append("public void Deconstruct(")
 					.ForEach(deconstructableFields, ", ", (b, f) =>
-						b.Append("out ").Append(f.Attribute.Type.FullName).Append(' ').Append(f.OutParamName))
+						b.Append("out ").Append(f.Attribute.GetTypeSymbol()).Append(' ').Append(f.OutParamName))
 					.Append(')')
 					.Append('{')
 					.ForEach(deconstructableFields, (b, f) =>
@@ -658,7 +658,7 @@ string paramName = null;")
 				.AppendLine("/// </returns>")
 				.Append(Util.GetString(f.Attribute.Visibility)).Append(' ')
 				.Append(_typeSymbol.Name).Append(" With").Append(f.Attribute.Name).Append('(')
-				.Append(f.Attribute.Type.FullName).Append(' ').Append(f.InParamName).Append(") =>")
+				.Append(f.Attribute.GetTypeSymbol()).Append(' ').Append(f.InParamName).Append(") =>")
 				.Append("Create(")
 				.ForEach(_fieldInstructions, ", ", (b_1, f_1) =>
 					b_1.Append(f_1.Attribute.Name == f.Attribute.Name ? f_1.InParamName : f_1.Attribute.Name))
@@ -712,7 +712,7 @@ public static bool operator !=(")
 			{
 				var field = _fieldInstructions[0];
 				_builder.Append("System.Collections.Generic.EqualityComparer<")
-					.Append(field.Attribute.Type.FullName)
+					.Append(field.Attribute.GetTypeSymbol())
 					.Append(">.Default.GetHashCode(")
 					.Append(field.Attribute.Name)
 					.Append(");");
@@ -752,7 +752,7 @@ public override bool Equals(System.Object obj) => obj is ")
 			{
 				var field = _fieldInstructions[0];
 				_builder.Append("System.Collections.Generic.EqualityComparer<")
-					.Append(field.Attribute.Type.FullName)
+					.Append(field.Attribute.GetTypeSymbol())
 					.Append(">.Default.Equals(")
 					.Append(field.Attribute.Name)
 					.Append(", other.").Append(field.Attribute.Name)
@@ -867,7 +867,7 @@ private readonly struct ValidateParameters : IEquatable<ValidateParameters>
 					.AppendLine("/// </param>"))
 				.Append("public ValidateParameters(")
 				.ForEach(_validatedFieldInstructions, ", ", (b, f) =>
-					b.Append(f.Attribute.Type.FullName).Append(' ').Append(f.InParamName))
+					b.Append(f.Attribute.GetTypeSymbol()).Append(' ').Append(f.InParamName))
 				.Append(')')
 				.Append('{')
 				.ForEach(_validatedFieldInstructions, (b, f) =>
@@ -877,7 +877,7 @@ private readonly struct ValidateParameters : IEquatable<ValidateParameters>
 					b.AppendLine("/// <summary>")
 					.Append("/// The value for <see cref=\"").Append(f.Attribute.Name).AppendLine("\"/> to validate.")
 					.AppendLine("/// </summary>")
-					.Append("public readonly ").Append(f.Attribute.Type.FullName).Append(' ')
+					.Append("public readonly ").Append(f.Attribute.GetTypeSymbol()).Append(' ')
 					.Append(f.Attribute.Name).Append(';'))
 				.AppendLine("#endregion");
 
@@ -900,7 +900,7 @@ private readonly struct ValidateParameters : IEquatable<ValidateParameters>
 					.Append(field.Attribute.Name).AppendLine("\"/>.")
 					.AppendLine("/// </summary>")
 					.Append("public static implicit operator ")
-					.Append(field.Attribute.Type.FullName).Append("(ValidateParameters instance) =>")
+					.Append(field.Attribute.GetTypeSymbol()).Append("(ValidateParameters instance) =>")
 					.Append("instance.").Append(field.Attribute.Name).AppendLine(";");
 			} else
 			{
@@ -916,7 +916,7 @@ private readonly struct ValidateParameters : IEquatable<ValidateParameters>
 						.AppendLine("/// </param>"))
 					.Append("public ValueObjectSourceBuilder Deconstruct(")
 					.ForEach(_validatedFieldInstructions, ", ", (b, f) =>
-						b.Append("out ").Append(f.Attribute.Type.FullName).Append(' ').Append(f.OutParamName))
+						b.Append("out ").Append(f.Attribute.GetTypeSymbol()).Append(' ').Append(f.OutParamName))
 					.Append(')')
 					.Append('{')
 					.ForEach(_validatedFieldInstructions, (b, f) =>
@@ -1030,7 +1030,7 @@ private ref struct ValidateResult
 /// Contains the error message to include in instances of <see cref=""System.ArgumentException""/> thrown 
 /// by <see cref=""Create(")
 					.ForEach(_validatedFieldInstructions, ", ", (b_1, f_1) =>
-						b_1.Append(f_1.Attribute.Type.FullName))
+						b_1.Append(f_1.Attribute.GetTypeSymbol()))
 					.Append(")\"/> if <see cref=\"")
 					.Append(f.Attribute.Name)
 					.AppendLine("IsInvalid\"/> is set to <see langword=\"true\"/>.")

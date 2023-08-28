@@ -7,7 +7,7 @@
 		<Nullable>enable</Nullable>
 		<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
 	</PropertyGroup>
-
+	
 	<ItemGroup>
 		<ProjectReference Include="..\MacroRecords\MacroRecords.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
 		<ProjectReference Include="..\MacroRecords.Attributes\MacroRecords.Attributes.csproj" />

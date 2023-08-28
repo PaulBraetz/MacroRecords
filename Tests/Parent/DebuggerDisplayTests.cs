@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MacroRecords.Tests
+namespace RhoMicro.MacroRecords.Tests
 {
     [TestClass]
     public class DebuggerDisplayTests

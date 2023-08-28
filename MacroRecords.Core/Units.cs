@@ -1,6 +1,6 @@
 ﻿using RhoMicro.CodeAnalysis.Attributes;
 
-namespace RhoMicro.MacroRecords
+namespace RhoMicro.MacroRecords.Core
 {
     internal static partial class Units
     {
@@ -23,13 +23,8 @@ namespace RhoMicro.MacroRecords
         /// <param name=""name"">The name of the generated field.</param>
         public FieldAttribute(Type type, String name)
         {
-            Type = type;
             Name = name;
         }
-        /// <summary>
-        /// Gets the type of the generated field.
-        /// </summary>
-        public Type Type { get; private set; }
         /// <summary>
         /// Gets the name of the generated field.
         /// </summary>
@@ -49,38 +44,29 @@ namespace RhoMicro.MacroRecords
             | FieldOptions.Deconstructable
             | FieldOptions.SupportsWith;
 
+        /// <summary>
+        /// Gets a value indicating whether the <see cref=""FieldOptions.Validated""/> flag is set on <see cref=""Options""/>.
+        /// </summary>
         public Boolean IsValidated => Options.HasFlag(FieldOptions.Validated);
+        /// <summary>
+        /// Gets a value indicating whether the <see cref=""FieldOptions.Deconstructable""/> flag is set on <see cref=""Options""/>.
+        /// </summary>
         public Boolean IsDeconstructable => Options.HasFlag(FieldOptions.Deconstructable);
+        /// <summary>
+        /// Gets a value indicating whether the <see cref=""FieldOptions.SupportsWith""/> flag is set on <see cref=""Options""/>.
+        /// </summary>
         public Boolean SupportsWith => Options.HasFlag(FieldOptions.SupportsWith);
+        /// <summary>
+        /// Gets a value indicating whether the <see cref=""FieldOptions.DebuggerDisplay""/> flag is set on <see cref=""Options""/>.
+        /// </summary>
         public Boolean IncludedInDebuggerDisplay => Options.HasFlag(FieldOptions.DebuggerDisplay);
 
         /// <summary>
         /// This method is not intended for use outside of the generator.
         /// </summary>
-        /// <param name=""propertyName""></param>
-        /// <param name=""type""></param>
-        public void SetTypeProperty(String propertyName, Object type)
-        {
-            if(propertyName == nameof(Type))
-            {
-                Type = Type.GetType(type.ToString());
-            }
-        }
-        /// <summary>
-        /// This method is not intended for use outside of the generator.
-        /// </summary>
-        /// <param name=""propertyName""></param>
         /// <returns></returns>
-        /// <exception cref=""InvalidOperationException""></exception>
-        public Object GetTypeProperty(String propertyName)
-        {
-            if(propertyName == nameof(Type))
-            {
-                return Type;
-            }
+        public Object TypeSymbol { get; private set; } = null;
 
-            throw new InvalidOperationException();
-        }
         /// <summary>
         /// This method is not intended for use outside of the generator.
         /// </summary>
@@ -90,23 +76,8 @@ namespace RhoMicro.MacroRecords
         {
             if(parameterName == ""type"")
             {
-                Type = Type.GetType(type.ToString());
+                TypeSymbol = type;
             }
-        }
-        /// <summary>
-        /// This method is not intended for use outside of the generator.
-        /// </summary>
-        /// <param name=""parameterName""></param>
-        /// <returns></returns>
-        /// <exception cref=""InvalidOperationException""></exception>
-        public Object GetTypeParameter(String parameterName)
-        {
-            if(parameterName == ""type"")
-            {
-                return Type;
-            }
-
-            throw new InvalidOperationException();
         }
     }
 }
@@ -119,27 +90,44 @@ namespace RhoMicro.MacroRecords
 namespace RhoMicro.MacroRecords
 {
 	/// <summary>
-	/// Informs the macro record generator to generate a record from
-	/// the annotated partial struct or class declaration.
+	/// Defines generation options for a record type definition.
 	/// </summary>
-	[AttributeUsage(AttributeTargets.Struct | AttributeTargets.Class, Inherited = false)]
-	public sealed class MacroRecordAttribute : Attribute
+	[Flags]
+	public enum RecordOptions
 	{
 		/// <summary>
-		/// Gets or sets the visibility of the generated constructor.
+		/// No special generation options should be applied to this record.
 		/// </summary>
-		public Visibility ConstructorVisibility { get; set; } = Visibility.Private;
+		None = 0,
 		/// <summary>
-		/// Gets or sets additional options for the generated record.
+		/// The generated type definition should have a default constructor that assigns all fields generated.
+		/// <para>
+		/// Unset this if the record inherits a class that requires
+		/// its own constructor to be called. In that case, make sure to properly assign the records
+		/// fields inside your constructor.
+		/// </para>
+		/// <para>
+		/// At least one constructor with the signature <c>ctor(T1, T2,..., Tn)</c>, where <c>Ti</c> is 
+		/// a property type corresponding to the order of declaration, has to be available in order for the factory 
+		/// methods to compile correctly.
+		/// </para>
 		/// </summary>
-		public RecordOptions Options { get; set; } =
-			RecordOptions.DebuggerDisplay |
-			RecordOptions.Constructor |
-			RecordOptions.EmptyMember;
-
-		public Boolean GenerateDebuggerDisplay => Options.HasFlag(RecordOptions.DebuggerDisplay);
-		public Boolean GenerateConstructor => Options.HasFlag(RecordOptions.Constructor);
-		public Boolean GenerateEmptyMember => Options.HasFlag(RecordOptions.EmptyMember);
+		Constructor = 1,
+		/// <summary>
+		/// The generated type definition should be annotated with the <see cref=""System.Diagnostics.DebuggerDisplayAttribute""/>.
+		/// </summary>
+		DebuggerDisplay = 2,
+		/// <summary>
+		/// The generated type definition should include a static readonly field containing the type default value.
+		/// This option only affects struct definitions.
+		/// </summary>
+		EmptyMember = 4,
+		/// <summary>
+		/// The generated type definition should include an explicit conversion operator. If only a single field is defined, the
+		/// explicit conversion operator will expect an argument of its type. 
+		/// Otherwise, the operator will expect a value tuple corresponding to the fields defined.
+		/// </summary>
+		ExplicitConversion = 8
 	}
 }
 ");

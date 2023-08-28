@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MacroRecords.Tests.IsValidResult
+namespace RhoMicro.MacroRecords.Tests.IsValidResult
 {
     [TestClass]
     public class DeconstructionTests

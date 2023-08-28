@@ -57,7 +57,8 @@ namespace RhoMicro.CodeAnalysis.Attributes
                         var typeParamSetExpressions = new List<Expression>();
                         var typeParamVariables = new List<ParameterExpression>();
 
-                        var implementsTypeParameterSetter = type.TryGetMethodSemantically(typeof(IHasTypeParameter).GetMethod(nameof(IHasTypeParameter.SetTypeParameter)), out var typeParameterSetter);
+                        var implementsTypeParameterSetter = 
+                            type.TryGetMethodSemantically(typeof(IHasTypeConstructorParameter).GetMethod(nameof(IHasTypeConstructorParameter.SetTypeParameter)), out var typeParameterSetter);
 
                         for(var i = 0; i < ctorParams.Length; i++)
                         {
@@ -105,7 +106,7 @@ namespace RhoMicro.CodeAnalysis.Attributes
                         blockExpressions.Add(newInstanceAssignmentExpr);
                         blockExpressions.AddRange(typeParamSetExpressions);
 
-                        var implementsTypePropertySetter = type.TryGetMethodSemantically(typeof(IHasTypeProperty).GetMethod(nameof(IHasTypeProperty.SetTypeProperty)), out var typePropertySetter);
+                        var implementsTypePropertySetter = type.TryGetMethodSemantically(typeof(IHasTypePropertySetter).GetMethod(nameof(IHasTypePropertySetter.SetTypeProperty)), out var typePropertySetter);
 
                         for(var i = 0; i < properties.Length; i++)
                         {
