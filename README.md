@@ -513,4 +513,4 @@ I am open to expanding the functionality offered. If you have any ideas, feel fr
 
 - add abstract support
 
-Credits for the name `MacroRecords` go to [knight](https://github.com/muhamedkarajic).
+Credits for the name `MacroRecords` go to [Muhamed Karajic](https://github.com/muhamedkarajic).
