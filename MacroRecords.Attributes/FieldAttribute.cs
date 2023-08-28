@@ -41,10 +41,22 @@ namespace RhoMicro.MacroRecords
             | FieldOptions.Deconstructable
             | FieldOptions.SupportsWith;
 
+        /// <summary>
+        /// Gets a value indicating whether the <see cref="FieldOptions.Validated"/> flag is set on <see cref="Options"/>.
+        /// </summary>
         public Boolean IsValidated => Options.HasFlag(FieldOptions.Validated);
-        public Boolean IsDeconstructable => Options.HasFlag(FieldOptions.Deconstructable);
-        public Boolean SupportsWith => Options.HasFlag(FieldOptions.SupportsWith);
-        public Boolean IncludedInDebuggerDisplay => Options.HasFlag(FieldOptions.DebuggerDisplay);
+		/// <summary>
+		/// Gets a value indicating whether the <see cref="FieldOptions.Deconstructable"/> flag is set on <see cref="Options"/>.
+		/// </summary>
+		public Boolean IsDeconstructable => Options.HasFlag(FieldOptions.Deconstructable);
+		/// <summary>
+		/// Gets a value indicating whether the <see cref="FieldOptions.SupportsWith"/> flag is set on <see cref="Options"/>.
+		/// </summary>
+		public Boolean SupportsWith => Options.HasFlag(FieldOptions.SupportsWith);
+		/// <summary>
+		/// Gets a value indicating whether the <see cref="FieldOptions.DebuggerDisplay"/> flag is set on <see cref="Options"/>.
+		/// </summary>
+		public Boolean IncludedInDebuggerDisplay => Options.HasFlag(FieldOptions.DebuggerDisplay);
 
         /// <summary>
         /// This method is not intended for use outside of the generator.
