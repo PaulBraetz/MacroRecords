@@ -606,6 +606,11 @@ string paramName = null;")
             if(deconstructableFields.Length == 1)
             {
                 var field = deconstructableFields[0];
+                if(field.Attribute.GetTypeSymbol().TypeKind == TypeKind.Interface)
+                {
+                    return this;
+                }
+
                 _builder.AppendLine("/// <summary>")
                     .Append("/// Converts an instance of <see cref=\"").Append(_typeSymbol.Name)
                     .Append("\"/> to its single constituent, <see cref=\"")
