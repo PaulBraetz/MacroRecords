@@ -360,11 +360,6 @@ namespace RhoMicro.MacroRecords.Core
                 return this;
             }
 
-            _builder.AppendLine("/// <summary>")
-                .Append("/// Explicitly converts the constituents of a <see cref=\"").Append(_typeSymbol.Name)
-                .Append("\"/> to an instance of <see cref=\"").Append(_typeSymbol.Name).AppendLine("\"/>.")
-                .AppendLine("/// </summary>");
-
             if(_fieldInstructions.Count == 1)
             {
                 var field = _fieldInstructions[0];
@@ -373,7 +368,11 @@ namespace RhoMicro.MacroRecords.Core
                     return this;
                 }
 
-                _builder.Append("/// <param name=\"").Append(field.InParamName).AppendLine("\">")
+                _builder.AppendLine("/// <summary>")
+                    .Append("/// Explicitly converts the constituents of a <see cref=\"").Append(_typeSymbol.Name)
+                    .Append("\"/> to an instance of <see cref=\"").Append(_typeSymbol.Name).AppendLine("\"/>.")
+                    .AppendLine("/// </summary>")
+                    .Append("/// <param name=\"").Append(field.InParamName).AppendLine("\">")
                     .Append("/// The value to assign to the new instances <see cref=\"").Append(field.Attribute.Name).AppendLine("\"/>.")
                     .AppendLine("/// </param>")
                     .Append("public static explicit operator ").Append(_typeSymbol.Name)
@@ -381,7 +380,11 @@ namespace RhoMicro.MacroRecords.Core
                     .Append(") => Create(").Append(field.InParamName).Append(");");
             } else if(_fieldInstructions.Count > 1)
             {
-                _builder.AppendLine("/// <param name=\"values\">")
+                _builder.AppendLine("/// <summary>")
+                    .Append("/// Explicitly converts the constituents of a <see cref=\"").Append(_typeSymbol.Name)
+                    .Append("\"/> to an instance of <see cref=\"").Append(_typeSymbol.Name).AppendLine("\"/>.")
+                    .AppendLine("/// </summary>")
+                    .AppendLine("/// <param name=\"values\">")
                     .Append("/// The values from which to construct an instance of <see cref=\"").Append(_typeSymbol.Name).AppendLine("\"/>.")
                     .AppendLine("/// </param>")
                     .Append("public static explicit operator ")
