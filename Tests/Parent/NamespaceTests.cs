@@ -34,7 +34,21 @@
                         namespace TestNamespace{
                         """
                     },
-                    new Object[]
+					new Object[]
+					{
+						"""
+                        using RhoMicro.MacroRecords;
+                        namespace ParentNamespace.TestNamespace;
+                        [MacroRecord]
+                        partial class TVO
+                        {
+                        }
+                        """,
+						"""
+                        namespace ParentNamespace.TestNamespace{
+                        """
+					},
+					new Object[]
                     {
                         """
                         using RhoMicro.MacroRecords;
@@ -49,8 +63,24 @@
                         """
                         namespace TestNamespace{
                         """
-                    }
-                };
+                    },
+					new Object[]
+					{
+						"""
+                        using RhoMicro.MacroRecords;
+                        namespace ParentNamespace.TestNamespace
+                        {
+                        [MacroRecord]
+                        partial class TVO
+                        {
+                        }
+                        }
+                        """,
+						"""
+                        namespace ParentNamespace.TestNamespace{
+                        """
+					}
+				};
             }
         }
 
