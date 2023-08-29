@@ -28,7 +28,20 @@ namespace RhoMicro.MacroRecords.Tests.Parent
 						public static readonly TVO Empty = default;
 						"""
 					},
-					new Object[]
+                    new Object[]
+                    {
+                        """
+                        using RhoMicro.MacroRecords;
+                        [MacroRecord(Options = RecordOptions.All)]
+                        partial struct TVO
+                        {
+                        }
+                        """,
+                        """
+						public static readonly TVO Empty = default;
+						"""
+                    },
+                    new Object[]
 					{
 						"""
                         using RhoMicro.MacroRecords;

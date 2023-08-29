@@ -32,6 +32,19 @@ namespace RhoMicro.MacroRecords.Tests
                     },
                     new Object[]
                     {
+                        """
+                        using RhoMicro.MacroRecords;
+                        [MacroRecord(Options = RecordOptions.All)]
+                        partial class TVO
+                        {
+                        }
+                        """,
+                        """
+                        [System.Diagnostics.DebuggerDisplayAttribute("TVO")]
+                        """
+                    },
+                    new Object[]
+                    {
 						"""
                         using RhoMicro.MacroRecords;
                         [MacroRecord(Options = RecordOptions.None)]

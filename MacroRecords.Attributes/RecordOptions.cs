@@ -13,6 +13,10 @@ namespace RhoMicro.MacroRecords
 		/// </summary>
 		None = 0,
 		/// <summary>
+		/// All generation options should be applied to this record.
+		/// </summary>
+		All = Int32.MaxValue,
+		/// <summary>
 		/// The generated type definition should have a default constructor that assigns all fields generated.
 		/// <para>
 		/// Unset this if the record inherits a class that requires
