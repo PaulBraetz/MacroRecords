@@ -57,7 +57,22 @@ namespace RhoMicro.MacroRecords.Tests.Parent
                             Create(in_Field1);
                         """
 					},
-					new Object[]
+                    new Object[]
+                    {
+                        """
+                        using RhoMicro.MacroRecords;
+                        [MacroRecord]
+                        [Field(typeof(int), "Field1", Options = FieldOptions.All)]
+                        partial class TVO
+                        {
+                        }
+                        """,
+                        """
+                        public TVO WithField1(System.Int32 in_Field1) =>
+                            Create(in_Field1);
+                        """
+                    },
+                    new Object[]
 					{
 						"""
                         using RhoMicro.MacroRecords;
@@ -73,7 +88,23 @@ namespace RhoMicro.MacroRecords.Tests.Parent
                             Create(in_Field1, Field2);
                         """
 					},
-					new Object[]
+                    new Object[]
+                    {
+                        """
+                        using RhoMicro.MacroRecords;
+                        [MacroRecord,
+                        Field(typeof(int), "Field1", Options = FieldOptions.All),
+                        Field(typeof(int), "Field2", Options = FieldOptions.None)]
+                        partial class TVO
+                        {
+                        }
+                        """,
+                        """
+                        public TVO WithField1(System.Int32 in_Field1) =>
+                            Create(in_Field1, Field2);
+                        """
+                    },
+                    new Object[]
 					{
 						"""
                         using RhoMicro.MacroRecords;
@@ -91,7 +122,61 @@ namespace RhoMicro.MacroRecords.Tests.Parent
                             Create(Field1, in_Field2);
                         """
 					},
-					new Object[]
+                    new Object[]
+                    {
+                        """
+                        using RhoMicro.MacroRecords;
+                        [MacroRecord,
+                        Field(typeof(int), "Field1", Options = FieldOptions.All),
+                        Field(typeof(string), "Field2", Options = FieldOptions.SupportsWith)]
+                        partial class TVO
+                        {
+                        }
+                        """,
+                        """
+                        public TVO WithField1(System.Int32 in_Field1) =>
+                            Create(in_Field1, Field2);
+                        public TVO WithField2(System.String in_Field2) =>
+                            Create(Field1, in_Field2);
+                        """
+                    },
+                    new Object[]
+                    {
+                        """
+                        using RhoMicro.MacroRecords;
+                        [MacroRecord,
+                        Field(typeof(int), "Field1", Options = FieldOptions.SupportsWith),
+                        Field(typeof(string), "Field2", Options = FieldOptions.All)]
+                        partial class TVO
+                        {
+                        }
+                        """,
+                        """
+                        public TVO WithField1(System.Int32 in_Field1) =>
+                            Create(in_Field1, Field2);
+                        public TVO WithField2(System.String in_Field2) =>
+                            Create(Field1, in_Field2);
+                        """
+                    },
+                    new Object[]
+                    {
+                        """
+                        using RhoMicro.MacroRecords;
+                        [MacroRecord,
+                        Field(typeof(int), "Field1", Options = FieldOptions.All),
+                        Field(typeof(string), "Field2", Options = FieldOptions.All)]
+                        partial class TVO
+                        {
+                        }
+                        """,
+                        """
+                        public TVO WithField1(System.Int32 in_Field1) =>
+                            Create(in_Field1, Field2);
+                        public TVO WithField2(System.String in_Field2) =>
+                            Create(Field1, in_Field2);
+                        """
+                    },
+                    new Object[]
 					{
 						"""
                         using RhoMicro.MacroRecords;
