@@ -22,7 +22,7 @@ namespace RhoMicro.MacroRecords.Tests
             var declaration = root.DescendantNodes()
                 .OfType<TypeDeclarationSyntax>()
                 .Where(n => n is StructDeclarationSyntax || n is ClassDeclarationSyntax)
-                .Single();
+                .Last();
 
             var semanticModel = compilation.GetSemanticModel(tree);
 
