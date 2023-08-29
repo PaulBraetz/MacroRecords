@@ -26,6 +26,19 @@
                     {
                         """
                         using RhoMicro.MacroRecords;
+                        [MacroRecord(Options = RecordOptions.All)]
+                        partial class TVO
+                        {
+                        }
+                        """,
+                        """
+                        private TVO(){}
+                        """
+                    },
+                    new Object[]
+                    {
+                        """
+                        using RhoMicro.MacroRecords;
                         [MacroRecord(Options = RecordOptions.None)]
                         partial class TVO
                         {
