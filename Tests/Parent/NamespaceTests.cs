@@ -24,6 +24,70 @@
                     {
                         """
                         using RhoMicro.MacroRecords;
+                        partial record struct TVOP
+                        {
+                            [MacroRecord]
+                            partial class TVO
+                            {
+                            }
+                        }
+                        """,
+                        """"
+                        partial record struct TVOP{
+                        """"
+                    },
+                    new Object[]
+                    {
+                        """
+                        using RhoMicro.MacroRecords;
+                        public partial record struct TVOP
+                        {
+                            [MacroRecord]
+                            partial class TVO
+                            {
+                            }
+                        }
+                        """,
+                        """"
+                        partial record struct TVOP{
+                        """"
+                    },
+                    new Object[]
+                    {
+                        """
+                        using RhoMicro.MacroRecords;
+                        partial class TVOP
+                        {
+                            [MacroRecord]
+                            partial class TVO
+                            {
+                            }
+                        }
+                        """,
+                        """
+                        partial class TVOP{
+                        """
+                    },
+                    new Object[]
+                    {
+                        """
+                        using RhoMicro.MacroRecords;
+                        public partial class TVOP
+                        {
+                            [MacroRecord]
+                            partial class TVO
+                            {
+                            }
+                        }
+                        """,
+                        """
+                        partial class TVOP{
+                        """
+                    },
+                    new Object[]
+                    {
+                        """
+                        using RhoMicro.MacroRecords;
                         namespace TestNamespace;
                         [MacroRecord]
                         partial class TVO
@@ -34,9 +98,9 @@
                         namespace TestNamespace{
                         """
                     },
-					new Object[]
-					{
-						"""
+                    new Object[]
+                    {
+                        """
                         using RhoMicro.MacroRecords;
                         namespace ParentNamespace.TestNamespace;
                         [MacroRecord]
@@ -44,11 +108,11 @@
                         {
                         }
                         """,
-						"""
+                        """
                         namespace ParentNamespace.TestNamespace{
                         """
-					},
-					new Object[]
+                    },
+                    new Object[]
                     {
                         """
                         using RhoMicro.MacroRecords;
@@ -64,9 +128,9 @@
                         namespace TestNamespace{
                         """
                     },
-					new Object[]
-					{
-						"""
+                    new Object[]
+                    {
+                        """
                         using RhoMicro.MacroRecords;
                         namespace ParentNamespace.TestNamespace
                         {
@@ -76,11 +140,11 @@
                         }
                         }
                         """,
-						"""
+                        """
                         namespace ParentNamespace.TestNamespace{
                         """
-					}
-				};
+                    }
+                };
             }
         }
 
