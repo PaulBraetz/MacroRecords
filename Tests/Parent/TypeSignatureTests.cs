@@ -27,6 +27,45 @@
                         """
                         using RhoMicro.MacroRecords;
                         [MacroRecord]
+                        partial record TVO
+                        {
+                        }
+                        """,
+                        """
+                        partial record TVO : IEquatable<TVO>
+                        """
+                    },
+                    new Object[]
+                    {
+                        """
+                        using RhoMicro.MacroRecords;
+                        [MacroRecord]
+                        partial record struct TVO
+                        {
+                        }
+                        """,
+                        """
+                        partial record struct TVO : IEquatable<TVO>
+                        """
+                    },
+                    new Object[]
+                    {
+                        """
+                        using RhoMicro.MacroRecords;
+                        [MacroRecord]
+                        partial readonly record struct TVO
+                        {
+                        }
+                        """,
+                        """
+                        partial record struct TVO : IEquatable<TVO>
+                        """
+                    },
+                    new Object[]
+                    {
+                        """
+                        using RhoMicro.MacroRecords;
+                        [MacroRecord]
                         sealed partial class TVO
                         {
                         }

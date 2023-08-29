@@ -23,6 +23,7 @@ namespace RhoMicro.MacroRecords.Tests
                 .OfType<TypeDeclarationSyntax>()
                 .Where(n => n is StructDeclarationSyntax || n is ClassDeclarationSyntax)
                 .Single();
+
             var semanticModel = compilation.GetSemanticModel(tree);
 
             //suppressed for debuggability
