@@ -238,7 +238,7 @@
                             out_ObjectField = ObjectField;
                         }
                         """
-                    }
+                    },
                     new Object[]
                     {
                         """
@@ -258,7 +258,7 @@
                             out_ObjectField = ObjectField;
                         }
                         """
-                    }
+                    },
                     new Object[]
                     {
                         """
