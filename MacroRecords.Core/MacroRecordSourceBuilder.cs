@@ -204,7 +204,19 @@ namespace RhoMicro.MacroRecords.Core
                     "class" :
                     "struct";
 
-                _builder.Append("partial ").Append(classOrStruct).Append(' ').Append(parent.Name).AppendLine('{');
+                _builder.Append("partial ");
+                if(parent.IsRecord)
+                {
+                    _builder.Append("record ");
+                    if(classOrStruct == "struct")
+                    {
+                        _builder.Append(classOrStruct);
+                    }
+                } else
+                {
+                    _builder.Append(classOrStruct);
+                }
+                _builder.Append(' ').Append(parent.Name).AppendLine('{');
 
                 parent = parent.ContainingType;
             }
