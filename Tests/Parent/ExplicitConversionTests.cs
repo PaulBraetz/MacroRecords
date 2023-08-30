@@ -97,9 +97,7 @@ namespace RhoMicro.MacroRecords.Tests.Parent
                         {
                         }
                         """,
-                        """
-						public static explicit operator TVO(System.Int32 in_Field1) => Create(in_Field1);
-						"""
+                        String.Empty
                     },
                     new Object[]
                     {
@@ -208,9 +206,7 @@ namespace RhoMicro.MacroRecords.Tests.Parent
 						{
 						}
 						""",
-                        """
-						public static explicit operator TVO((System.Int32, System.String) values) => Create(values.Item1, values.Item2);
-						"""
+                        String.Empty
                     },
                     new Object[]
                     {
