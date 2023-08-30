@@ -129,17 +129,17 @@ namespace RhoMicro.MacroRecords.Core
             var attributes = declaration.AttributeLists
                 .OfAttributeClasses(
                 semanticModel,
-                Units.MacroAttribute.GeneratedType.Identifier,
-                Units.FieldAttribute.GeneratedType.Identifier);
+                Util.FieldAttributeIdentifier,
+                Util.MacroRecordAttributeIdentifier);
 
             var head = attributes
-                .Select(a => (success: Units.MacroAttribute.Factory.TryBuild(a, semanticModel, out var result), result))
+                .Select(a => (success: Util.MacroRecordAttributeFactory.TryBuild(a, semanticModel, out var result), result))
                 .Where(t => t.success)
                 .Select(t => t.result)
                 .FirstOrDefault();
 
             var fields = attributes
-                .Select(a => (success: Units.FieldAttribute.Factory.TryBuild(a, semanticModel, out var result), result))
+                .Select(a => (success: Util.FieldAttributeFactory.TryBuild(a, semanticModel, out var result), result))
                 .Where(t => t.success)
                 .Select(t => t.result)
                 .ToArray();
@@ -380,7 +380,7 @@ namespace RhoMicro.MacroRecords.Core
         }
         public MacroRecordSourceBuilder AddExplicitTypeConversion()
         {
-            if(!_attribute.GenerateExplicitConversion)
+            if(!_attribute.GenerateExplicitConversion || _attribute.GenerateImplicitConversion)
             {
                 return this;
             }
