@@ -1272,17 +1272,12 @@ public readonly string ").Append(f.Attribute.Name).AppendLine("Error;"));
         }
         public MacroRecordSourceBuilder AddIsValidResultConversion()
         {
-            if(_validatedFieldInstructions.Count == 0)
-            {
-                return this;
-            }
-
             _builder.Append(
 @"/// <summary>
 /// Implicitly converts an instance of <see cref=""""IsValidResult""""/> to <see cref=""""bool""""/>.
 /// ");
 
-            if(_validatedFieldInstructions.Count == 1)
+            if(_validatedFieldInstructions.Count == 0)
             {
                 _builder.Append("As no fields are being validated, the result will always be <see langword=\"true\"/>");
             } else
@@ -1293,10 +1288,10 @@ public readonly string ").Append(f.Attribute.Name).AppendLine("Error;"));
             _builder.Append(@"
 /// </summary>
 /// <param name=""result"" > The instance to implicitly convert.</ param >
-public static implicit operator bool(IsValidResult result) =>
+public static implicit operator System.Boolean(IsValidResult result) =>
 ");
 
-            if(_validatedFieldInstructions.Count == 1)
+            if(_validatedFieldInstructions.Count == 0)
             {
                 _builder.Append("true");
             } else
