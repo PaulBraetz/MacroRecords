@@ -229,8 +229,7 @@ namespace RhoMicro.MacroRecords.Tests.Parent
             var builder = Util.CreateBuilder(consumer);
 
             //Act
-            Assert.Fail("Op not implemented yet.");
-            //var actual = builder.AddImplicitConversion().BuildCore();
+            var actual = builder.AddImplicitTypeConversion().BuildCore();
 
             //Assert
             //Assertions.AreEquivalent(expected, actual);

@@ -237,7 +237,7 @@ namespace RhoMicro.MacroRecords.Tests.Parent
             var builder = Util.CreateBuilder(consumer);
 
             //Act
-            var actual = builder.AddExplicitConversion().BuildCore();
+            var actual = builder.AddExplicitTypeConversion().BuildCore();
 
             //Assert
             Assertions.AreEquivalent(expected, actual);
