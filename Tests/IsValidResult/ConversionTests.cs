@@ -23,7 +23,7 @@ namespace RhoMicro.MacroRecords.Tests.IsValidResult
                         [Field(typeof(object), "ObjField", Options = FieldOptions.Validated)]
                         partial class TVO {}
                         """,
-                        "public static implicit operator System.Boolean(IsValidResult instance) => !instance.ObjFieldIsInvalid;"
+                        "public static implicit operator System.Boolean(IsValidResult result) => !result.ObjFieldIsInvalid;"
                     },
                     new Object[]
                     {
@@ -33,7 +33,7 @@ namespace RhoMicro.MacroRecords.Tests.IsValidResult
                         [Field(typeof(object), "ObjField")]
                         partial class TVO {}
                         """,
-                        "public static implicit operator System.Boolean(IsValidResult instance) => true;"
+                        "public static implicit operator System.Boolean(IsValidResult result) => true;"
                     },
                     new Object[]
                     {
@@ -44,7 +44,7 @@ namespace RhoMicro.MacroRecords.Tests.IsValidResult
                         [Field(typeof(object), "ObjField2", Options = FieldOptions.Validated)]
                         partial class TVO {}
                         """,
-                        "public static implicit operator System.Boolean(IsValidResult instance) => !instance.ObjField1IsInvalid && !instance.ObjField2IsInvalid;"
+                        "public static implicit operator System.Boolean(IsValidResult result) => !result.ObjField1IsInvalid && !result.ObjField2IsInvalid;"
                     },
                     new Object[]
                     {
@@ -55,7 +55,7 @@ namespace RhoMicro.MacroRecords.Tests.IsValidResult
                         [Field(typeof(object), "ObjField2")]
                         partial class TVO {}
                         """,
-                        "public static implicit operator System.Boolean(IsValidResult instance) => !instance.ObjField1IsInvalid;"
+                        "public static implicit operator System.Boolean(IsValidResult result) => !result.ObjField1IsInvalid;"
                     },
                     new Object[]
                     {
@@ -66,7 +66,7 @@ namespace RhoMicro.MacroRecords.Tests.IsValidResult
                         [Field(typeof(object), "ObjField2", Options = FieldOptions.Validated)]
                         partial class TVO {}
                         """,
-                        "public static implicit operator System.Boolean(IsValidResult instance) => !instance.ObjField2IsInvalid;"
+                        "public static implicit operator System.Boolean(IsValidResult result) => !result.ObjField2IsInvalid;"
                     },
                     new Object[]
                     {
@@ -74,10 +74,10 @@ namespace RhoMicro.MacroRecords.Tests.IsValidResult
                         using RhoMicro.MacroRecords;
                         [MacroRecord]
                         [Field(typeof(object), "ObjField1")]
-                        [Field(typeof(object), "ObjField2", Options = FieldOptions.Validated)]
+                        [Field(typeof(object), "ObjField2"s)]
                         partial class TVO {}
                         """,
-                        "public static implicit operator System.Boolean(IsValidResult instance) => true;"
+                        "public static implicit operator System.Boolean(IsValidResult result) => true;"
                     }
                 };
             }
