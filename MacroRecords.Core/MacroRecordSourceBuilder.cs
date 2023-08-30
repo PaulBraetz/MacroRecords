@@ -129,17 +129,17 @@ namespace RhoMicro.MacroRecords.Core
             var attributes = declaration.AttributeLists
                 .OfAttributeClasses(
                 semanticModel,
-                Units.MacroAttribute.GeneratedType.Identifier,
-                Units.FieldAttribute.GeneratedType.Identifier);
+                Util.FieldAttributeIdentifier,
+                Util.MacroRecordAttributeIdentifier);
 
             var head = attributes
-                .Select(a => (success: Units.MacroAttribute.Factory.TryBuild(a, semanticModel, out var result), result))
+                .Select(a => (success: Util.MacroRecordAttributeFactory.TryBuild(a, semanticModel, out var result), result))
                 .Where(t => t.success)
                 .Select(t => t.result)
                 .FirstOrDefault();
 
             var fields = attributes
-                .Select(a => (success: Units.FieldAttribute.Factory.TryBuild(a, semanticModel, out var result), result))
+                .Select(a => (success: Util.FieldAttributeFactory.TryBuild(a, semanticModel, out var result), result))
                 .Where(t => t.success)
                 .Select(t => t.result)
                 .ToArray();
@@ -365,41 +365,78 @@ namespace RhoMicro.MacroRecords.Core
         }
         #endregion
         #region Validation & Factories
-        public MacroRecordSourceBuilder AddExplicitConversion()
+        public MacroRecordSourceBuilder AddParentValidationAndFactories()
         {
-            if(!_attribute.GenerateExplicitConversion)
+            _builder.AppendLine("#region Validation & Factories");
+            AddParentValidateMethod();
+            AddParentIsValidMethod();
+            AddParentTryCreateMethod();
+            AddParentCreateMethod();
+            AddExplicitTypeConversion();
+            AddImplicitTypeConversion();
+            _builder.AppendLine("#endregion");
+
+            return this;
+        }
+        public MacroRecordSourceBuilder AddExplicitTypeConversion()
+        {
+            if(!_attribute.GenerateExplicitConversion || _attribute.GenerateImplicitConversion)
             {
                 return this;
             }
+
+            AddTypeConversion(isExplicit: true);
+
+            return this;
+        }
+        public MacroRecordSourceBuilder AddImplicitTypeConversion()
+        {
+            if(!_attribute.GenerateImplicitConversion)
+            {
+                return this;
+            }
+
+            AddTypeConversion(isExplicit: false);
+
+            return this;
+        }
+        private void AddTypeConversion(Boolean isExplicit)
+        {
+            var keyword = isExplicit ?
+                "explicit" :
+                "implicit";
+            var commentFragment = isExplicit ?
+                "Explicitly" :
+                "Implicitly";
 
             if(_fieldInstructions.Count == 1)
             {
                 var field = _fieldInstructions[0];
                 if(field.Attribute.GetTypeSymbol().TypeKind == TypeKind.Interface)
                 {
-                    return this;
+                    return;
                 }
 
                 _builder.AppendLine("/// <summary>")
-                    .Append("/// Explicitly converts the constituents of a <see cref=\"").Append(_typeSymbol.Name)
+                    .Append("/// ").Append(commentFragment).Append(" converts the constituents of a <see cref=\"").Append(_typeSymbol.Name)
                     .Append("\"/> to an instance of <see cref=\"").Append(_typeSymbol.Name).AppendLine("\"/>.")
                     .AppendLine("/// </summary>")
                     .Append("/// <param name=\"").Append(field.InParamName).AppendLine("\">")
                     .Append("/// The value to assign to the new instances <see cref=\"").Append(field.Attribute.Name).AppendLine("\"/>.")
                     .AppendLine("/// </param>")
-                    .Append("public static explicit operator ").Append(_typeSymbol.Name)
+                    .Append("public static ").Append(keyword).Append(" operator ").Append(_typeSymbol.Name)
                     .Append('(').Append(field.Attribute.GetTypeSymbol()).Append(' ').Append(field.InParamName)
                     .Append(") => Create(").Append(field.InParamName).Append(");");
             } else if(_fieldInstructions.Count > 1)
             {
                 _builder.AppendLine("/// <summary>")
-                    .Append("/// Explicitly converts the constituents of a <see cref=\"").Append(_typeSymbol.Name)
+                    .Append("/// ").Append(commentFragment).Append(" converts the constituents of a <see cref=\"").Append(_typeSymbol.Name)
                     .Append("\"/> to an instance of <see cref=\"").Append(_typeSymbol.Name).AppendLine("\"/>.")
                     .AppendLine("/// </summary>")
                     .AppendLine("/// <param name=\"values\">")
                     .Append("/// The values from which to construct an instance of <see cref=\"").Append(_typeSymbol.Name).AppendLine("\"/>.")
                     .AppendLine("/// </param>")
-                    .Append("public static explicit operator ")
+                    .Append("public static ").Append(keyword).Append(" operator ")
                     .Append(_typeSymbol.Name).Append("((")
                     .ForEach(_fieldInstructions, ", ", (b, f) =>
                         b.Append(f.Attribute.GetTypeSymbol()))
@@ -408,20 +445,6 @@ namespace RhoMicro.MacroRecords.Core
                         b.Append("values.Item").Append(i))
                     .Append(");");
             }
-
-            return this;
-        }
-        public MacroRecordSourceBuilder AddParentValidationAndFactories()
-        {
-            _builder.AppendLine("#region Validation & Factories");
-            AddParentValidateMethod();
-            AddParentIsValidMethod();
-            AddParentTryCreateMethod();
-            AddParentCreateMethod();
-            AddExplicitConversion();
-            _builder.AppendLine("#endregion");
-
-            return this;
         }
         public MacroRecordSourceBuilder AddParentValidateMethod()
         {
