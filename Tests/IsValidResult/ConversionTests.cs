@@ -74,7 +74,7 @@ namespace RhoMicro.MacroRecords.Tests.IsValidResult
                         using RhoMicro.MacroRecords;
                         [MacroRecord]
                         [Field(typeof(object), "ObjField1")]
-                        [Field(typeof(object), "ObjField2"s)]
+                        [Field(typeof(object), "ObjField2")]
                         partial class TVO {}
                         """,
                         "public static implicit operator System.Boolean(IsValidResult result) => true;"
