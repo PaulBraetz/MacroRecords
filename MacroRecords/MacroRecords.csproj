@@ -8,7 +8,7 @@
 		<NoPackageAnalysis>true</NoPackageAnalysis>
 		<IsRoslynComponent>true</IsRoslynComponent>
 		<!--'.0' required for auto source gen updater-->
-		<AssemblyName>RhoMicro.$(MSBuildProjectName).136</AssemblyName>
+		<AssemblyName>RhoMicro.$(MSBuildProjectName).142</AssemblyName>
 		<RootNamespace>RhoMicro.$(MSBuildProjectName)</RootNamespace>
 		<EnableNETAnalyzers>true</EnableNETAnalyzers>
 		<AnalysisMode>All</AnalysisMode>
@@ -76,7 +76,6 @@
 	  <Compile Include="..\MacroRecords.Core\MacroRecordSourceBuilder.cs" Link="Core\MacroRecordSourceBuilder.cs" />
 	  <Compile Include="..\MacroRecords.Core\SourceBuilder.cs" Link="Core\SourceBuilder.cs" />
 	  <Compile Include="..\MacroRecords.Core\SyntaxContextReceiver.cs" Link="Core\SyntaxContextReceiver.cs" />
-	  <Compile Include="..\MacroRecords.Core\Units.cs" Link="Core\Units.cs" />
 	  <Compile Include="..\MacroRecords.Core\Util.cs" Link="Core\Util.cs" />
 	</ItemGroup>
 
