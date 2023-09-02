@@ -27,7 +27,7 @@ namespace RhoMicro.MacroRecords.Tests.Parent
                         }
                         """,
                         """
-                        public System.Boolean Equals(TVO other) =>
+                        public bool Equals(TVO other) =>
                             other != null &&
                             ObjFieldEquals(other.ObjField);
                         """
@@ -44,7 +44,7 @@ namespace RhoMicro.MacroRecords.Tests.Parent
                         }
                         """,
                         """
-                        public System.Boolean Equals(TVO other) =>
+                        public bool Equals(TVO other) =>
                             other != null &&
                             ObjFieldEquals(other.ObjField);
                         """
@@ -60,7 +60,7 @@ namespace RhoMicro.MacroRecords.Tests.Parent
                         }
                         """,
                         """
-                        public System.Boolean Equals(TVO other) =>
+                        public bool Equals(TVO other) =>
                             other != null &&
                             System.Collections.Generic.EqualityComparer<System.Object>.Default.Equals(ObjField, other.ObjField);
                         """
@@ -79,7 +79,7 @@ namespace RhoMicro.MacroRecords.Tests.Parent
                         }
                         """,
                         """
-                        public System.Boolean Equals(TVO other) =>
+                        public bool Equals(TVO other) =>
                             other != null &&
                             ObjFieldEquals(other.ObjField) && 
                             System.Collections.Generic.EqualityComparer<System.Object>.Default.Equals(ObjField1, other.ObjField1);
@@ -98,7 +98,7 @@ namespace RhoMicro.MacroRecords.Tests.Parent
                         }
                         """,
                         """
-                        public System.Boolean Equals(TVO other) =>
+                        public bool Equals(TVO other) =>
                             other != null &&
                             ObjFieldEquals(other.ObjField) && 
                             System.Collections.Generic.EqualityComparer<System.Object>.Default.Equals(ObjField1, other.ObjField1);
@@ -116,7 +116,7 @@ namespace RhoMicro.MacroRecords.Tests.Parent
                         }
                         """,
                         """
-                        public System.Boolean Equals(TVO other) =>
+                        public bool Equals(TVO other) =>
                             other != null &&
                             System.Collections.Generic.EqualityComparer<System.Object>.Default.Equals(ObjField, other.ObjField) && 
                             System.Collections.Generic.EqualityComparer<System.Object>.Default.Equals(ObjField1, other.ObjField1);
@@ -137,7 +137,7 @@ namespace RhoMicro.MacroRecords.Tests.Parent
                         }
                         """,
                         """
-                        public System.Boolean Equals(TVO other) =>
+                        public bool Equals(TVO other) =>
                             other != null &&
                             ObjFieldEquals(other.ObjField) && 
                             System.Collections.Generic.EqualityComparer<System.Object>.Default.Equals(ObjField1, other.ObjField1) && 
@@ -158,7 +158,7 @@ namespace RhoMicro.MacroRecords.Tests.Parent
                         }
                         """,
                         """
-                        public System.Boolean Equals(TVO other) =>
+                        public bool Equals(TVO other) =>
                             other != null &&
                             ObjField1Equals(other.ObjField1) && 
                             System.Collections.Generic.EqualityComparer<System.Object>.Default.Equals(ObjField, other.ObjField) && 
@@ -179,11 +179,11 @@ namespace RhoMicro.MacroRecords.Tests.Parent
                         }
                         """,
                         """
-                        public System.Boolean Equals(TVO other) =>
+                        public bool Equals(TVO other) =>
                             other != null &&
-                            ObjField1Equals(other.ObjField2) && 
-                            System.Collections.Generic.EqualityComparer<System.Object>.Default.Equals(ObjField1, other.ObjField1) && 
-                            System.Collections.Generic.EqualityComparer<System.Object>.Default.Equals(ObjField2, other.ObjField2);
+                            ObjField2Equals(other.ObjField2) && 
+                            System.Collections.Generic.EqualityComparer<System.Object>.Default.Equals(ObjField, other.ObjField) && 
+                            System.Collections.Generic.EqualityComparer<System.Object>.Default.Equals(ObjField1, other.ObjField1);
                         """
                     },
                     new Object[]
@@ -200,7 +200,7 @@ namespace RhoMicro.MacroRecords.Tests.Parent
                         }
                         """,
                         """
-                        public System.Boolean Equals(TVO other) =>
+                        public bool Equals(TVO other) =>
                             other != null &&
                             ObjFieldEquals(other.ObjField) && 
                             System.Collections.Generic.EqualityComparer<System.Object>.Default.Equals(ObjField1, other.ObjField1) && 
@@ -221,7 +221,7 @@ namespace RhoMicro.MacroRecords.Tests.Parent
                         }
                         """,
                         """
-                        public System.Boolean Equals(TVO other) =>
+                        public bool Equals(TVO other) =>
                             other != null &&
                             ObjField1Equals(other.ObjField1) && 
                             System.Collections.Generic.EqualityComparer<System.Object>.Default.Equals(ObjField, other.ObjField) && 
@@ -242,11 +242,11 @@ namespace RhoMicro.MacroRecords.Tests.Parent
                         }
                         """,
                         """
-                        public System.Boolean Equals(TVO other) =>
+                        public bool Equals(TVO other) =>
                             other != null &&
-                            ObjField1Equals(other.ObjField2) && 
-                            System.Collections.Generic.EqualityComparer<System.Object>.Default.Equals(ObjField1, other.ObjField1) && 
-                            System.Collections.Generic.EqualityComparer<System.Object>.Default.Equals(ObjField2, other.ObjField2);
+                            ObjField2Equals(other.ObjField2) && 
+                            System.Collections.Generic.EqualityComparer<System.Object>.Default.Equals(ObjField, other.ObjField) && 
+                            System.Collections.Generic.EqualityComparer<System.Object>.Default.Equals(ObjField1, other.ObjField1);
                         """
                     },
                     new Object[]
@@ -262,7 +262,7 @@ namespace RhoMicro.MacroRecords.Tests.Parent
                         }
                         """,
                         """
-                        public System.Boolean Equals(TVO other) =>
+                        public bool Equals(TVO other) =>
                             other != null &&
                             System.Collections.Generic.EqualityComparer<System.Object>.Default.Equals(ObjField, other.ObjField) && 
                             System.Collections.Generic.EqualityComparer<System.Object>.Default.Equals(ObjField1, other.ObjField1) && 
@@ -281,7 +281,7 @@ namespace RhoMicro.MacroRecords.Tests.Parent
             var builder = Util.CreateBuilder(consumer);
 
             //Act
-            var actual = builder.AddParentEqualsMethods().BuildCore();
+            var actual = builder.AddParentIEquatableEqualsMethod().BuildCore();
 
             //Assert
             Assertions.AreEquivalent(expected, actual);
