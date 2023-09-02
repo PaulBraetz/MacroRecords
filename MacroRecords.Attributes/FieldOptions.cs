@@ -41,11 +41,26 @@ namespace RhoMicro.MacroRecords
         SupportsWith = 2,
         /// <summary>
         /// The field will be included in the generated validation mechanisms.
+        /// If at least one field is flagged with <see cref="Validated"/>, a partial
+        /// method <c>Validate</c> must be implemented by the consumer.
         /// </summary>
         Validated = 4,
         /// <summary>
         /// The field name and value will be included in the <see cref="System.Diagnostics.DebuggerDisplayAttribute"/>.
         /// </summary>
-        DebuggerDisplay = 8
+        DebuggerDisplay = 8,
+        /// <summary>
+        /// The field will make use of consumer-defined equality and hashing functions.
+        /// For every field <c>Field</c> of type <c>T</c> flagged with <see cref="CustomEquality"/>, 
+        /// the consumer must implement two methods with the following signatures and return types:
+        /// <para>
+        /// <c><see cref="Boolean"/> FieldEquals(T, T)</c> 
+        /// </para>
+        /// and
+        /// <para>
+        /// <c><see cref="Int32"/> GetHashCodeForField(T)</c> 
+        /// </para>
+        /// </summary>
+        CustomEquality = 16
     }
 }
