@@ -23,6 +23,8 @@ namespace RhoMicro.MacroRecords.Core
             return Append(symbol?.ToDisplayString() ?? String.Empty);
         }
 
+        public SourceBuilder Append(ITypeSymbol symbol) => Append(symbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat));
+        public SourceBuilder Append(Visibility visibility) => Append(Util.GetString(visibility));
         public SourceBuilder Append(String value)
         {
             _builder.Append(value);
