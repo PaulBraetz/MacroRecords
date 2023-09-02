@@ -799,7 +799,7 @@ public static bool operator !=(")
             _builder.Append(
 @"#region Equality & Hashíng
 /// <inheritdoc/>
-public override bool Equals(System.Object obj) => obj is ")
+public override bool Equals(object obj) => obj is ")
                 .Append(_typeSymbol.Name).Append(" instance && Equals(instance);");
 
             return this;
@@ -1032,7 +1032,7 @@ private readonly struct ValidateParameters : IEquatable<ValidateParameters>
             _builder.Append(
 @"#region Equality & Hashing
 /// <inheritdoc/>
-public override bool Equals(System.Object obj)
+public override bool Equals(object obj)
 {
 	return obj is ValidateParameters address && Equals(address);
 }
@@ -1184,12 +1184,12 @@ public static implicit operator IsValidResult(ValidateResult result) =>
 @"#region Equals & Hashing
 /// <summary>
 /// <see cref=""ValidateResult""/> may not be boxed due to being a <see langword=""ref""/> <see langword=""struct""/>. 
-/// Therefore, calling <see cref=""Equals(System.Object)""/> is not supported.
+/// Therefore, calling <see cref=""Equals(object)""/> is not supported.
 /// </summary>
 /// <exception cref=""NotSupportedException""></exception>
-public override bool Equals(System.Object obj)
+public override bool Equals(object obj)
 {
-	throw new NotSupportedException(""").Append(_typeSymbol.Name).Append(@".ValidateResult may not be boxed due to being a ref struct. Therefore, calling Equals(System.Object) is not supported."");
+	throw new NotSupportedException(""").Append(_typeSymbol.Name).Append(@".ValidateResult may not be boxed due to being a ref struct. Therefore, calling Equals(object) is not supported."");
 }
 /// <summary>
 /// <see cref=""ValidateResult""/> does not support calling <see cref=""GetHashCode""/>.
@@ -1443,7 +1443,7 @@ public static bool operator !=(IsValidResult left, IsValidResult right)
 
             _builder.Append(
 @"/// <inheritdoc/>
-public override bool Equals(System.Object obj)
+public override bool Equals(object obj)
 {
 	return obj is IsValidResult result && Equals(result);
 }
