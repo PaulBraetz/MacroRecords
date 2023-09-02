@@ -52,10 +52,6 @@ namespace RhoMicro.MacroRecords
         /// Gets a value indicating whether the <see cref="FieldOptions.DebuggerDisplay"/> flag is set on <see cref="Options"/>.
         /// </summary>
         public Boolean IncludedInDebuggerDisplay => Options.HasFlag(FieldOptions.DebuggerDisplay);
-        /// <summary>
-        /// Gets a value indicating whether the <see cref="FieldOptions.CustomEquality"/> flag is set on <see cref="Options"/>.
-        /// </summary>
-        public Boolean HasCustomEquality => Options.HasFlag(FieldOptions.CustomEquality);
 
         /// <summary>
         /// This method is not intended for use outside of the generator.

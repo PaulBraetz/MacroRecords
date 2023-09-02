@@ -48,21 +48,6 @@ namespace RhoMicro.MacroRecords
         /// <summary>
         /// The field name and value will be included in the <see cref="System.Diagnostics.DebuggerDisplayAttribute"/>.
         /// </summary>
-        DebuggerDisplay = 8,
-        /// <summary>
-        /// The field will make use of consumer-defined equality and hashing functions.
-        /// For every field <c>Field</c> of type <c>T</c> flagged with <see cref="CustomEquality"/>, 
-        /// the consumer must implement two methods with the following signatures and return types:
-        /// <para>
-        /// <c><see cref="Boolean"/> FieldEquals(T)</c> 
-        /// </para>
-        /// and
-        /// <para>
-        /// <c><see cref="Int32"/> GetHashCodeForField()</c> 
-        /// </para>
-        /// <c>FieldEquals(T)</c> will be called when comparing one instances <c>Field</c> to another ones.
-        /// <c>GetHashCodeForField</c> will called when calculating an instances hash code.
-        /// </summary>
-        CustomEquality = 16
+        DebuggerDisplay = 8
     }
 }
