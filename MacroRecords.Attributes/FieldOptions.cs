@@ -54,12 +54,14 @@ namespace RhoMicro.MacroRecords
         /// For every field <c>Field</c> of type <c>T</c> flagged with <see cref="CustomEquality"/>, 
         /// the consumer must implement two methods with the following signatures and return types:
         /// <para>
-        /// <c><see cref="Boolean"/> FieldEquals(T, T)</c> 
+        /// <c><see cref="Boolean"/> FieldEquals(T)</c> 
         /// </para>
         /// and
         /// <para>
-        /// <c><see cref="Int32"/> GetHashCodeForField(T)</c> 
+        /// <c><see cref="Int32"/> GetHashCodeForField()</c> 
         /// </para>
+        /// <c>FieldEquals(T)</c> will be called when comparing one instances <c>Field</c> to another ones.
+        /// <c>GetHashCodeForField</c> will called when calculating an instances hash code.
         /// </summary>
         CustomEquality = 16
     }
