@@ -4,8 +4,6 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 using RhoMicro.MacroRecords.Core;
 
-using System;
-
 namespace RhoMicro.MacroRecords.Tests
 {
     internal static class Util
@@ -13,7 +11,7 @@ namespace RhoMicro.MacroRecords.Tests
         public static MacroRecordSourceBuilder CreateBuilder(String source)
         {
             var parseOptions = new CSharpParseOptions(
-                LanguageVersion.CSharp7_3, 
+                LanguageVersion.Latest, 
                 DocumentationMode.Parse,
                 SourceCodeKind.Regular);
 
