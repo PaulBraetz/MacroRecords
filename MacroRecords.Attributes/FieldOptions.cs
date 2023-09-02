@@ -41,6 +41,8 @@ namespace RhoMicro.MacroRecords
         SupportsWith = 2,
         /// <summary>
         /// The field will be included in the generated validation mechanisms.
+        /// If at least one field is flagged with <see cref="Validated"/>, a partial
+        /// method <c>Validate</c> must be implemented by the consumer.
         /// </summary>
         Validated = 4,
         /// <summary>

@@ -16,11 +16,7 @@ namespace RhoMicro.MacroRecords
         /// <summary>
         /// Gets or sets additional options for the generated record.
         /// </summary>
-        public RecordOptions Options { get; set; } =
-            RecordOptions.DebuggerDisplay |
-            RecordOptions.Constructor |
-            RecordOptions.EmptyMember |
-            RecordOptions.ExplicitConversion;
+        public RecordOptions Options { get; set; } = RecordOptions.Default;
 
         /// <summary>
         /// Gets a value indicating whether the <see cref="RecordOptions.DebuggerDisplay"/> flag is set on <see cref="Options"/>.
@@ -42,5 +38,9 @@ namespace RhoMicro.MacroRecords
         /// Gets a value indicating whether the <see cref="RecordOptions.ImplicitConversion"/> flag is set on <see cref="Options"/>.
         /// </summary>
         public Boolean GenerateImplicitConversion => Options.HasFlag(RecordOptions.ImplicitConversion);
+        /// <summary>
+        /// Gets a value indicating whether the <see cref="RecordOptions.CustomEquality"/> flag is set on <see cref="Options"/>.
+        /// </summary>
+        public Boolean HasCustomEquality => Options.HasFlag(RecordOptions.CustomEquality);
     }
 }

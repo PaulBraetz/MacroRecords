@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using RhoMicro.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using System.Text;
 
 namespace RhoMicro.MacroRecords.Core
 {
@@ -177,7 +176,6 @@ namespace RhoMicro.MacroRecords.Core
         public String BuildCore() => _builder.ToString();
         #endregion
         #region Add Methods
-
         #region Parent Type
         public MacroRecordSourceBuilder AddParentType()
         {
@@ -196,15 +194,12 @@ namespace RhoMicro.MacroRecords.Core
         }
         public MacroRecordSourceBuilder AddNestedTypes()
         {
-            if(_validatedFieldInstructions.Count == 0)
-            {
-                return this;
-            }
-
             _builder.AppendLine("#region Nested Types");
             AddValidateResultType();
             AddValidateParametersType();
             AddIsValidResultType();
+            AddCustomEqualitiesType();
+            AddCustomHashCodesType();
             _builder.AppendLine("#endregion");
 
             return this;
@@ -237,6 +232,7 @@ namespace RhoMicro.MacroRecords.Core
                 {
                     _builder.Append(classOrStruct);
                 }
+
                 _builder.Append(' ').Append(parent.Name).AppendLine('{');
 
                 parent = parent.ContainingType;
@@ -274,7 +270,7 @@ namespace RhoMicro.MacroRecords.Core
                 .Append(_structOrClass)
                 .Append(' ')
                 .Append(_typeSymbol.Name)
-                .Append(" : IEquatable<")
+                .Append(" : global::System.IEquatable<")
                 .Append(_typeSymbol.Name)
                 .Append('>');
 
@@ -287,7 +283,7 @@ namespace RhoMicro.MacroRecords.Core
                 return this;
             }
 
-            _builder.Append("[System.Diagnostics.DebuggerDisplayAttribute(\"")
+            _builder.Append("[global::System.Diagnostics.DebuggerDisplayAttribute(\"")
                 .Append(_typeSymbol.Name);
 
             var includedFields = _fieldInstructions
@@ -334,7 +330,7 @@ namespace RhoMicro.MacroRecords.Core
                     b.Append("/// <param name=\"").Append(f.InParamName).AppendLine("\">")
                         .Append("/// The value to assign to <see cref=\"").Append(f.Attribute.Name).AppendLine("\"/>.")
                         .AppendLine("/// </param>"))
-                .Append(Util.GetString(_attribute.ConstructorVisibility))
+                .Append(_attribute.ConstructorVisibility)
                 .Append(' ')
                 .Append(_typeSymbol.Name)
                 .Append('(')
@@ -359,7 +355,7 @@ namespace RhoMicro.MacroRecords.Core
                 b.AppendLine("/// <summary>")
                 .Append("/// ").AppendLine(f.Attribute.Summary)
                 .AppendLine("/// </summary>")
-                .Append(Util.GetString(f.Attribute.Visibility))
+                .Append(f.Attribute.Visibility)
                 .Append(" readonly ")
                 .Append(f.Attribute.GetTypeSymbol())
                 .Append(' ')
@@ -479,7 +475,7 @@ namespace RhoMicro.MacroRecords.Core
                 .AppendLine("/// </summary>")
                 .AppendLine("/// <param name=\"parameters\">The parameters to validate.</param>")
                 .AppendLine("/// <param name=\"result\">The validation result to communicate validation with.</param>")
-                .Append("static partial void Validate(ValidateParameters parameters, ref ValidateResult result);");
+                .Append("static partial void Validate(in ValidateParameters parameters, ref ValidateResult result);");
 
             return this;
         }
@@ -584,9 +580,9 @@ return validateResult;
                 .AppendLine()
                 .AppendLine("/// <returns>")
                 .Append("/// A new instance of <see cref=\"").Append(_typeSymbol.Name).AppendLine("\"/> if one could be constructed")
-                .AppendLine("/// using the parameters passed; otherwise, an <see cref = \"System.ArgumentException\"/> will be thrown.")
+                .AppendLine("/// using the parameters passed; otherwise, an <see cref = \"global::System.ArgumentException\"/> will be thrown.")
                 .AppendLine("/// </returns>")
-                .AppendLine("/// <exception cref=\"System.ArgumentException\">")
+                .AppendLine("/// <exception cref=\"global::System.ArgumentException\">")
                 .AppendLine("/// Thrown if the parameters passed are not valid for construction.")
                 .AppendLine("/// </exception>")
                 .Append("public static ").Append(_typeSymbol.Name).Append(" Create(")
@@ -619,7 +615,7 @@ string paramName = null;")
                 .Append('{')
                 .Append("reason = $\" Reason: {reasonMessage}\";")
                 .Append('}')
-                .Append("throw new ArgumentException($\"The {paramName} provided for creating an instance of ")
+                .Append("throw new global::System.ArgumentException($\"The {paramName} provided for creating an instance of ")
                 .Append(_typeSymbol.Name).Append(" was not valid.{reason}\", paramName);")
                 .Append('}');
             }
@@ -725,7 +721,7 @@ string paramName = null;")
                 .Append(f.InParamName)
                 .AppendLine("\"/>.")
                 .AppendLine("/// </returns>")
-                .Append(Util.GetString(f.Attribute.Visibility)).Append(' ')
+                .Append(f.Attribute.Visibility).Append(' ')
                 .Append(_typeSymbol.Name).Append(" With").Append(f.Attribute.Name).Append('(')
                 .Append(f.Attribute.GetTypeSymbol()).Append(' ').Append(f.InParamName).Append(") =>")
                 .Append("Create(")
@@ -746,28 +742,27 @@ string paramName = null;")
 
             return result;
         }
-        public MacroRecordSourceBuilder AddParentInequalityOperator()
-        {
-            _builder.AppendLine("/// <summary>")
-                .Append("/// Indicates whether two instances of <see cref=\"")
-                .Append(_typeSymbol.Name).AppendLine("\"/> are <em>not</em> equal.")
-                .Append(
-@"/// </summary>
-/// <param name=""left"">The left operand.</param>
-/// <param name=""left"">The right operand.</param>
-/// <returns>
-/// <see langword=""true""/> if <paramref name=""left""/> and <paramref name=""right""/> are
-/// <em>not</em> equal; otherwise, <see langword=""false""/>.
-/// </returns>
-public static bool operator !=(")
-                .Append(_typeSymbol.Name).Append(" left, ")
-                .Append(_typeSymbol.Name).AppendLine(" right) => !(left == right);")
-                .AppendLine("#endregion");
-
-            return this;
-        }
+        #region Hashing
         public MacroRecordSourceBuilder AddParentGetHashCodeMethod()
         {
+            //better debuggability
+#pragma warning disable IDE0046 // Convert to conditional expression
+            if(_attribute.HasCustomEquality && _fieldInstructions.Count > 0)
+            {
+                return AddParentCustomGetHashCodeMethod();
+            } else
+            {
+                return AddParentDefaultGetHashCodeMethod();
+            }
+#pragma warning restore IDE0046 // Convert to conditional expression
+        }
+        public MacroRecordSourceBuilder AddParentDefaultGetHashCodeMethod()
+        {
+            if(_attribute.HasCustomEquality && _fieldInstructions.Count > 0)
+            {
+                return this;
+            }
+
             _builder.AppendLine("/// <inheritdoc/>")
                 .Append("public override int GetHashCode() =>");
 
@@ -780,7 +775,7 @@ public static bool operator !=(")
             if(_fieldInstructions.Count == 1)
             {
                 var field = _fieldInstructions[0];
-                _builder.Append("System.Collections.Generic.EqualityComparer<")
+                _builder.Append("global::System.Collections.Generic.EqualityComparer<")
                     .Append(field.Attribute.GetTypeSymbol())
                     .Append(">.Default.GetHashCode(")
                     .Append(field.Attribute.Name)
@@ -795,15 +790,115 @@ public static bool operator !=(")
 
             return this;
         }
-        public MacroRecordSourceBuilder AddParentEqualsMethods()
+        public MacroRecordSourceBuilder AddParentCustomGetHashCodeMethod()
         {
+            if(!_attribute.HasCustomEquality || _fieldInstructions.Count == 0)
+            {
+                return this;
+            }
 
             _builder.Append(
-@"#region Equality & Hashíng
-/// <inheritdoc/>
-public override bool Equals(System.Object obj) => obj is ")
-                .Append(_typeSymbol.Name).Append(" instance && Equals(instance);")
-                .AppendLine("/// <inheritdoc/>")
+@"/// <summary>
+/// Calculates custom hash codes for any field of a <see cref=""").Append(_typeSymbol.Name).Append(@"""/> instance.
+/// </summary>
+/// <param name=""obj"">The instance whose fields' hash codes to calculate.</param>
+/// <param name=""hashCodes"">The calculated custom hashcodes.</param>
+static partial void GetCustomHashCodes(in ").Append(_typeSymbol.Name).Append(@" obj, ref CustomHashCodes hashCodes);
+/// <inheritdoc />
+public override int GetHashCode()
+{
+    var instance = this;
+    var hashCodes = new CustomHashCodes();
+    GetCustomHashCodes(in instance, ref hashCodes);
+    var result = ");
+            if(_fieldInstructions.Count > 1)
+            {
+                _builder.AppendLine('(');
+            } else
+            {
+                _builder.AppendLine();
+            }
+
+            _builder.ForEach(_fieldInstructions, ',' + Environment.NewLine, (b, f) =>
+                b.Append("hashCodes.").Append(f.Attribute.Name).Append("HashCode").AppendLine(" ?? ")
+                    .Append("global::System.Collections.Generic.EqualityComparer<").Append(f.Attribute.GetTypeSymbol())
+                    .Append(">.Default.GetHashCode(instance.").Append(f.Attribute.Name).Append(")"));
+
+            if(_fieldInstructions.Count > 1)
+            {
+                _builder.AppendLine(')').Append(".GetHashCode()");
+            }
+
+            _builder.Append("; return result;}");
+
+            return this;
+        }
+        #endregion
+        #region Equality
+        public MacroRecordSourceBuilder AddParentIEquatableEqualsMethod()
+        {
+            //better debuggability
+#pragma warning disable IDE0046 // Convert to conditional expression
+            if(_attribute.HasCustomEquality && _fieldInstructions.Count > 0)
+            {
+                return AddParentCustomIEquatableEqualsMethod();
+            } else
+            {
+                return AddParentDefaultIEquatableEqualsMethod();
+            }
+#pragma warning restore IDE0046 // Convert to conditional expression
+        }
+        public MacroRecordSourceBuilder AddParentCustomIEquatableEqualsMethod()
+        {
+            if(!_attribute.HasCustomEquality || _fieldInstructions.Count == 0)
+            {
+                return this;
+            }
+
+            _builder.AppendLine("/// <summary>")
+                .Append("/// Evaluates custom equality for any field of two <see cref=\"")
+                .Append(_typeSymbol.Name).AppendLine("\"/> instances.")
+                .AppendLine("/// </summary>")
+                .Append(
+@"/// <param name=""a"">The instance to compare against <paramref name=""b""/>.</param>
+/// <param name=""b"">The instance to compare against <paramref name=""a""/>.</param>
+/// <param name=""equalities"">
+/// A mutable container for information on custom field equalities between 
+/// <paramref name=""a""/> and <paramref name=""b""/>.
+/// </param>
+static partial void GetCustomEqualities(in ")
+                .Append(_typeSymbol.Name).Append(" a, in ").Append(_typeSymbol.Name)
+                .Append(
+@" b, ref CustomEqualities equalities);
+        /// <inheritdoc/>
+        public bool Equals(").Append(_typeSymbol.Name).Append(
+@" other)
+    {
+        var self = this;
+        var equalities = new CustomEqualities();
+        GetCustomEqualities(in self, in other, ref equalities);
+        var result = ")
+                .ForEach(_fieldInstructions, " &&" + Environment.NewLine, (b, f) =>
+                    b.Append("(equalities.").Append(f.Attribute.Name)
+                    .Append("IsEqual ?? global::System.Collections.Generic.EqualityComparer<")
+                    .Append(f.Attribute.GetTypeSymbol()).Append(">.Default.Equals(self.")
+                    .Append(f.Attribute.Name).Append(", other.").Append(f.Attribute.Name).Append("))"))
+                .Append(
+@";
+
+        return result;
+    }");
+
+            return this;
+        }
+        public MacroRecordSourceBuilder AddParentDefaultIEquatableEqualsMethod()
+        {
+            if(_attribute.HasCustomEquality && _fieldInstructions.Count > 0)
+            {
+                return this;
+            }
+
+            _builder.AppendLine("/// <inheritdoc/>")
                 .Append("public bool Equals(").Append(_typeSymbol.Name).Append(" other) =>");
 
             if(_fieldInstructions.Count == 0)
@@ -817,28 +912,36 @@ public override bool Equals(System.Object obj) => obj is ")
                 _builder.Append("other != null && ");
             }
 
-            if(_fieldInstructions.Count == 1)
-            {
-                var field = _fieldInstructions[0];
-                _builder.Append("System.Collections.Generic.EqualityComparer<")
-                    .Append(field.Attribute.GetTypeSymbol())
+            _builder.ForEach(_fieldInstructions, " &&" + Environment.NewLine, (b, f) =>
+                b.Append("global::System.Collections.Generic.EqualityComparer<")
+                    .Append(f.Attribute.GetTypeSymbol())
                     .Append(">.Default.Equals(")
-                    .Append(field.Attribute.Name)
-                    .Append(", other.").Append(field.Attribute.Name)
-                    .Append(");");
-            } else
-            {
-                _builder.Append('(')
-                    .ForEach(_fieldInstructions, ", ", (b, f) =>
-                        b.Append(f.Attribute.Name))
-                    .Append(").Equals((")
-                    .ForEach(_fieldInstructions, ", ", (b, f) =>
-                        b.Append("other.").Append(f.Attribute.Name))
-                    .Append("));");
-            }
+                    .Append(f.Attribute.Name)
+                    .Append(", other.").Append(f.Attribute.Name)
+                    .Append(")"))
+                .Append(';');
 
             return this;
         }
+        public MacroRecordSourceBuilder AddParentEqualsMethods()
+        {
+            AddParentObjectEqualsMethod();
+            AddParentIEquatableEqualsMethod();
+
+            return this;
+        }
+        public MacroRecordSourceBuilder AddParentObjectEqualsMethod()
+        {
+            _builder.Append(
+@"#region Equality & Hashíng
+/// <inheritdoc/>
+public override bool Equals(object obj) => obj is ")
+                .Append(_typeSymbol.Name).Append(" instance && Equals(instance);");
+
+            return this;
+        }
+        #endregion
+        #region Operators
         public MacroRecordSourceBuilder AddParentEqualityOperator()
         {
             _builder.AppendLine("/// <summary>")
@@ -848,7 +951,7 @@ public override bool Equals(System.Object obj) => obj is ")
             var isStruct = _structOrClass == "struct";
             if(isStruct)
             {
-                _builder.Append(
+                _builder.AppendLine(
 @"/// <para>
 /// <paramref name=""left""/> and <paramref name=""right"" /> are considered equal if 
 /// <c><paramref name=""left""/>.Equals(<paramref name=""right"" />)</c> evaluates to <see langword=""true"" />.
@@ -874,7 +977,7 @@ public override bool Equals(System.Object obj) => obj is ")
             _builder.Append(
 @"/// </summary>
 /// <param name=""left"">The left operand.</param>
-/// <param name=""left"">The right operand.</param>
+/// <param name=""right"">The right operand.</param>
 /// <returns>
 /// <see langword=""true""/> if <paramref name=""left""/> and <paramref name=""right""/> are
 /// equal; otherwise, <see langword=""false""/>.
@@ -893,6 +996,27 @@ public static bool operator ==(")
 
             return this;
         }
+        public MacroRecordSourceBuilder AddParentInequalityOperator()
+        {
+            _builder.AppendLine("/// <summary>")
+                .Append("/// Indicates whether two instances of <see cref=\"")
+                .Append(_typeSymbol.Name).AppendLine("\"/> are <em>not</em> equal.")
+                .Append(
+@"/// </summary>
+/// <param name=""left"">The left operand.</param>
+/// <param name=""right"">The right operand.</param>
+/// <returns>
+/// <see langword=""true""/> if <paramref name=""left""/> and <paramref name=""right""/> are
+/// <em>not</em> equal; otherwise, <see langword=""false""/>.
+/// </returns>
+public static bool operator !=(")
+                .Append(_typeSymbol.Name).Append(" left, ")
+                .Append(_typeSymbol.Name).AppendLine(" right) => !(left == right);")
+                .AppendLine("#endregion");
+
+            return this;
+        }
+        #endregion
         #endregion
         #endregion
         #region ValidateParameters Type
@@ -907,7 +1031,7 @@ public static bool operator ==(")
 @"/// <summary>
 /// Wrapper type around possible construction parameters; used for validation.
 /// </summary>
-private readonly struct ValidateParameters : IEquatable<ValidateParameters>
+private readonly struct ValidateParameters : global::System.IEquatable<ValidateParameters>
 {");
 
             AddValidateParametersConstructorsAndFields();
@@ -1007,7 +1131,7 @@ private readonly struct ValidateParameters : IEquatable<ValidateParameters>
             _builder.Append(
 @"#region Equality & Hashing
 /// <inheritdoc/>
-public override bool Equals(System.Object obj)
+public override bool Equals(object obj)
 {
 	return obj is ValidateParameters address && Equals(address);
 }
@@ -1096,7 +1220,7 @@ private ref struct ValidateResult
                     .Append("public bool ").Append(f.Attribute.Name).AppendLine("IsInvalid;")
                     .Append(
 @"/// <summary>
-/// Contains the error message to include in instances of <see cref=""System.ArgumentException""/> thrown 
+/// Contains the error message to include in instances of <see cref=""global::System.ArgumentException""/> thrown 
 /// by <see cref=""Create(")
                     .ForEach(_validatedFieldInstructions, ", ", (b_1, f_1) =>
                         b_1.Append(f_1.Attribute.GetTypeSymbol()))
@@ -1159,20 +1283,20 @@ public static implicit operator IsValidResult(ValidateResult result) =>
 @"#region Equals & Hashing
 /// <summary>
 /// <see cref=""ValidateResult""/> may not be boxed due to being a <see langword=""ref""/> <see langword=""struct""/>. 
-/// Therefore, calling <see cref=""Equals(System.Object)""/> is not supported.
+/// Therefore, calling <see cref=""Equals(object)""/> is not supported.
 /// </summary>
-/// <exception cref=""NotSupportedException""></exception>
-public override bool Equals(System.Object obj)
+/// <exception cref=""global::System.NotSupportedException""></exception>
+public override bool Equals(object obj)
 {
-	throw new NotSupportedException(""").Append(_typeSymbol.Name).Append(@".ValidateResult may not be boxed due to being a ref struct. Therefore, calling Equals(System.Object) is not supported."");
+	throw new global::System.NotSupportedException(""").Append(_typeSymbol.Name).Append(@".ValidateResult may not be boxed due to being a ref struct. Therefore, calling Equals(object) is not supported."");
 }
 /// <summary>
 /// <see cref=""ValidateResult""/> does not support calling <see cref=""GetHashCode""/>.
 /// </summary>
-/// <exception cref=""NotSupportedException""></exception>
+/// <exception cref=""global::System.NotSupportedException""></exception>
 public override int GetHashCode()
 {
-	throw new NotSupportedException();
+	throw new global::System.NotSupportedException();
 }
 #endregion
 ");
@@ -1192,7 +1316,7 @@ public override int GetHashCode()
 @"/// <summary>
 /// Contains validation results for construction parameters.
 /// </summary>
-public readonly struct IsValidResult : IEquatable<IsValidResult>
+public readonly struct IsValidResult : global::System.IEquatable<IsValidResult>
 {");
             AddIsValidResultConstructorAndFields();
             AddIsValidResultConversionAndDeconstruction();
@@ -1309,7 +1433,7 @@ public readonly string ").Append(f.Attribute.Name).AppendLine("Error;"));
             _builder.Append(@"
 /// </summary>
 /// <param name=""result"" > The instance to implicitly convert.</ param >
-public static implicit operator System.Boolean(IsValidResult result) =>
+public static implicit operator global::System.Boolean(IsValidResult result) =>
 ");
 
             if(_validatedFieldInstructions.Count == 0)
@@ -1418,7 +1542,7 @@ public static bool operator !=(IsValidResult left, IsValidResult right)
 
             _builder.Append(
 @"/// <inheritdoc/>
-public override bool Equals(System.Object obj)
+public override bool Equals(object obj)
 {
 	return obj is IsValidResult result && Equals(result);
 }
@@ -1455,6 +1579,103 @@ public override int GetHashCode() =>
             return this;
         }
         #endregion
+        #endregion
+        #region CustomEqualities Type
+        public MacroRecordSourceBuilder AddCustomEqualitiesType()
+        {
+            if(!_attribute.HasCustomEquality || _fieldInstructions.Count == 0)
+            {
+                return this;
+            }
+
+            _builder.Append(
+@"/// <summary>
+/// Makes available to consumers the ability to provide custom equality implementations
+/// for each field of a <see cref=""").Append(_typeSymbol.Name).Append(@"""/> instance.
+/// </summary>
+private ref struct CustomEqualities
+        {
+            #region Fields
+            ").ForEach(_fieldInstructions, (b, f) =>
+                b.AppendLine("/// <summary>")
+                .Append("/// The equality of the <see cref=\"").Append(f.Attribute.Name).AppendLine("\"/> fields provided, or <see langword=\"null\"/>")
+                .AppendLine("/// if the default equality mechanism should be used.")
+                .AppendLine("/// </summary>")
+                .Append("public global::System.Nullable<global::System.Boolean> ").Append(f.Attribute.Name).Append("IsEqual;"))
+            .Append(@"
+        #endregion
+        #region Equality & Hashing
+        /// <summary>
+        /// <see cref = ""CustomEqualities""/> may not be boxed due to being a <see langword=""ref""/> <see langword=""struct""/>. 
+        /// Therefore, calling <see cref = ""Equals(object)""/> is not supported.
+        /// </summary>
+        /// <exception cref = ""global::System.NotSupportedException""></exception>
+        public override bool Equals(object obj)
+        {
+            throw new global::System.NotSupportedException(""").Append(_typeSymbol.Name).Append(@".CustomEqualities may not be boxed due to being a ref struct. Therefore, calling Equals(object) is not supported."");
+        }
+        /// <summary>
+        /// <see cref = ""CustomEqualities""/> does not support calling <see cref = ""GetHashCode""/>.
+        /// </summary>
+        /// <exception cref = ""global::System.NotSupportedException""></exception>
+        public override int GetHashCode()
+        {
+            throw new global::System.NotSupportedException();
+        }
+        #endregion
+    }");
+
+            return this;
+        }
+        #endregion
+        #region CustomHashCodes Type
+        public MacroRecordSourceBuilder AddCustomHashCodesType()
+        {
+            if(!_attribute.HasCustomEquality || _fieldInstructions.Count == 0)
+            {
+                return this;
+            }
+
+            _builder.Append(
+    @"/// <summary>
+/// Makes available to consumers the ability to provide custom hash code implementations
+/// for each field of a <see cref=""").Append(_typeSymbol.Name).Append(@"""/> instance.
+/// </summary>
+private ref struct CustomHashCodes
+        {
+            #region Fields
+            ").ForEach(_fieldInstructions, (b, f) =>
+                b.AppendLine("/// <summary>")
+                .Append("/// The hashcode calculated for the <see cref=\"").Append(f.Attribute.Name).AppendLine("\"/> field provided, or <see langword=\"null\"/>")
+                .AppendLine("/// if the default hashing mechanism should be used.")
+                .AppendLine("/// </summary>")
+                .Append("public global::System.Nullable<global::System.Int32> ").Append(f.Attribute.Name).Append("HashCode;"))
+            .Append(@"
+        #endregion
+        #region Equality & Hashing
+        /// <summary>
+        /// <see cref = ""CustomHashCodes""/> may not be boxed due to being a <see langword=""ref""/> <see langword=""struct""/>. 
+        /// Therefore, calling <see cref = ""Equals(object)""/> is not supported.
+        /// </summary>
+        /// <exception cref = ""global::System.NotSupportedException""></exception>
+        public override bool Equals(object obj)
+        {
+            throw new global::System.NotSupportedException(""").Append(_typeSymbol.Name).Append(@".CustomHashCodes may not be boxed due to being a ref struct. Therefore, calling Equals(object) is not supported."");
+        }
+    /// <summary>
+    /// <see cref = ""CustomHashCodes""/> does not support calling <see cref = ""GetHashCode""/>.
+    /// </summary>
+    /// <exception cref = ""global::System.NotSupportedException""></exception>
+    public override int GetHashCode()
+    {
+        throw new global::System.NotSupportedException();
+    }
+    #endregion
+}
+");
+
+            return this;
+        }
         #endregion
         #endregion
     }

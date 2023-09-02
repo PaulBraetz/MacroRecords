@@ -8,7 +8,6 @@ namespace RhoMicro.MacroRecords.Core
 {
     internal static class Util
     {
-
         public static readonly IAttributeFactory<FieldAttribute> FieldAttributeFactory = AttributeFactory<FieldAttribute>.Create();
         public static readonly IAttributeFactory<MacroRecordAttribute> MacroRecordAttributeFactory = AttributeFactory<MacroRecordAttribute>.Create();
 
