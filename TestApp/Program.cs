@@ -1,13 +1,8 @@
-﻿using TestNamespace;
+﻿using System;
 
-[MacroRecord]
-[Field(typeof(ITestInterface), "Field")]
-readonly partial struct MyClass { }
-
-namespace TestNamespace
+internal class Program
 {
-    interface ITestInterface
+    private static void Main(string[] args)
     {
-        public String Value { get; set; }
     }
 }
