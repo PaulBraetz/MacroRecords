@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -123,6 +125,37 @@ namespace RhoMicro.MacroRecords.Tests.Parent
                         """
                         public readonly System.Object ObjectField;
                         public readonly System.String StringField;
+                        """
+                    },
+                    new Object[]
+                    {
+                        """
+                        using RhoMicro.MacroRecords;
+                        [MacroRecord,
+                        Field(typeof(int), "Field"),
+                        Field(typeof(object), "Field"),
+                        Field(typeof(string), "Field")]
+                        partial class TVO
+                        {
+                        }
+                        """,
+                        """
+                        public readonly System.Int32 Field;
+                        """
+                    },
+                    new Object[]
+                    {
+                        """
+                        using RhoMicro.MacroRecords;
+                        [MacroRecord,
+                        Field(typeof(object), "Field"),
+                        Field(typeof(string), "Field")]
+                        partial class TVO
+                        {
+                        }
+                        """,
+                        """
+                        public readonly System.Object Field;
                         """
                     }
                 };
