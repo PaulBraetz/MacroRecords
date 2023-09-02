@@ -11,6 +11,24 @@ namespace RhoMicro.MacroRecords.Core
 {
     internal sealed class MacroRecordSourceBuilder
     {
+        #region Nested Types
+        private sealed class FieldAttributeNameEqualityComparer : IEqualityComparer<FieldAttribute>
+        {
+            private FieldAttributeNameEqualityComparer() { }
+            public static readonly IEqualityComparer<FieldAttribute> Instance = new FieldAttributeNameEqualityComparer();
+            public Boolean Equals(FieldAttribute x, FieldAttribute y) =>
+                x == null ?
+                y == null :
+                y == null ?
+                x == null :
+                EqualityComparer<String>.Default.Equals(x.Name, y.Name);
+
+            public Int32 GetHashCode(FieldAttribute obj) =>
+                obj == null ?
+                throw new ArgumentNullException(nameof(obj)) :
+                EqualityComparer<String>.Default.GetHashCode(obj.Name);
+        }
+        #endregion
         #region Constructor
         private MacroRecordSourceBuilder(
             String visibility,
@@ -80,6 +98,7 @@ namespace RhoMicro.MacroRecords.Core
             var (structOrClass, defaultOrNull) = GetStructOrClass(declaration);
             var generateToString = GetGenerateToString(declaration);
             var fieldInstructions = fields
+                .Distinct(FieldAttributeNameEqualityComparer.Instance)
                 .Select(f => (success: FieldInstructions.TryCreate(f, out var instruction), instruction))
                 .Where(t => t.success)
                 .Select(t => t.instruction)
@@ -157,6 +176,8 @@ namespace RhoMicro.MacroRecords.Core
         }
         public String BuildCore() => _builder.ToString();
         #endregion
+        #region Add Methods
+
         #region Parent Type
         public MacroRecordSourceBuilder AddParentType()
         {
@@ -1433,6 +1454,7 @@ public override int GetHashCode() =>
 
             return this;
         }
+        #endregion
         #endregion
         #endregion
     }
