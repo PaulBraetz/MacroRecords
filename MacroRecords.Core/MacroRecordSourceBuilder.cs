@@ -918,7 +918,8 @@ static partial void GetCustomEqualities(in ")
                     .Append(">.Default.Equals(")
                     .Append(f.Attribute.Name)
                     .Append(", other.").Append(f.Attribute.Name)
-                    .Append(");"));
+                    .Append(")"))
+                .Append(';');
 
             return this;
         }
@@ -950,7 +951,7 @@ public override bool Equals(object obj) => obj is ")
             var isStruct = _structOrClass == "struct";
             if(isStruct)
             {
-                _builder.Append(
+                _builder.AppendLine(
 @"/// <para>
 /// <paramref name=""left""/> and <paramref name=""right"" /> are considered equal if 
 /// <c><paramref name=""left""/>.Equals(<paramref name=""right"" />)</c> evaluates to <see langword=""true"" />.
@@ -976,7 +977,7 @@ public override bool Equals(object obj) => obj is ")
             _builder.Append(
 @"/// </summary>
 /// <param name=""left"">The left operand.</param>
-/// <param name=""left"">The right operand.</param>
+/// <param name=""right"">The right operand.</param>
 /// <returns>
 /// <see langword=""true""/> if <paramref name=""left""/> and <paramref name=""right""/> are
 /// equal; otherwise, <see langword=""false""/>.
@@ -1003,7 +1004,7 @@ public static bool operator ==(")
                 .Append(
 @"/// </summary>
 /// <param name=""left"">The left operand.</param>
-/// <param name=""left"">The right operand.</param>
+/// <param name=""right"">The right operand.</param>
 /// <returns>
 /// <see langword=""true""/> if <paramref name=""left""/> and <paramref name=""right""/> are
 /// <em>not</em> equal; otherwise, <see langword=""false""/>.
