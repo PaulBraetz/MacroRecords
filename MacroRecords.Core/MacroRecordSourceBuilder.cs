@@ -799,11 +799,11 @@ string paramName = null;")
 
             _builder.Append(
 @"/// <summary>
-/// Calculates custom hash codes for any field of a <see cref=""TVO""/> instance.
+/// Calculates custom hash codes for any field of a <see cref=""").Append(_typeSymbol.Name).Append(@"""/> instance.
 /// </summary>
 /// <param name=""obj"">The instance whose fields' hash codes to calculate.</param>
 /// <param name=""hashCodes"">The calculated custom hashcodes.</param>
-static partial void GetCustomHashCodes(in TVO obj, ref CustomHashCodes hashCodes);
+static partial void GetCustomHashCodes(in ").Append(_typeSymbol.Name).Append(@" obj, ref CustomHashCodes hashCodes);
 /// <inheritdoc />
 public override int GetHashCode()
 {
