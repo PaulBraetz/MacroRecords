@@ -820,25 +820,40 @@ public override bool Equals(System.Object obj) => obj is ")
                 _builder.Append("other != null && ");
             }
 
-            if(_fieldInstructions.Count == 1)
+            var customEqualityFields = new List<FieldInstructions>();
+            var generatedEqualityFields = new List<FieldInstructions>();
+
+            foreach(var instruction in _fieldInstructions)
             {
-                var field = _fieldInstructions[0];
-                _builder.Append("System.Collections.Generic.EqualityComparer<")
-                    .Append(field.Attribute.GetTypeSymbol())
-                    .Append(">.Default.Equals(")
-                    .Append(field.Attribute.Name)
-                    .Append(", other.").Append(field.Attribute.Name)
-                    .Append(");");
-            } else
-            {
-                _builder.Append('(')
-                    .ForEach(_fieldInstructions, ", ", (b, f) =>
-                        b.Append(f.Attribute.Name))
-                    .Append(").Equals((")
-                    .ForEach(_fieldInstructions, ", ", (b, f) =>
-                        b.Append("other.").Append(f.Attribute.Name))
-                    .Append("));");
+                if(instruction.Attribute.HasCustomEquality)
+                {
+                    customEqualityFields.Add(instruction);
+                } else
+                {
+                    generatedEqualityFields.Add(instruction);
+                }
             }
+
+            _builder.ForEach(customEqualityFields, " && ", (b, f) =>
+                b.Append(f.Attribute.Name).Append("Equals(other.").Append(f.Attribute.Name).Append(')'));
+
+            if(generatedEqualityFields.Count > 0)
+            {
+                if(customEqualityFields.Count > 0)
+                {
+                    _builder.Append(" && ");
+                }
+
+                _builder.ForEach(generatedEqualityFields, " && ", (b, f) =>
+                    b.Append("System.Collections.Generic.EqualityComparer<")
+                        .Append(f.Attribute.GetTypeSymbol())
+                        .Append(">.Default.Equals(")
+                        .Append(f.Attribute.Name)
+                        .Append(", other.").Append(f.Attribute.Name)
+                        .Append(')'));
+            }
+
+            _builder.Append(';');
 
             return this;
         }
