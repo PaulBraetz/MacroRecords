@@ -177,7 +177,6 @@ namespace RhoMicro.MacroRecords.Core
         public String BuildCore() => _builder.ToString();
         #endregion
         #region Add Methods
-
         #region Parent Type
         public MacroRecordSourceBuilder AddParentType()
         {
@@ -795,15 +794,19 @@ public static bool operator !=(")
 
             return this;
         }
-        public MacroRecordSourceBuilder AddParentEqualsMethods()
+        public MacroRecordSourceBuilder AddParentObjectEqualsMethod()
         {
-
             _builder.Append(
 @"#region Equality & Hashíng
 /// <inheritdoc/>
 public override bool Equals(System.Object obj) => obj is ")
-                .Append(_typeSymbol.Name).Append(" instance && Equals(instance);")
-                .AppendLine("/// <inheritdoc/>")
+                .Append(_typeSymbol.Name).Append(" instance && Equals(instance);");
+
+            return this;
+        }
+        public MacroRecordSourceBuilder AddParentIEquatableEqualsMethod()
+        {
+            _builder.AppendLine("/// <inheritdoc/>")
                 .Append("public bool Equals(").Append(_typeSymbol.Name).Append(" other) =>");
 
             if(_fieldInstructions.Count == 0)
@@ -836,6 +839,13 @@ public override bool Equals(System.Object obj) => obj is ")
                         b.Append("other.").Append(f.Attribute.Name))
                     .Append("));");
             }
+
+            return this;
+        }
+        public MacroRecordSourceBuilder AddParentEqualsMethods()
+        {
+            AddParentObjectEqualsMethod();
+            AddParentIEquatableEqualsMethod();
 
             return this;
         }
