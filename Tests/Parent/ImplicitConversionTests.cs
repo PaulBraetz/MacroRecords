@@ -232,7 +232,7 @@ namespace RhoMicro.MacroRecords.Tests.Parent
             var actual = builder.AddImplicitTypeConversion().BuildCore();
 
             //Assert
-            //Assertions.AreEquivalent(expected, actual);
+            Assertions.AreEquivalent(expected, actual);
         }
     }
 }

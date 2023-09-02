@@ -4,13 +4,20 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 using RhoMicro.MacroRecords.Core;
 
+using System;
+
 namespace RhoMicro.MacroRecords.Tests
 {
     internal static class Util
     {
         public static MacroRecordSourceBuilder CreateBuilder(String source)
         {
-            var tree = CSharpSyntaxTree.ParseText(source);
+            var parseOptions = new CSharpParseOptions(
+                LanguageVersion.CSharp7_3, 
+                DocumentationMode.Parse,
+                SourceCodeKind.Regular);
+
+            var tree = CSharpSyntaxTree.ParseText(source, parseOptions);
 
             var compilation = CSharpCompilation.Create("TestCompilation")
                               .AddReferences(

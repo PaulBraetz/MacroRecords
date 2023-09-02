@@ -11,27 +11,21 @@ namespace RhoMicro.MacroRecords.Tests
 {
     internal static class Assertions
     {
-        public static void AreEquivalent(String expected, String actual)
-        {
-            var options = new CSharpParseOptions(LanguageVersion.CSharp7_2,
+        private static readonly CSharpParseOptions _options = new(
+                LanguageVersion.CSharp7_3,
                 DocumentationMode.None,
                 SourceCodeKind.Regular);
 
-            AreEquivalent(
-                expected: expected,
-                actual: actual,
-                options);
-        }
 
-        public static void AreEquivalent(String expected, String actual, CSharpParseOptions options)
+        public static void AreEquivalent(String expected, String actual)
         {
             if(expected == actual)
             {
                 return;
             }
 
-            var expectedTree = CSharpSyntaxTree.ParseText(expected, options);
-            var actualTree = CSharpSyntaxTree.ParseText(actual, options);
+            var expectedTree = CSharpSyntaxTree.ParseText(expected, _options);
+            var actualTree = CSharpSyntaxTree.ParseText(actual, _options);
 
             var condition = expectedTree.IsEquivalentTo(actualTree);
             Assert.IsTrue(condition);
