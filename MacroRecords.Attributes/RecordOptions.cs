@@ -65,6 +65,11 @@ namespace RhoMicro.MacroRecords
         /// The generated type definition should include partial template method definitions for 
 		/// equality and hashing.
         /// </summary>
-        CustomEquality = 32
+        CustomEquality = 32,
+        /// <summary>
+        /// The generated type definition should include a partial template method definition for
+        /// validating potential construction parameters.
+        /// </summary>
+        Validated = 64
     }
 }

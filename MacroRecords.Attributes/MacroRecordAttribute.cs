@@ -42,5 +42,9 @@ namespace RhoMicro.MacroRecords
         /// Gets a value indicating whether the <see cref="RecordOptions.CustomEquality"/> flag is set on <see cref="Options"/>.
         /// </summary>
         public Boolean HasCustomEquality => Options.HasFlag(RecordOptions.CustomEquality);
+        /// <summary>
+        /// Gets a value indicating whether the <see cref="RecordOptions.Validated"/> flag is set on <see cref="Options"/>.
+        /// </summary>
+        public Boolean HasValidation => Options.HasFlag(RecordOptions.Validated);
     }
 }

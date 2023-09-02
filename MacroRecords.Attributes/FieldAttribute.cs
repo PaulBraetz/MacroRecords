@@ -32,14 +32,8 @@ namespace RhoMicro.MacroRecords
         /// <summary>
         /// Gets or sets additional options for the generated field.
         /// </summary>
-        public FieldOptions Options { get; set; } = FieldOptions.DebuggerDisplay
-            | FieldOptions.Deconstructable
-            | FieldOptions.SupportsWith;
+        public FieldOptions Options { get; set; } = FieldOptions.Default;
 
-        /// <summary>
-        /// Gets a value indicating whether the <see cref="FieldOptions.Validated"/> flag is set on <see cref="Options"/>.
-        /// </summary>
-        public Boolean IsValidated => Options.HasFlag(FieldOptions.Validated);
         /// <summary>
         /// Gets a value indicating whether the <see cref="FieldOptions.Deconstructable"/> flag is set on <see cref="Options"/>.
         /// </summary>
