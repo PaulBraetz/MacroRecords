@@ -363,11 +363,6 @@ namespace RhoMicro.MacroRecords.Core
         }
         public MacroRecordSourceBuilder AddParentFields()
         {
-            if(_fieldInstructions.Count == 0)
-            {
-                return this;
-            }
-
             _builder.ForEach(_fieldInstructions, (b, f) =>
                 b.AppendLine("/// <summary>")
                 .Append("/// ").AppendLine(f.Attribute.Summary)
@@ -703,7 +698,7 @@ string paramName = null;")
                     .Append(')')
                     .Append('{')
                     .ForEach(deconstructableFields, (b, f) =>
-                        b.Append(f.OutParamName).Append(" = ").Append(f.Attribute.Name).Append(';'))
+                        b.Append(f.OutParamName).Append(" = this.").Append(f.Attribute.Name).Append(';'))
                     .Append('}');
             }
 
@@ -739,7 +734,7 @@ string paramName = null;")
                 .Append(f.Attribute.GetTypeSymbol()).Append(' ').Append(f.InParamName).Append(") =>")
                 .Append("Create(")
                 .ForEach(_fieldInstructions, ", ", (b_1, f_1) =>
-                    b_1.Append(f_1.Attribute.Name == f.Attribute.Name ? f_1.InParamName : f_1.Attribute.Name))
+                    b_1.Append(f_1.Attribute.Name == f.Attribute.Name ? f_1.InParamName : $"this.{f_1.Attribute.Name}"))
                 .Append(");"));
 
             return this;
@@ -785,14 +780,14 @@ string paramName = null;")
                 var field = _fieldInstructions[0];
                 _builder.Append("global::System.Collections.Generic.EqualityComparer<")
                     .Append(field.Attribute.GetTypeSymbol())
-                    .Append(">.Default.GetHashCode(")
+                    .Append(">.Default.GetHashCode(this.")
                     .Append(field.Attribute.Name)
                     .Append(");");
             } else
             {
                 _builder.Append('(')
                     .ForEach(_fieldInstructions, ", ", (b, f) =>
-                        b.Append(f.Attribute.Name))
+                        b.Append("this.").Append(f.Attribute.Name))
                     .Append(").GetHashCode();");
             }
 
@@ -829,7 +824,7 @@ public override int GetHashCode()");
             _builder.ForEach(_fieldInstructions, ',' + Environment.NewLine, (b, f) =>
                 b.Append("hashCodes.").Append(f.Attribute.Name).Append("HashCode").AppendLine(" ?? ")
                     .Append("global::System.Collections.Generic.EqualityComparer<").Append(f.Attribute.GetTypeSymbol())
-                    .Append(">.Default.GetHashCode(").Append(f.Attribute.Name).Append(")"));
+                    .Append(">.Default.GetHashCode(this.").Append(f.Attribute.Name).Append(")"));
 
             if(_fieldInstructions.Count > 1)
             {
@@ -885,7 +880,7 @@ partial void GetCustomEqualities(in ").Append(_typeSymbol.Name).Append(@" other,
                 .ForEach(_fieldInstructions, " &&" + Environment.NewLine, (b, f) =>
                     b.Append("(equalities.").Append(f.Attribute.Name)
                     .Append("IsEqual ?? global::System.Collections.Generic.EqualityComparer<")
-                    .Append(f.Attribute.GetTypeSymbol()).Append(">.Default.Equals(")
+                    .Append(f.Attribute.GetTypeSymbol()).Append(">.Default.Equals(this.")
                     .Append(f.Attribute.Name).Append(", other.").Append(f.Attribute.Name).Append("))"))
                 .Append(
 @";
@@ -1335,28 +1330,16 @@ public readonly string ").Append(f.Attribute.Name).AppendLine("Error;"));
 /// Implicitly converts an instance of <see cref=""IsValidResult""/> to <see cref=""bool""/>.
 /// ");
 
-            if(!_attribute.HasValidation)
-            {
-                _builder.Append("As no fields are being validated, the result will always be <see langword=\"true\"/>");
-            } else
-            {
-                _builder.Append("The result will be true if all <c>xIsInvalid</c> fields evaluate to <see langword=\"false\"/>.");
-            }
+            _builder.Append("The result will be true if all <c>xIsInvalid</c> fields evaluate to <see langword=\"false\"/>.");
 
             _builder.Append(@"
 /// </summary>
 /// <param name=""result"" > The instance to implicitly convert.</ param >
-public static implicit operator global::System.Boolean(IsValidResult result) =>
+public static implicit operator bool(IsValidResult result) =>
 ");
 
-            if(!_attribute.HasValidation)
-            {
-                _builder.Append("true");
-            } else
-            {
-                _builder.ForEach(_fieldInstructions, " &&", (b, f) =>
-                    b.Append("!result.").Append(f.Attribute.Name).Append("IsInvalid"));
-            }
+            _builder.ForEach(_fieldInstructions, " &&", (b, f) =>
+                b.Append("!result.").Append(f.Attribute.Name).Append("IsInvalid"));
 
             _builder.Append(';');
 
@@ -1480,7 +1463,7 @@ private ref struct CustomEqualities
                 .Append("/// The equality of the <see cref=\"").Append(f.Attribute.Name).AppendLine("\"/> fields provided, or <see langword=\"null\"/>")
                 .AppendLine("/// if the default equality mechanism should be used.")
                 .AppendLine("/// </summary>")
-                .Append("public global::System.Nullable<global::System.Boolean> ").Append(f.Attribute.Name).Append("IsEqual;"))
+                .Append("public global::System.Nullable<bool> ").Append(f.Attribute.Name).Append("IsEqual;"))
             .Append(@"
         #endregion
         #region Equality & Hashing

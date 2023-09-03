@@ -19,17 +19,16 @@
                         readonly partial struct TVO {}
                         """,
                         """
-                        static partial void GetCustomHashCodes(in TVO obj, ref CustomHashCodes hashCodes);
+                        partial void GetCustomHashCodes(ref CustomHashCodes hashCodes);
                         public override int GetHashCode()
                         {
-                            var instance = this;
                             var hashCodes = new CustomHashCodes();
-                            GetCustomHashCodes(in instance, ref hashCodes);
+                            GetCustomHashCodes(ref hashCodes);
                             var result = (
                             hashCodes.FieldHashCode ?? 
-                            global::System.Collections.Generic.EqualityComparer<byte[]>.Default.GetHashCode(instance.Field),
+                            global::System.Collections.Generic.EqualityComparer<byte[]>.Default.GetHashCode(this.Field),
                             hashCodes.Field2HashCode ?? 
-                            global::System.Collections.Generic.EqualityComparer<string>.Default.GetHashCode(instance.Field2))
+                            global::System.Collections.Generic.EqualityComparer<string>.Default.GetHashCode(this.Field2))
                             .GetHashCode(); 
 
                             return result;

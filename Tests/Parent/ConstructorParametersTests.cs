@@ -20,7 +20,7 @@
                         }
                         """,
                         """
-                        private TVO(System.Int32 in_Field1)
+                        private TVO(int in_Field1)
                         {
                             Field1=in_Field1;
                         }
@@ -38,7 +38,7 @@
                         }
                         """,
                         """
-                        private TVO(System.Int32 in_Field1, System.Int32 in_Field2)
+                        private TVO(int in_Field1, int in_Field2)
                         {
                             Field1=in_Field1;
                             Field2=in_Field2;
@@ -57,7 +57,7 @@
                         }
                         """,
                         """
-                        private TVO(System.Int32 in_Field1, System.String in_Field2)
+                        private TVO(int in_Field1, string in_Field2)
                         {
                             Field1=in_Field1;
                             Field2=in_Field2;
@@ -91,7 +91,7 @@
                         }
                         """,
                         """
-                        private TVO(System.Object in_ObjectField, System.String in_StringField)
+                        private TVO(object in_ObjectField, string in_StringField)
                         {
                             ObjectField = in_ObjectField;
                             StringField = in_StringField;

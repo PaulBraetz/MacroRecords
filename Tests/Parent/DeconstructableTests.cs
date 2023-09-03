@@ -31,7 +31,7 @@
                         }
                         """,
                         """
-                        public static implicit operator System.Int32(TVO instance)=>
+                        public static implicit operator int(TVO instance)=>
                             instance.Field1;
                         """
                     },
@@ -46,7 +46,7 @@
                         }
                         """,
                         """
-                        public static implicit operator System.Int32(TVO instance)=>
+                        public static implicit operator int(TVO instance)=>
                             instance.Field1;
                         """
                     },
@@ -110,10 +110,10 @@
                         }
                         """,
                         """
-                        public void Deconstruct(out System.Int32 out_Field1, out System.Int32 out_Field2)
+                        public void Deconstruct(out int out_Field1, out int out_Field2)
                         {
-                            out_Field1 = Field1;
-                            out_Field2 = Field2;
+                            out_Field1 = this.Field1;
+                            out_Field2 = this.Field2;
                         }
                         """
                     },
@@ -129,10 +129,10 @@
                         }
                         """,
                         """
-                        public void Deconstruct(out System.Int32 out_Field1, out System.Int32 out_Field2)
+                        public void Deconstruct(out int out_Field1, out int out_Field2)
                         {
-                            out_Field1 = Field1;
-                            out_Field2 = Field2;
+                            out_Field1 = this.Field1;
+                            out_Field2 = this.Field2;
                         }
                         """
                     },
@@ -148,16 +148,16 @@
                         }
                         """,
                         """
-                        public void Deconstruct(out System.Int32 out_Field1, out System.Int32 out_Field2)
+                        public void Deconstruct(out int out_Field1, out int out_Field2)
                         {
-                            out_Field1 = Field1;
-                            out_Field2 = Field2;
+                            out_Field1 = this.Field1;
+                            out_Field2 = this.Field2;
                         }
                         """
                     },
                     new Object[]
                     {
-						"""
+                        """
                         using RhoMicro.MacroRecords;
                         [MacroRecord]
                         [Field(typeof(int), "Field1", Options = FieldOptions.Deconstructable)]
@@ -167,7 +167,7 @@
                         }
                         """,
                         """
-                        public static implicit operator System.Int32(TVO instance)=>
+                        public static implicit operator int(TVO instance)=>
                             instance.Field1;
                         """
                     },
@@ -183,13 +183,13 @@
                         }
                         """,
                         """
-                        public static implicit operator System.Int32(TVO instance)=>
+                        public static implicit operator int(TVO instance)=>
                             instance.Field1;
                         """
                     },
                     new Object[]
                     {
-						"""
+                        """
                         using RhoMicro.MacroRecords;
                         [MacroRecord]
                         [Field(typeof(int), "Field1", Options = FieldOptions.None)]
@@ -199,7 +199,7 @@
                         }
                         """,
                         """
-                        public static implicit operator System.String(TVO instance)=>
+                        public static implicit operator string(TVO instance)=>
                             instance.Field2;
                         """
                     },
@@ -215,13 +215,13 @@
                         }
                         """,
                         """
-                        public static implicit operator System.String(TVO instance)=>
+                        public static implicit operator string(TVO instance)=>
                             instance.Field2;
                         """
                     },
                     new Object[]
                     {
-						"""
+                        """
                         using RhoMicro.MacroRecords;
                         [MacroRecord]
                         [Field(typeof(int), "Field1", Options = FieldOptions.None)]
@@ -232,10 +232,10 @@
                         }
                         """,
                         """
-                        public void Deconstruct(out System.String out_Field2, out System.Object out_ObjectField)
+                        public void Deconstruct(out string out_Field2, out object out_ObjectField)
                         {
-                            out_Field2 = Field2;
-                            out_ObjectField = ObjectField;
+                            out_Field2 = this.Field2;
+                            out_ObjectField = this.ObjectField;
                         }
                         """
                     },
@@ -252,10 +252,10 @@
                         }
                         """,
                         """
-                        public void Deconstruct(out System.String out_Field2, out System.Object out_ObjectField)
+                        public void Deconstruct(out string out_Field2, out object out_ObjectField)
                         {
-                            out_Field2 = Field2;
-                            out_ObjectField = ObjectField;
+                            out_Field2 = this.Field2;
+                            out_ObjectField = this.ObjectField;
                         }
                         """
                     },
@@ -272,10 +272,10 @@
                         }
                         """,
                         """
-                        public void Deconstruct(out System.String out_Field2, out System.Object out_ObjectField)
+                        public void Deconstruct(out string out_Field2, out object out_ObjectField)
                         {
-                            out_Field2 = Field2;
-                            out_ObjectField = ObjectField;
+                            out_Field2 = this.Field2;
+                            out_ObjectField = this.ObjectField;
                         }
                         """
                     }
