@@ -20,10 +20,10 @@ namespace RhoMicro.MacroRecords
         /// All default generation options should be applied to this record.
         /// </summary>
         Default =
-            DebuggerDisplay |
             Constructor |
             EmptyMember |
-            ExplicitConversion,
+            ExplicitConversion |
+            ToString,
         /// <summary>
         /// The generated type definition should have a default constructor that assigns all fields generated.
         /// <para>
@@ -70,6 +70,10 @@ namespace RhoMicro.MacroRecords
         /// The generated type definition should include a partial template method definition for
         /// validating potential construction parameters.
         /// </summary>
-        Validated = 64
+        Validated = 64,
+        /// <summary>
+        /// The generated type definition should include an implementation of <see cref="Object.ToString"/>.
+        /// </summary>
+        ToString = 128
     }
 }

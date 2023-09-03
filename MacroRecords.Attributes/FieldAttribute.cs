@@ -46,6 +46,10 @@ namespace RhoMicro.MacroRecords
         /// Gets a value indicating whether the <see cref="FieldOptions.DebuggerDisplay"/> flag is set on <see cref="Options"/>.
         /// </summary>
         public Boolean IncludedInDebuggerDisplay => Options.HasFlag(FieldOptions.DebuggerDisplay);
+        /// <summary>
+        /// Gets a value indicating whether the <see cref="FieldOptions.ToString"/> flag is set on <see cref="Options"/>.
+        /// </summary>
+        public Boolean IncludedInToString => Options.HasFlag(FieldOptions.ToString);
 
         /// <summary>
         /// This method is not intended for use outside of the generator.

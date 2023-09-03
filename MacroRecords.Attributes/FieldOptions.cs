@@ -22,7 +22,8 @@ namespace RhoMicro.MacroRecords
         Default =
             DebuggerDisplay |
             Deconstructable |
-            SupportsWith,
+            SupportsWith |
+            ToString,
         /// <summary>
         /// The field will be included in the generated deconstruction mechanism.
         /// <para>
@@ -49,6 +50,10 @@ namespace RhoMicro.MacroRecords
         /// <summary>
         /// The field name and value will be included in the <see cref="System.Diagnostics.DebuggerDisplayAttribute"/>.
         /// </summary>
-        DebuggerDisplay = 8
+        DebuggerDisplay = 8,
+        /// <summary>
+        /// The field name and value will be included in the <see cref="Object.ToString"/> implementation.
+        /// </summary>
+        ToString = 16
     }
 }

@@ -46,5 +46,9 @@ namespace RhoMicro.MacroRecords
         /// Gets a value indicating whether the <see cref="RecordOptions.Validated"/> flag is set on <see cref="Options"/>.
         /// </summary>
         public Boolean HasValidation => Options.HasFlag(RecordOptions.Validated);
+        /// <summary>
+        /// Gets a value indicating whether the <see cref="RecordOptions.ToString"/> flag is set on <see cref="Options"/>.
+        /// </summary>
+        public Boolean HasToString => Options.HasFlag(RecordOptions.ToString);
     }
 }
