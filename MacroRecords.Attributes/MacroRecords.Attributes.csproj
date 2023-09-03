@@ -13,7 +13,7 @@
 	  <Copyright>2023</Copyright>
 	  <PackageTags>DDD;Value Objects;Records;Source Generator</PackageTags>
 	  <PackageTags>Rhomicro</PackageTags>
-	  <Version>1.0.0-alpha.8</Version>
+	  <Version>1.0.0-alpha.9</Version>
 	  <GenerateDocumentationFile>true</GenerateDocumentationFile>
 	  <PackageId>RhoMicro.MacroRecords.Attributes</PackageId>
 	  <Company>RhoMicro</Company>
