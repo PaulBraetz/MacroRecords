@@ -626,13 +626,12 @@ string paramName = null;")
                 .Append("throw new global::System.ArgumentException($\"The {paramName} provided for creating an instance of ")
                 .Append(_typeSymbol.Name).Append(" was not valid.{reason}\", paramName);")
                 .Append('}');
-            } else
-            {
-                _builder.Append("return new ").Append(_typeSymbol.Name).Append('(')
+            }
+
+            _builder.Append("return new ").Append(_typeSymbol.Name).Append('(')
                 .ForEach(_fieldInstructions, ", ", (b, f) =>
                     b.Append(f.InParamName))
                 .Append(");}");
-            }
 
             return this;
         }
@@ -1107,17 +1106,17 @@ private readonly struct ValidateParameters
         }
         public MacroRecordSourceBuilder AddValidateParametersEqualityAndHashing()
         {
-            _builder.Append(
+            _builder.AppendLine(
 @"#region Equality & Hashing
 /// <inheritdoc/>
 public override bool Equals(object obj)
 {
-    throw new NotSupportedException();
+    throw new global::System.NotSupportedException();
 }
 /// <inheritdoc/>
 public override int GetHashCode()
 {
-    throw new NotSupportedException();
+    throw new global::System.NotSupportedException();
 }
 #endregion");
 
