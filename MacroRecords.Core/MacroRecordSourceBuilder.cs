@@ -201,7 +201,7 @@ namespace RhoMicro.MacroRecords.Core
             AddParentConstructorAndFields();
             AddParentValidationAndFactories();
             AddParentDeconstructionAndTransformation();
-            AddParentEqualityAndHashing();
+            AddParentEqualityHashingToString();
             _builder.Append('}');
             AddParentClose();
 
@@ -739,10 +739,11 @@ string paramName = null;")
             return this;
         }
         #endregion
-        #region Equality & Hashing
-        public MacroRecordSourceBuilder AddParentEqualityAndHashing()
+        #region Equality, Hashing & ToString
+        public MacroRecordSourceBuilder AddParentEqualityHashingToString()
         {
-            _builder.AppendLine("#region Equality & Hashing");
+            _builder.AppendLine("#region Equality, Hashing & ToString");
+            AddParentToString();
             AddParentEqualsMethods();
             AddParentGetHashCodeMethod();
             AddParentEqualityOperator();
@@ -1006,6 +1007,42 @@ public static bool operator !=(")
                 .Append(_typeSymbol.Name).Append(" left, ")
                 .Append(_typeSymbol.Name).AppendLine(" right) => !(left == right);")
                 .AppendLine("#endregion");
+
+            return this;
+        }
+        #endregion
+        #region ToString
+        public MacroRecordSourceBuilder AddParentToString()
+        {
+            if(!_attribute.HasToString)
+            {
+                return this;
+            }
+
+            var includedFields = _fieldInstructions
+                .Where(f => f.Attribute.IncludedInToString)
+                .ToArray();
+
+            _builder.Append(
+@"/// <inheritdoc/>
+public override string ToString() => ");
+
+            if(includedFields.Length > 0)
+            {
+                _builder.Append('$');
+            }
+
+            _builder.Append('"').Append(_typeSymbol.Name);
+
+            if(includedFields.Length > 0)
+            {
+                _builder.Append('(')
+                    .ForEach(includedFields, ", ", (b, f) =>
+                        b.Append(f.Attribute.Name).Append(" : {").Append(f.Attribute.Name).Append('}'))
+                    .Append(')');
+            }
+
+            _builder.Append("\";");
 
             return this;
         }
