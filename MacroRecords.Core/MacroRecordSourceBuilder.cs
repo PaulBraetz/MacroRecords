@@ -927,8 +927,7 @@ partial void GetCustomEqualities(in ").Append(_typeSymbol.Name).Append(@" other,
         public MacroRecordSourceBuilder AddParentObjectEqualsMethod()
         {
             _builder.Append(
-@"#region Equality & Hashíng
-/// <inheritdoc/>
+@"/// <inheritdoc/>
 public override bool Equals(object obj) => obj is ")
                 .Append(_typeSymbol.Name).Append(" instance && Equals(instance);");
 
@@ -1005,8 +1004,7 @@ public static bool operator ==(")
 /// </returns>
 public static bool operator !=(")
                 .Append(_typeSymbol.Name).Append(" left, ")
-                .Append(_typeSymbol.Name).AppendLine(" right) => !(left == right);")
-                .AppendLine("#endregion");
+                .Append(_typeSymbol.Name).AppendLine(" right) => !(left == right);");
 
             return this;
         }
