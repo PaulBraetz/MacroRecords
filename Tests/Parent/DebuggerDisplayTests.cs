@@ -26,9 +26,7 @@ namespace RhoMicro.MacroRecords.Tests.Parent
                         {
                         }
                         """,
-                        """
-                        [global::System.Diagnostics.DebuggerDisplayAttribute("TVO")]
-                        """
+                        String.Empty
                     },
                     new Object[]
                     {
@@ -67,9 +65,7 @@ namespace RhoMicro.MacroRecords.Tests.Parent
                         {
                         }
                         """,
-                        """
-                        [global::System.Diagnostics.DebuggerDisplayAttribute("TVO")]
-                        """
+                        String.Empty
                     },
                     new Object[]
                     {
@@ -83,9 +79,7 @@ namespace RhoMicro.MacroRecords.Tests.Parent
                         {
                         }
                         """,
-                        """
-                        [global::System.Diagnostics.DebuggerDisplayAttribute("TVO(Field1 : {Field1})")]
-                        """
+                        String.Empty
                     },
                     new Object[]
                     {
@@ -102,9 +96,7 @@ namespace RhoMicro.MacroRecords.Tests.Parent
                         {
                         }
                         """,
-                        """
-                        [global::System.Diagnostics.DebuggerDisplayAttribute("TVO(Field1 : {Field1}, Field2 : {Field2})")]
-                        """
+                        String.Empty
                     },
                     new Object[]
                     {
@@ -123,9 +115,7 @@ namespace RhoMicro.MacroRecords.Tests.Parent
                         {
                         }
                         """,
-                        """
-                        [global::System.Diagnostics.DebuggerDisplayAttribute("TVO")]
-                        """
+                        String.Empty
                     },
                     new Object[]
                     {
@@ -143,9 +133,7 @@ namespace RhoMicro.MacroRecords.Tests.Parent
                         {
                         }
                         """,
-                        """
-                        [global::System.Diagnostics.DebuggerDisplayAttribute("TVO(Field2 : {Field2})")]
-                        """
+                        String.Empty
                     },
                     new Object[]
                     {
@@ -163,9 +151,7 @@ namespace RhoMicro.MacroRecords.Tests.Parent
                         {
                         }
                         """,
-                        """
-                        [global::System.Diagnostics.DebuggerDisplayAttribute("TVO(Field1 : {Field1})")]
-                        """
+                        String.Empty
                     },
                     new Object[]
                     {
@@ -233,9 +219,7 @@ namespace RhoMicro.MacroRecords.Tests.Parent
                             typeof(int), 
                             "Field2", 
                             Options = FieldOptions.None)]
-                        partial class TVO
-                        {
-                        }
+                        partial class TVO {}
                         """,
                         String.Empty
                     }

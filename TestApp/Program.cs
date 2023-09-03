@@ -1,13 +1,14 @@
 ﻿using RhoMicro.MacroRecords;
 
 using System;
+using System.Linq;
 
 internal partial class Program
 {
     private static void Main(string[] args)
     {
     }
-    [MacroRecord(Options = RecordOptions.Default)]
-    [Field(typeof(int), "Field", Options = FieldOptions.All)]
+    [MacroRecord]
+    [Field(typeof(int), "Field0")]
     partial struct TVO { }
 }
