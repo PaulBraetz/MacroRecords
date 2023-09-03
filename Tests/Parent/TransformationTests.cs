@@ -53,7 +53,7 @@ namespace RhoMicro.MacroRecords.Tests.Parent
                         }
                         """,
 						"""
-                        public TVO WithField1(System.Int32 in_Field1) =>
+                        public TVO WithField1(int in_Field1) =>
                             Create(in_Field1);
                         """
 					},
@@ -68,7 +68,7 @@ namespace RhoMicro.MacroRecords.Tests.Parent
                         }
                         """,
                         """
-                        public TVO WithField1(System.Int32 in_Field1) =>
+                        public TVO WithField1(int in_Field1) =>
                             Create(in_Field1);
                         """
                     },
@@ -84,8 +84,8 @@ namespace RhoMicro.MacroRecords.Tests.Parent
                         }
                         """,
 						"""
-                        public TVO WithField1(System.Int32 in_Field1) =>
-                            Create(in_Field1, Field2);
+                        public TVO WithField1(int in_Field1) =>
+                            Create(in_Field1, this.Field2);
                         """
 					},
                     new Object[]
@@ -100,8 +100,8 @@ namespace RhoMicro.MacroRecords.Tests.Parent
                         }
                         """,
                         """
-                        public TVO WithField1(System.Int32 in_Field1) =>
-                            Create(in_Field1, Field2);
+                        public TVO WithField1(int in_Field1) =>
+                            Create(in_Field1, this.Field2);
                         """
                     },
                     new Object[]
@@ -115,13 +115,13 @@ namespace RhoMicro.MacroRecords.Tests.Parent
                         {
                         }
                         """,
-						"""
-                        public TVO WithField1(System.Int32 in_Field1) =>
-                            Create(in_Field1, Field2);
-                        public TVO WithField2(System.String in_Field2) =>
-                            Create(Field1, in_Field2);
                         """
-					},
+                        public TVO WithField1(int in_Field1) =>
+                            Create(in_Field1, this.Field2);
+                        public TVO WithField2(string in_Field2) =>
+                            Create(this.Field1, in_Field2);
+                        """
+                    },
                     new Object[]
                     {
                         """
@@ -134,10 +134,10 @@ namespace RhoMicro.MacroRecords.Tests.Parent
                         }
                         """,
                         """
-                        public TVO WithField1(System.Int32 in_Field1) =>
-                            Create(in_Field1, Field2);
-                        public TVO WithField2(System.String in_Field2) =>
-                            Create(Field1, in_Field2);
+                        public TVO WithField1(int in_Field1) =>
+                            Create(in_Field1, this.Field2);
+                        public TVO WithField2(string in_Field2) =>
+                            Create(this.Field1, in_Field2);
                         """
                     },
                     new Object[]
@@ -152,10 +152,10 @@ namespace RhoMicro.MacroRecords.Tests.Parent
                         }
                         """,
                         """
-                        public TVO WithField1(System.Int32 in_Field1) =>
-                            Create(in_Field1, Field2);
-                        public TVO WithField2(System.String in_Field2) =>
-                            Create(Field1, in_Field2);
+                        public TVO WithField1(int in_Field1) =>
+                            Create(in_Field1, this.Field2);
+                        public TVO WithField2(string in_Field2) =>
+                            Create(this.Field1, in_Field2);
                         """
                     },
                     new Object[]
@@ -170,10 +170,10 @@ namespace RhoMicro.MacroRecords.Tests.Parent
                         }
                         """,
                         """
-                        public TVO WithField1(System.Int32 in_Field1) =>
-                            Create(in_Field1, Field2);
-                        public TVO WithField2(System.String in_Field2) =>
-                            Create(Field1, in_Field2);
+                        public TVO WithField1(int in_Field1) =>
+                            Create(in_Field1, this.Field2);
+                        public TVO WithField2(string in_Field2) =>
+                            Create(this.Field1, in_Field2);
                         """
                     },
                     new Object[]
@@ -187,7 +187,7 @@ namespace RhoMicro.MacroRecords.Tests.Parent
                         }
                         """,
 						"""
-                        public TVO WithField1(System.Int32 in_Field1) =>
+                        public TVO WithField1(int in_Field1) =>
                             Create(in_Field1);
                         """
 					},
@@ -202,11 +202,11 @@ namespace RhoMicro.MacroRecords.Tests.Parent
                         {
                         }
                         """,
-						"""
-                        public TVO WithField1(System.Int32 in_Field1) =>
-                            Create(in_Field1, Field2);
                         """
-					},
+                        public TVO WithField1(int in_Field1) =>
+                            Create(in_Field1, this.Field2);
+                        """
+                    },
 					new Object[]
 					{
 						"""
@@ -218,13 +218,13 @@ namespace RhoMicro.MacroRecords.Tests.Parent
                         {
                         }
                         """,
-						"""
-                        public TVO WithField1(System.Int32 in_Field1) =>
-                            Create(in_Field1, Field2);
-                        public TVO WithField2(System.String in_Field2) =>
-                            Create(Field1, in_Field2);
                         """
-					}
+                        public TVO WithField1(int in_Field1) =>
+                            Create(in_Field1, this.Field2);
+                        public TVO WithField2(string in_Field2) =>
+                            Create(this.Field1, in_Field2);
+                        """
+                    }
 				};
 			}
 		}

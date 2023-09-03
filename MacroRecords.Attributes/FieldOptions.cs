@@ -17,6 +17,13 @@ namespace RhoMicro.MacroRecords
         /// </summary>
         All = Int32.MaxValue,
         /// <summary>
+        /// All default generation options should be applied to this field.
+        /// </summary>
+        Default =
+            DebuggerDisplay |
+            Deconstructable |
+            SupportsWith,
+        /// <summary>
         /// The field will be included in the generated deconstruction mechanism.
         /// <para>
         /// If only a single field contained in the record is marked as 
@@ -39,12 +46,6 @@ namespace RhoMicro.MacroRecords
         /// transforming instances of the generated value object.
         /// </summary>
         SupportsWith = 2,
-        /// <summary>
-        /// The field will be included in the generated validation mechanisms.
-        /// If at least one field is flagged with <see cref="Validated"/>, a partial
-        /// method <c>Validate</c> must be implemented by the consumer.
-        /// </summary>
-        Validated = 4,
         /// <summary>
         /// The field name and value will be included in the <see cref="System.Diagnostics.DebuggerDisplayAttribute"/>.
         /// </summary>

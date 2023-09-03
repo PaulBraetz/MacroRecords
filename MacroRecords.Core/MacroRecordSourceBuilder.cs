@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using RhoMicro.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using System.Reflection.Metadata.Ecma335;
 
 namespace RhoMicro.MacroRecords.Core
 {
@@ -35,22 +36,20 @@ namespace RhoMicro.MacroRecords.Core
             String defaultOrNull,
             Boolean generateToString,
             IReadOnlyList<FieldInstructions> fieldInstructions,
-            String nullPropagatingToken,
             MacroRecordAttribute attribute,
-            INamedTypeSymbol typeSymbol)
+            INamedTypeSymbol typeSymbol,
+            Boolean nullableEnabled)
         {
             _visibility = visibility;
             _structOrClass = structOrClass;
             _defaultOrNull = defaultOrNull;
             _generateToString = generateToString;
             _fieldInstructions = fieldInstructions;
-            _nullPropagatingToken = nullPropagatingToken;
             _attribute = attribute;
             _typeSymbol = typeSymbol;
 
-            _validatedFieldInstructions = _fieldInstructions.Where(f => f.Attribute.IsValidated).ToArray();
-
             _builder = new SourceBuilder();
+            _nullableDefaultEnabled = nullableEnabled;
         }
 
         private readonly MacroRecordAttribute _attribute;
@@ -58,9 +57,8 @@ namespace RhoMicro.MacroRecords.Core
         private readonly String _structOrClass;
         private readonly String _defaultOrNull;
         private readonly Boolean _generateToString;
+        private readonly Boolean _nullableDefaultEnabled;
         private readonly IReadOnlyList<FieldInstructions> _fieldInstructions;
-        private readonly IReadOnlyList<FieldInstructions> _validatedFieldInstructions;
-        private readonly String _nullPropagatingToken;
         private readonly INamedTypeSymbol _typeSymbol;
         private readonly SourceBuilder _builder;
         #endregion
@@ -102,19 +100,36 @@ namespace RhoMicro.MacroRecords.Core
                 .Where(t => t.success)
                 .Select(t => t.instruction)
                 .ToArray();
-            var nullPropagatingToken = structOrClass == "class" ?
-                "?" :
-                String.Empty;
+
+            var nullableEnabled = GetDeclarationNullability(semanticModel, declaration);
+
             builder = new MacroRecordSourceBuilder(
                 visibility,
                 structOrClass,
                 defaultOrNull,
                 generateToString,
                 fieldInstructions,
-                nullPropagatingToken,
                 head,
-                declarationSymbol);
+                declarationSymbol,
+                nullableEnabled);
+
             return builder;
+        }
+
+        private static Boolean GetDeclarationNullability(SemanticModel semanticModel, TypeDeclarationSyntax declaration)
+        {
+            if(declaration is StructDeclarationSyntax)
+            {
+                return false;
+            }
+
+            var nullableContext = semanticModel.GetNullableContext(declaration.Identifier.SpanStart);
+            if(nullableContext.AnnotationsEnabled())
+            {
+                return true;
+            }
+
+            return false;
         }
 
         private static Boolean GetGenerateToString(TypeDeclarationSyntax declaration)
@@ -261,8 +276,10 @@ namespace RhoMicro.MacroRecords.Core
         #region Type Signature & Attributes
         public MacroRecordSourceBuilder AddParentTypeSignatureAndAttributes()
         {
-            return AddParentDebuggerDisplayAttribute()
-                .AddParentTypeSignature();
+            AddParentDebuggerDisplayAttribute();
+            AddParentTypeSignature();
+
+            return this;
         }
         public MacroRecordSourceBuilder AddParentTypeSignature()
         {
@@ -346,11 +363,6 @@ namespace RhoMicro.MacroRecords.Core
         }
         public MacroRecordSourceBuilder AddParentFields()
         {
-            if(_fieldInstructions.Count == 0)
-            {
-                return this;
-            }
-
             _builder.ForEach(_fieldInstructions, (b, f) =>
                 b.AppendLine("/// <summary>")
                 .Append("/// ").AppendLine(f.Attribute.Summary)
@@ -372,7 +384,7 @@ namespace RhoMicro.MacroRecords.Core
             }
 
             _builder.AppendLine("/// <summary>")
-                .AppendLine("///Gets the default empty instance.")
+                .AppendLine("/// The default empty instance.")
                 .AppendLine("/// </summary>")
                 .Append("public static readonly ")
                 .Append(_typeSymbol.Name)
@@ -389,36 +401,23 @@ namespace RhoMicro.MacroRecords.Core
             AddParentIsValidMethod();
             AddParentTryCreateMethod();
             AddParentCreateMethod();
-            AddExplicitTypeConversion();
-            AddImplicitTypeConversion();
+            AddParentTypeConversion();
             _builder.AppendLine("#endregion");
 
             return this;
         }
-        public MacroRecordSourceBuilder AddExplicitTypeConversion()
+        public MacroRecordSourceBuilder AddParentTypeConversion()
         {
-            if(!_attribute.GenerateExplicitConversion || _attribute.GenerateImplicitConversion)
+            if(_fieldInstructions.Count == 0 ||
+                !_attribute.GenerateExplicitConversion &&
+                !_attribute.GenerateImplicitConversion)
             {
                 return this;
             }
 
-            AddTypeConversion(isExplicit: true);
+            var isExplicit = _attribute.GenerateExplicitConversion &&
+                !_attribute.GenerateImplicitConversion;
 
-            return this;
-        }
-        public MacroRecordSourceBuilder AddImplicitTypeConversion()
-        {
-            if(!_attribute.GenerateImplicitConversion)
-            {
-                return this;
-            }
-
-            AddTypeConversion(isExplicit: false);
-
-            return this;
-        }
-        private void AddTypeConversion(Boolean isExplicit)
-        {
             var keyword = isExplicit ?
                 "explicit" :
                 "implicit";
@@ -431,7 +430,8 @@ namespace RhoMicro.MacroRecords.Core
                 var field = _fieldInstructions[0];
                 if(field.Attribute.GetTypeSymbol().TypeKind == TypeKind.Interface)
                 {
-                    return;
+                    //interface type conversion operators are illegal
+                    return this;
                 }
 
                 _builder.AppendLine("/// <summary>")
@@ -444,7 +444,7 @@ namespace RhoMicro.MacroRecords.Core
                     .Append("public static ").Append(keyword).Append(" operator ").Append(_typeSymbol.Name)
                     .Append('(').Append(field.Attribute.GetTypeSymbol()).Append(' ').Append(field.InParamName)
                     .Append(") => Create(").Append(field.InParamName).Append(");");
-            } else if(_fieldInstructions.Count > 1)
+            } else
             {
                 _builder.AppendLine("/// <summary>")
                     .Append("/// ").Append(commentFragment).Append(" converts the constituents of a <see cref=\"").Append(_typeSymbol.Name)
@@ -462,10 +462,12 @@ namespace RhoMicro.MacroRecords.Core
                         b.Append("values.Item").Append(i))
                     .Append(");");
             }
+
+            return this;
         }
         public MacroRecordSourceBuilder AddParentValidateMethod()
         {
-            if(_validatedFieldInstructions.Count == 0)
+            if(!_attribute.HasValidation)
             {
                 return this;
             }
@@ -481,16 +483,11 @@ namespace RhoMicro.MacroRecords.Core
         }
         public MacroRecordSourceBuilder AddParentIsValidMethod()
         {
-            if(_validatedFieldInstructions.Count == 0)
-            {
-                return this;
-            }
-
             _builder.AppendLine("/// <summary>")
                 .AppendLine("/// Gets a value indicating the validity of the parameters passed, were they to")
                 .Append("/// be used for constructing a new instance of <see cref=\"").Append(_typeSymbol.Name).AppendLine("\"/>.")
                 .AppendLine("/// </summary>")
-                .ForEach(_validatedFieldInstructions, (b, f) =>
+                .ForEach(_fieldInstructions, (b, f) =>
                     b.Append("/// <param name=\"").Append(f.InParamName).AppendLine("\"/>")
                     .Append("/// The potential <see cref=\"").Append(f.Attribute.Name).AppendLine("\"/> value whose validity to assert.")
                     .AppendLine("/// </param>"))
@@ -498,29 +495,29 @@ namespace RhoMicro.MacroRecords.Core
                 .AppendLine("/// A value indicating the validity of the parameters passed.")
                 .AppendLine("/// </returns>")
                 .Append("public static IsValidResult IsValid(")
-                .ForEach(_validatedFieldInstructions, ", ", (b, f) =>
+                .ForEach(_fieldInstructions, ", ", (b, f) =>
                     b.Append(f.Attribute.GetTypeSymbol()).Append(' ').Append(f.InParamName))
-                .Append(
-@")
+                .Append(')');
+            if(_attribute.HasValidation)
+            {
+                _builder.Append(
+@"
 {
 var result = ValidateResult.Valid;
 var validateParameters = new ValidateParameters(")
-                .ForEach(_validatedFieldInstructions, ", ", (b, f) => b.Append(f.InParamName))
-                .Append(
-@");
-Validate(validateParameters, ref result);
+                    .ForEach(_fieldInstructions, ", ", (b, f) => b.Append(f.InParamName))
+                    .Append(@");
+Validate(in validateParameters, ref result);
 return result;
 }");
-
+            } else
+            {
+                _builder.Append(" => IsValidResult.Valid;");
+            }
             return this;
         }
         public MacroRecordSourceBuilder AddParentTryCreateMethod()
         {
-            if(_validatedFieldInstructions.Count == 0)
-            {
-                return this;
-            }
-
             _builder.AppendLine("/// <summary>")
                 .Append("/// Attempts to create a new instance of <see cref=\"").Append(_typeSymbol.Name).AppendLine("\"/>.")
                 .AppendLine("/// </summary>")
@@ -540,31 +537,44 @@ return result;
                 .Append("public static IsValidResult TryCreate(")
                 .ForEach(_fieldInstructions, ", ", (b, f) =>
                     b.Append(f.Attribute.GetTypeSymbol()).Append(' ').Append(f.InParamName))
-                .Append(", out ").Append(_typeSymbol.Name).Append(_nullPropagatingToken)
-                .Append(
-@" result)
-{
-var validateResult = ValidateResult.Valid;
+                .Append(", out ").Append(_typeSymbol.Name);
+            if(_nullableDefaultEnabled)
+            {
+                _builder.Append('?');
+            }
+            _builder.AppendLine(" result){");
+
+            if(_attribute.HasValidation)
+            {
+                _builder.Append(
+    @"var validateResult = ValidateResult.Valid;
 var validateParameters = new ValidateParameters(")
-                .ForEach(_validatedFieldInstructions, ", ", (b, f) =>
-                    b.Append(f.InParamName))
-                .Append(
-@");
+                    .ForEach(_fieldInstructions, ", ", (b, f) =>
+                        b.Append(f.InParamName))
+                    .Append(
+    @");
 Validate(validateParameters, ref validateResult);
 var isValid = validateResult.IsValid;
 if(isValid)
 {
 result = new ").Append(_typeSymbol.Name).Append('(')
-                .ForEach(_fieldInstructions, ", ", (b, f) =>
-                    b.Append(f.InParamName))
-                .Append(
-@");
+                    .ForEach(_fieldInstructions, ", ", (b, f) =>
+                        b.Append(f.InParamName))
+                    .Append(
+    @");
 } else {
 result = ").Append(_defaultOrNull).Append(
-@";
+    @";
 }
 return validateResult;
 }");
+            } else
+            {
+                _builder.Append("result = new ").Append(_typeSymbol.Name).Append('(')
+                .ForEach(_fieldInstructions, ", ", (b, f) =>
+                    b.Append(f.InParamName))
+                .Append(");return IsValidResult.Valid;}");
+            }
 
             return this;
         }
@@ -588,15 +598,13 @@ return validateResult;
                 .Append("public static ").Append(_typeSymbol.Name).Append(" Create(")
                 .ForEach(_fieldInstructions, ", ", (b, f) =>
                     b.Append(f.Attribute.GetTypeSymbol()).Append(' ').Append(f.InParamName))
-                .Append(
-@")
-{");
-            if(_validatedFieldInstructions.Count > 0)
+                .AppendLine("){");
+            if(_attribute.HasValidation)
             {
                 _builder.Append(
 @"var validateResult = ValidateResult.Valid;
 var validateParameters = new ValidateParameters(")
-                .ForEach(_validatedFieldInstructions, ", ", (b, f) => b.Append(f.InParamName))
+                .ForEach(_fieldInstructions, ", ", (b, f) => b.Append(f.InParamName))
                 .Append(
 @");
 Validate(validateParameters, ref validateResult);
@@ -604,7 +612,7 @@ if (!validateResult.IsValid)
 {
 string reasonMessage = null;
 string paramName = null;")
-                .ForEach(_validatedFieldInstructions, $"{Environment.NewLine} else ", (b, f) =>
+                .ForEach(_fieldInstructions, $"{Environment.NewLine} else ", (b, f) =>
                     b.Append("if (validateResult.").Append(f.Attribute.Name).Append("IsInvalid)")
                     .Append('{')
                     .Append("reasonMessage = validateResult.").Append(f.Attribute.Name).Append("Error;")
@@ -621,9 +629,9 @@ string paramName = null;")
             }
 
             _builder.Append("return new ").Append(_typeSymbol.Name).Append('(')
-            .ForEach(_fieldInstructions, ", ", (b, f) =>
-                b.Append(f.InParamName)).Append(");")
-            .Append('}');
+                .ForEach(_fieldInstructions, ", ", (b, f) =>
+                    b.Append(f.InParamName))
+                .Append(");}");
 
             return this;
         }
@@ -631,9 +639,7 @@ string paramName = null;")
         #region Deconstruction & Transformation
         public MacroRecordSourceBuilder AddParentDeconstructionAndTransformation()
         {
-            var anyEligible = _fieldInstructions
-                 .Where(f => f.Attribute.IsDeconstructable || f.Attribute.SupportsWith)
-                 .Any();
+            var anyEligible = _fieldInstructions.Any(f => f.Attribute.IsDeconstructable || f.Attribute.SupportsWith);
 
             if(!anyEligible)
             {
@@ -663,6 +669,7 @@ string paramName = null;")
                 var field = deconstructableFields[0];
                 if(field.Attribute.GetTypeSymbol().TypeKind == TypeKind.Interface)
                 {
+                    //interface type conversion operators are illegal
                     return this;
                 }
 
@@ -673,7 +680,7 @@ string paramName = null;")
                     .AppendLine("/// </summary>")
                     .Append("public static implicit operator ").Append(field.Attribute.GetTypeSymbol())
                     .Append('(')
-                    .Append(_typeSymbol.Name).Append(" instance) =>")
+                    .Append(_typeSymbol.Name).Append(" instance) => ")
                     .Append("instance.").Append(field.Attribute.Name).Append(';');
             } else
             {
@@ -690,7 +697,7 @@ string paramName = null;")
                     .Append(')')
                     .Append('{')
                     .ForEach(deconstructableFields, (b, f) =>
-                        b.Append(f.OutParamName).Append(" = ").Append(f.Attribute.Name).Append(';'))
+                        b.Append(f.OutParamName).Append(" = this.").Append(f.Attribute.Name).Append(';'))
                     .Append('}');
             }
 
@@ -726,7 +733,7 @@ string paramName = null;")
                 .Append(f.Attribute.GetTypeSymbol()).Append(' ').Append(f.InParamName).Append(") =>")
                 .Append("Create(")
                 .ForEach(_fieldInstructions, ", ", (b_1, f_1) =>
-                    b_1.Append(f_1.Attribute.Name == f.Attribute.Name ? f_1.InParamName : f_1.Attribute.Name))
+                    b_1.Append(f_1.Attribute.Name == f.Attribute.Name ? f_1.InParamName : $"this.{f_1.Attribute.Name}"))
                 .Append(");"));
 
             return this;
@@ -735,19 +742,21 @@ string paramName = null;")
         #region Equality & Hashing
         public MacroRecordSourceBuilder AddParentEqualityAndHashing()
         {
-            var result = AddParentEqualsMethods()
-                .AddParentGetHashCodeMethod()
-                .AddParentEqualityOperator()
-                .AddParentInequalityOperator();
+            _builder.AppendLine("#region Equality & Hashing");
+            AddParentEqualsMethods();
+            AddParentGetHashCodeMethod();
+            AddParentEqualityOperator();
+            AddParentInequalityOperator();
+            _builder.AppendLine("#endregion");
 
-            return result;
+            return this;
         }
         #region Hashing
         public MacroRecordSourceBuilder AddParentGetHashCodeMethod()
         {
             //better debuggability
 #pragma warning disable IDE0046 // Convert to conditional expression
-            if(_attribute.HasCustomEquality && _fieldInstructions.Count > 0)
+            if(_attribute.HasCustomEquality)
             {
                 return AddParentCustomGetHashCodeMethod();
             } else
@@ -758,11 +767,6 @@ string paramName = null;")
         }
         public MacroRecordSourceBuilder AddParentDefaultGetHashCodeMethod()
         {
-            if(_attribute.HasCustomEquality && _fieldInstructions.Count > 0)
-            {
-                return this;
-            }
-
             _builder.AppendLine("/// <inheritdoc/>")
                 .Append("public override int GetHashCode() =>");
 
@@ -770,21 +774,19 @@ string paramName = null;")
             {
                 _builder.Append("0;");
                 return this;
-            }
-
-            if(_fieldInstructions.Count == 1)
+            } else if(_fieldInstructions.Count == 1)
             {
                 var field = _fieldInstructions[0];
                 _builder.Append("global::System.Collections.Generic.EqualityComparer<")
                     .Append(field.Attribute.GetTypeSymbol())
-                    .Append(">.Default.GetHashCode(")
+                    .Append(">.Default.GetHashCode(this.")
                     .Append(field.Attribute.Name)
                     .Append(");");
             } else
             {
                 _builder.Append('(')
                     .ForEach(_fieldInstructions, ", ", (b, f) =>
-                        b.Append(f.Attribute.Name))
+                        b.Append("this.").Append(f.Attribute.Name))
                     .Append(").GetHashCode();");
             }
 
@@ -792,37 +794,36 @@ string paramName = null;")
         }
         public MacroRecordSourceBuilder AddParentCustomGetHashCodeMethod()
         {
-            if(!_attribute.HasCustomEquality || _fieldInstructions.Count == 0)
+            _builder.Append(
+@"/// <summary>
+/// Calculates custom hash codes for any field of this instance.
+/// </summary>
+/// <param name=""hashCodes"">The calculated custom hashcodes.</param>
+partial void GetCustomHashCodes(ref CustomHashCodes hashCodes);
+/// <inheritdoc />
+public override int GetHashCode()");
+
+            if(_fieldInstructions.Count == 0)
             {
+                _builder.Append(" => 0;");
+
                 return this;
             }
 
             _builder.Append(
-@"/// <summary>
-/// Calculates custom hash codes for any field of a <see cref=""").Append(_typeSymbol.Name).Append(@"""/> instance.
-/// </summary>
-/// <param name=""obj"">The instance whose fields' hash codes to calculate.</param>
-/// <param name=""hashCodes"">The calculated custom hashcodes.</param>
-static partial void GetCustomHashCodes(in ").Append(_typeSymbol.Name).Append(@" obj, ref CustomHashCodes hashCodes);
-/// <inheritdoc />
-public override int GetHashCode()
-{
-    var instance = this;
+@"{
     var hashCodes = new CustomHashCodes();
-    GetCustomHashCodes(in instance, ref hashCodes);
+    GetCustomHashCodes(ref hashCodes);
     var result = ");
             if(_fieldInstructions.Count > 1)
             {
                 _builder.AppendLine('(');
-            } else
-            {
-                _builder.AppendLine();
             }
 
             _builder.ForEach(_fieldInstructions, ',' + Environment.NewLine, (b, f) =>
                 b.Append("hashCodes.").Append(f.Attribute.Name).Append("HashCode").AppendLine(" ?? ")
                     .Append("global::System.Collections.Generic.EqualityComparer<").Append(f.Attribute.GetTypeSymbol())
-                    .Append(">.Default.GetHashCode(instance.").Append(f.Attribute.Name).Append(")"));
+                    .Append(">.Default.GetHashCode(this.").Append(f.Attribute.Name).Append(")"));
 
             if(_fieldInstructions.Count > 1)
             {
@@ -839,7 +840,7 @@ public override int GetHashCode()
         {
             //better debuggability
 #pragma warning disable IDE0046 // Convert to conditional expression
-            if(_attribute.HasCustomEquality && _fieldInstructions.Count > 0)
+            if(_attribute.HasCustomEquality)
             {
                 return AddParentCustomIEquatableEqualsMethod();
             } else
@@ -850,38 +851,35 @@ public override int GetHashCode()
         }
         public MacroRecordSourceBuilder AddParentCustomIEquatableEqualsMethod()
         {
-            if(!_attribute.HasCustomEquality || _fieldInstructions.Count == 0)
+            _builder.AppendLine("/// <summary>")
+                .AppendLine("/// Evaluates custom equality for any field of this instance and another.")
+                .AppendLine("/// </summary>")
+                .Append(
+@"/// <param name=""other"">The instance to compare against this instance.</param>
+/// <param name=""equalities"">
+/// A mutable container for information on custom field equalities between 
+/// this instance and <paramref name=""other""/>.
+/// </param>
+partial void GetCustomEqualities(in ").Append(_typeSymbol.Name).Append(@" other, ref CustomEqualities equalities);
+        /// <inheritdoc/>
+        public bool Equals(").Append(_typeSymbol.Name).Append(
+@" other)");
+
+            if(_fieldInstructions.Count == 0)
             {
+                _builder.Append(" => true;");
                 return this;
             }
 
-            _builder.AppendLine("/// <summary>")
-                .Append("/// Evaluates custom equality for any field of two <see cref=\"")
-                .Append(_typeSymbol.Name).AppendLine("\"/> instances.")
-                .AppendLine("/// </summary>")
-                .Append(
-@"/// <param name=""a"">The instance to compare against <paramref name=""b""/>.</param>
-/// <param name=""b"">The instance to compare against <paramref name=""a""/>.</param>
-/// <param name=""equalities"">
-/// A mutable container for information on custom field equalities between 
-/// <paramref name=""a""/> and <paramref name=""b""/>.
-/// </param>
-static partial void GetCustomEqualities(in ")
-                .Append(_typeSymbol.Name).Append(" a, in ").Append(_typeSymbol.Name)
-                .Append(
-@" b, ref CustomEqualities equalities);
-        /// <inheritdoc/>
-        public bool Equals(").Append(_typeSymbol.Name).Append(
-@" other)
-    {
-        var self = this;
+            _builder.Append(
+@"{
         var equalities = new CustomEqualities();
-        GetCustomEqualities(in self, in other, ref equalities);
+        GetCustomEqualities(in other, ref equalities);
         var result = ")
                 .ForEach(_fieldInstructions, " &&" + Environment.NewLine, (b, f) =>
                     b.Append("(equalities.").Append(f.Attribute.Name)
                     .Append("IsEqual ?? global::System.Collections.Generic.EqualityComparer<")
-                    .Append(f.Attribute.GetTypeSymbol()).Append(">.Default.Equals(self.")
+                    .Append(f.Attribute.GetTypeSymbol()).Append(">.Default.Equals(this.")
                     .Append(f.Attribute.Name).Append(", other.").Append(f.Attribute.Name).Append("))"))
                 .Append(
 @";
@@ -893,13 +891,8 @@ static partial void GetCustomEqualities(in ")
         }
         public MacroRecordSourceBuilder AddParentDefaultIEquatableEqualsMethod()
         {
-            if(_attribute.HasCustomEquality && _fieldInstructions.Count > 0)
-            {
-                return this;
-            }
-
             _builder.AppendLine("/// <inheritdoc/>")
-                .Append("public bool Equals(").Append(_typeSymbol.Name).Append(" other) =>");
+                .Append("public bool Equals(").Append(_typeSymbol.Name).Append(" other) => ");
 
             if(_fieldInstructions.Count == 0)
             {
@@ -1022,7 +1015,7 @@ public static bool operator !=(")
         #region ValidateParameters Type
         public MacroRecordSourceBuilder AddValidateParametersType()
         {
-            if(_validatedFieldInstructions.Count == 0)
+            if(!_attribute.HasValidation)
             {
                 return this;
             }
@@ -1031,7 +1024,7 @@ public static bool operator !=(")
 @"/// <summary>
 /// Wrapper type around possible construction parameters; used for validation.
 /// </summary>
-private readonly struct ValidateParameters : global::System.IEquatable<ValidateParameters>
+private readonly struct ValidateParameters
 {");
 
             AddValidateParametersConstructorsAndFields();
@@ -1044,29 +1037,24 @@ private readonly struct ValidateParameters : global::System.IEquatable<ValidateP
         }
         public MacroRecordSourceBuilder AddValidateParametersConstructorsAndFields()
         {
-            if(_validatedFieldInstructions.Count == 0)
-            {
-                return this;
-            }
-
             _builder.AppendLine(
 @"#region Constructors & Fields
 /// <summary>
 /// Initializes a new instance.
 /// </summary>")
-                .ForEach(_validatedFieldInstructions, (b, f) =>
+                .ForEach(_fieldInstructions, (b, f) =>
                     b.Append("/// <param name=\"").Append(f.InParamName).AppendLine("\">")
                     .Append("/// The value for <see cref=\"").Append(f.Attribute.Name).AppendLine("\"/> to validate.")
                     .AppendLine("/// </param>"))
                 .Append("public ValidateParameters(")
-                .ForEach(_validatedFieldInstructions, ", ", (b, f) =>
+                .ForEach(_fieldInstructions, ", ", (b, f) =>
                     b.Append(f.Attribute.GetTypeSymbol()).Append(' ').Append(f.InParamName))
                 .Append(')')
                 .Append('{')
-                .ForEach(_validatedFieldInstructions, (b, f) =>
+                .ForEach(_fieldInstructions, (b, f) =>
                     b.Append(f.Attribute.Name).Append(" = ").Append(f.InParamName).Append(';'))
                 .Append('}')
-                .ForEach(_validatedFieldInstructions, (b, f) =>
+                .ForEach(_fieldInstructions, (b, f) =>
                     b.AppendLine("/// <summary>")
                     .Append("/// The value for <see cref=\"").Append(f.Attribute.Name).AppendLine("\"/> to validate.")
                     .AppendLine("/// </summary>")
@@ -1078,16 +1066,11 @@ private readonly struct ValidateParameters : global::System.IEquatable<ValidateP
         }
         public MacroRecordSourceBuilder AddValidateParametersDeconstruction()
         {
-            if(_validatedFieldInstructions.Count == 0)
-            {
-                return this;
-            }
-
             _builder.AppendLine("#region Deconstruction");
 
-            if(_validatedFieldInstructions.Count == 1)
+            if(_fieldInstructions.Count == 1)
             {
-                var field = _validatedFieldInstructions[0];
+                var field = _fieldInstructions[0];
                 _builder.AppendLine("/// <summary>")
                     .Append("/// Converts an instance of <see cref=\"\"ValidateParameters\"\"/> to its single constituent, <see cref=\"ValidateParameters.")
                     .Append(field.Attribute.Name).AppendLine("\"/>.")
@@ -1101,18 +1084,18 @@ private readonly struct ValidateParameters : global::System.IEquatable<ValidateP
 @"/// <summary>
 /// Deconstructs this instance into its constituent values.
 /// </summary>")
-                    .ForEach(_validatedFieldInstructions, (b, f) =>
+                    .ForEach(_fieldInstructions, (b, f) =>
                         b.Append("/// <param name=\"").Append(f.OutParamName)
                         .AppendLine("\">")
                         .Append("/// The value contained in <see cref=\"")
                         .Append(f.Attribute.Name).AppendLine("\"/>.")
                         .AppendLine("/// </param>"))
                     .Append("public void Deconstruct(")
-                    .ForEach(_validatedFieldInstructions, ", ", (b, f) =>
+                    .ForEach(_fieldInstructions, ", ", (b, f) =>
                         b.Append("out ").Append(f.Attribute.GetTypeSymbol()).Append(' ').Append(f.OutParamName))
                     .Append(')')
                     .Append('{')
-                    .ForEach(_validatedFieldInstructions, (b, f) =>
+                    .ForEach(_fieldInstructions, (b, f) =>
                         b.Append(f.OutParamName).Append(" = ").Append(f.Attribute.Name).Append(';'))
                     .AppendLine("}");
             }
@@ -1123,64 +1106,17 @@ private readonly struct ValidateParameters : global::System.IEquatable<ValidateP
         }
         public MacroRecordSourceBuilder AddValidateParametersEqualityAndHashing()
         {
-            if(_validatedFieldInstructions.Count == 0)
-            {
-                return this;
-            }
-
-            _builder.Append(
+            _builder.AppendLine(
 @"#region Equality & Hashing
 /// <inheritdoc/>
 public override bool Equals(object obj)
 {
-	return obj is ValidateParameters address && Equals(address);
+    throw new global::System.NotSupportedException();
 }
 /// <inheritdoc/>
-public bool Equals(ValidateParameters other)
-{")
-                .Append("return (")
-                .ForEach(_validatedFieldInstructions, ", ", (b, f) =>
-                    b.Append(f.Attribute.Name))
-                .Append(").Equals((")
-                .ForEach(_validatedFieldInstructions, ", ", (b, f) =>
-                    b.Append("other.").Append(f.Attribute.Name))
-                .Append("));")
-                .Append('}')
-                .Append(
-@"/// <inheritdoc/>
 public override int GetHashCode()
-{")
-                .Append("return (")
-                .ForEach(_validatedFieldInstructions, ", ", (b, f) =>
-                    b.Append(f.Attribute.Name))
-                .Append(").GetHashCode();")
-                .Append('}')
-                .AppendLine(
-@"/// <summary>
-/// Indicates whether two instances of <see cref=""ValidateParameters""/> are equal.
-/// </summary>
-/// <param name=""left"">The left operand.</param>
-/// <param name=""left"">The right operand.</param>
-/// <returns>
-/// <see langword=""true""/> if <paramref name=""left""/> and <paramref name=""right""/> are
-/// equal; otherwise, <see langword=""false""/>.
-/// </returns>
-public static bool operator ==(ValidateParameters left, ValidateParameters right)
 {
-	return left.Equals(right);
-}
-/// <summary>
-/// Indicates whether two instances of <see cref=""ValidateParameters""/> are <em>not</em> equal.
-/// </summary>
-/// <param name=""left"">The left operand.</param>
-/// <param name=""left"">The right operand.</param>
-/// <returns>
-/// <see langword=""true""/> if <paramref name=""left""/> and <paramref name=""right""/> are
-/// <em>not</em> equal; otherwise, <see langword=""false""/>.
-/// </returns>
-public static bool operator !=(ValidateParameters left, ValidateParameters right)
-{
-	return !(left == right);
+    throw new global::System.NotSupportedException();
 }
 #endregion");
 
@@ -1190,7 +1126,7 @@ public static bool operator !=(ValidateParameters left, ValidateParameters right
         #region ValidateResult Type
         public MacroRecordSourceBuilder AddValidateResultType()
         {
-            if(_validatedFieldInstructions.Count == 0)
+            if(!_attribute.HasValidation)
             {
                 return this;
             }
@@ -1212,7 +1148,7 @@ private ref struct ValidateResult
         public MacroRecordSourceBuilder AddValidateResultFieldsAndProperties()
         {
             _builder.AppendLine("#region Fields & Properties")
-                .ForEach(_validatedFieldInstructions, (b, f) =>
+                .ForEach(_fieldInstructions, (b, f) =>
                     b.AppendLine("/// <summary>")
                     .Append("/// Indicates whether the value provided by <see cref=\"ValidateParameters.")
                     .Append(f.Attribute.Name).AppendLine("\"/> is invalid.")
@@ -1222,7 +1158,7 @@ private ref struct ValidateResult
 @"/// <summary>
 /// Contains the error message to include in instances of <see cref=""global::System.ArgumentException""/> thrown 
 /// by <see cref=""Create(")
-                    .ForEach(_validatedFieldInstructions, ", ", (b_1, f_1) =>
+                    .ForEach(_fieldInstructions, ", ", (b_1, f_1) =>
                         b_1.Append(f_1.Attribute.GetTypeSymbol()))
                     .Append(")\"/> if <see cref=\"")
                     .Append(f.Attribute.Name)
@@ -1239,7 +1175,7 @@ public static ValidateResult Valid => default;
 /// Gets a value indicating whether none of the validation fields have been set to <see langword=""true""/>.
 /// </summary>
 public bool IsValid =>")
-                .ForEach(_validatedFieldInstructions, "&& ", (b, f) =>
+                .ForEach(_fieldInstructions, "&& ", (b, f) =>
                     b.Append('!').Append(f.Attribute.Name).Append("IsInvalid"))
                 .AppendLine(";")
                 .AppendLine("#endregion");
@@ -1248,11 +1184,6 @@ public bool IsValid =>")
         }
         public MacroRecordSourceBuilder AddValidateResultConversionOperators()
         {
-            if(_validatedFieldInstructions.Count == 0)
-            {
-                return this;
-            }
-
             _builder.Append(
 @"#region Conversion Operators
 /// <summary>
@@ -1262,7 +1193,7 @@ public bool IsValid =>")
 /// <param name=""result"">The instance to implicitly convert.</param>
 public static implicit operator IsValidResult(ValidateResult result) =>
 	new IsValidResult(")
-                .ForEach(_validatedFieldInstructions, ", ", (b, f) =>
+                .ForEach(_fieldInstructions, ", ", (b, f) =>
                     b.Append("result.").Append(f.Attribute.Name).Append("IsInvalid")
                     .Append(", result.").Append(f.Attribute.Name).Append("Error"))
                 .Append(
@@ -1274,7 +1205,7 @@ public static implicit operator IsValidResult(ValidateResult result) =>
         }
         public MacroRecordSourceBuilder AddValidateResultEqualityAndHashing()
         {
-            if(_validatedFieldInstructions.Count == 0)
+            if(!_attribute.HasValidation)
             {
                 return this;
             }
@@ -1307,11 +1238,6 @@ public override int GetHashCode()
         #region IsValidResult Type
         public MacroRecordSourceBuilder AddIsValidResultType()
         {
-            if(_validatedFieldInstructions.Count == 0)
-            {
-                return this;
-            }
-
             _builder.Append(
 @"/// <summary>
 /// Contains validation results for construction parameters.
@@ -1321,6 +1247,7 @@ public readonly struct IsValidResult : global::System.IEquatable<IsValidResult>
             AddIsValidResultConstructorAndFields();
             AddIsValidResultConversionAndDeconstruction();
             AddIsValidResultEqualityAndHashing();
+
             _builder.Append('}');
 
             return this;
@@ -1328,11 +1255,6 @@ public readonly struct IsValidResult : global::System.IEquatable<IsValidResult>
         #region Constructor & Fields
         public MacroRecordSourceBuilder AddIsValidResultConstructorAndFields()
         {
-            if(_validatedFieldInstructions.Count == 0)
-            {
-                return this;
-            }
-
             _builder.AppendLine("#region Constructor & Fields");
             AddIsValidResultConstructor();
             AddIsValidResultFields();
@@ -1342,28 +1264,23 @@ public readonly struct IsValidResult : global::System.IEquatable<IsValidResult>
         }
         public MacroRecordSourceBuilder AddIsValidResultConstructor()
         {
-            if(_validatedFieldInstructions.Count == 0)
-            {
-                return this;
-            }
-
             _builder.Append(
 @"/// <summary>
 /// Initializes a new instance.
 /// </summary>
 ")
-                .ForEach(_validatedFieldInstructions, (b, f) =>
+                .ForEach(_fieldInstructions, (b, f) =>
                     b.Append("/// <param name=\"").Append(f.InParamName).AppendLine("IsInvalid\">")
                     .Append("/// Indicates whether the parameter provided for <see cref=\"")
                     .Append(f.Attribute.Name).AppendLine("\"/> was invalid.")
                     .AppendLine("/// </param>"))
                 .Append("public IsValidResult(")
-                .ForEach(_validatedFieldInstructions, ", ", (b, f) =>
+                .ForEach(_fieldInstructions, ", ", (b, f) =>
                     b.Append("bool ").Append(f.InParamName)
                     .Append("IsInvalid, string ")
                     .Append(f.InParamName).Append("Error"))
                 .Append("){")
-                .ForEach(_validatedFieldInstructions, (b, f) =>
+                .ForEach(_fieldInstructions, (b, f) =>
                     b.Append(f.Attribute.Name).Append("IsInvalid = ").Append(f.InParamName).Append("IsInvalid;")
                     .Append(f.Attribute.Name).Append("Error = ").Append(f.InParamName).Append("Error;"))
                 .Append('}');
@@ -1372,24 +1289,23 @@ public readonly struct IsValidResult : global::System.IEquatable<IsValidResult>
         }
         public MacroRecordSourceBuilder AddIsValidResultFields()
         {
-            if(_validatedFieldInstructions.Count == 0)
-            {
-                return this;
-            }
-
-            _builder.ForEach(_validatedFieldInstructions, (b, f) =>
-                b.Append(
+            _builder.AppendLine(
+@"/// <summary>
+/// The default (valid) instance.
+/// </summary>
+public static readonly IsValidResult Valid = default;")
+                .ForEach(_fieldInstructions, (b, f) =>
+                    b.Append(
 @"/// <summary>
 /// Indicates whether the parameter provided for <see cref=""")
-                .Append(f.Attribute.Name).Append(
+                    .Append(f.Attribute.Name).Append(
 @"""/> was invalid.
 /// </summary>
 public readonly bool ")
-                .Append(f.Attribute.Name).AppendLine("IsInvalid;")
-                .Append(
+                    .Append(f.Attribute.Name).AppendLine("IsInvalid;")
+                    .Append(
 @"/// <summary>
-/// Contains a validation description if <see cref=""").Append(f.Attribute.Name).Append(
-@"IsInvalid""/> is set to <see langword=""true""/>.
+/// Contains an error description for <see cref=""").Append(f.Attribute.Name).Append(@"""/>.
 /// </summary>
 public readonly string ").Append(f.Attribute.Name).AppendLine("Error;"));
 
@@ -1399,15 +1315,6 @@ public readonly string ").Append(f.Attribute.Name).AppendLine("Error;"));
         #region Conversion & Deconstruction
         public MacroRecordSourceBuilder AddIsValidResultConversionAndDeconstruction()
         {
-            var eligibleFields = _fieldInstructions
-                .Where(f => f.Attribute.IsDeconstructable || f.Attribute.IsValidated)
-                .Any();
-
-            if(!eligibleFields)
-            {
-                return this;
-            }
-
             _builder.AppendLine("#region Conversion & Deconstruction");
             AddIsValidResultConversion();
             AddIsValidResultDeconstruction();
@@ -1419,31 +1326,19 @@ public readonly string ").Append(f.Attribute.Name).AppendLine("Error;"));
         {
             _builder.Append(
 @"/// <summary>
-/// Implicitly converts an instance of <see cref=""""IsValidResult""""/> to <see cref=""""bool""""/>.
+/// Implicitly converts an instance of <see cref=""IsValidResult""/> to <see cref=""bool""/>.
 /// ");
 
-            if(_validatedFieldInstructions.Count == 0)
-            {
-                _builder.Append("As no fields are being validated, the result will always be <see langword=\"true\"/>");
-            } else
-            {
-                _builder.Append("The result will be true if all validity fields evaluate to <see langword=\"false\"/>.");
-            }
+            _builder.Append("The result will be true if all <c>xIsInvalid</c> fields evaluate to <see langword=\"false\"/>.");
 
             _builder.Append(@"
 /// </summary>
 /// <param name=""result"" > The instance to implicitly convert.</ param >
-public static implicit operator global::System.Boolean(IsValidResult result) =>
+public static implicit operator bool(IsValidResult result) =>
 ");
 
-            if(_validatedFieldInstructions.Count == 0)
-            {
-                _builder.Append("true");
-            } else
-            {
-                _builder.ForEach(_validatedFieldInstructions, " &&", (b, f) =>
-                    b.Append("!result.").Append(f.Attribute.Name).Append("IsInvalid"));
-            }
+            _builder.ForEach(_fieldInstructions, " &&", (b, f) =>
+                b.Append("!result.").Append(f.Attribute.Name).Append("IsInvalid"));
 
             _builder.Append(';');
 
@@ -1451,16 +1346,11 @@ public static implicit operator global::System.Boolean(IsValidResult result) =>
         }
         public MacroRecordSourceBuilder AddIsValidResultDeconstruction()
         {
-            if(_validatedFieldInstructions.Count == 0)
-            {
-                return this;
-            }
-
             _builder.AppendLine(
 @"/// <summary>
 /// Deconstructs this instance into its constituent values.
 /// </summary>")
-                .ForEach(_validatedFieldInstructions, (b, f) =>
+                .ForEach(_fieldInstructions, (b, f) =>
                     b.Append("/// <param name=\"").Append(f.OutParamName).AppendLine("IsInvalid\">")
                     .Append("/// The value contained in <see cref=\"").Append(f.Attribute.Name).AppendLine("IsInvalid\"/>.")
                     .AppendLine("/// </param>")
@@ -1468,10 +1358,10 @@ public static implicit operator global::System.Boolean(IsValidResult result) =>
                     .Append("/// The value contained in <see cref=\"").Append(f.Attribute.Name).AppendLine("Error\"/>.")
                     .AppendLine("/// </param>"))
                 .Append("public void Deconstruct(")
-                .ForEach(_validatedFieldInstructions, ", ", (b, f) =>
+                .ForEach(_fieldInstructions, ", ", (b, f) =>
                     b.Append("out bool ").Append(f.OutParamName).Append("IsInvalid, out string ").Append(f.OutParamName).Append("Error"))
                 .Append("){")
-                .ForEach(_validatedFieldInstructions, (b, f) =>
+                .ForEach(_fieldInstructions, (b, f) =>
                     b.Append(f.OutParamName).Append("IsInvalid = ")
                     .Append(f.Attribute.Name).Append("IsInvalid;")
                     .Append(f.OutParamName).Append("Error = ")
@@ -1484,94 +1374,65 @@ public static implicit operator global::System.Boolean(IsValidResult result) =>
         #region Equality & Hashing
         public MacroRecordSourceBuilder AddIsValidResultEqualityAndHashing()
         {
-            if(_validatedFieldInstructions.Count == 0)
-            {
-                return this;
-            }
-
             _builder.AppendLine("#region Equality & Hashing");
             AddIsValidResultEquals();
             AddIsValidResultGetHashcode();
+            AddIsValidResultEqualityOperators();
             _builder.AppendLine("#endregion");
 
             return this;
         }
         public MacroRecordSourceBuilder AddIsValidResultEqualityOperators()
         {
-            if(_validatedFieldInstructions.Count == 0)
-            {
-                return this;
-            }
-
             _builder.Append(
 @"/// <summary>
 /// Indicates whether two instances of <see cref=""IsValidResult""/> are equal.
 /// </summary>
 /// <param name=""left"">The left operand.</param>
-/// <param name=""left"">The right operand.</param>
+/// <param name=""right"">The right operand.</param>
 /// <returns>
 /// <see langword=""true""/> if <paramref name=""left""/> and <paramref name=""right""/> are
 /// equal; otherwise, <see langword=""false""/>.
 /// </returns>
-public static bool operator ==(IsValidResult left, IsValidResult right)
-{{
-	return left.Equals(right);
-}}
+public static bool operator ==(IsValidResult left, IsValidResult right) => left.Equals(right);
 /// <summary>
 /// Indicates whether two instances of <see cref=""IsValidResult""/> are <em>not</em> equal.
 /// </summary>
 /// <param name=""left"">The left operand.</param>
-/// <param name=""left"">The right operand.</param>
+/// <param name=""right"">The right operand.</param>
 /// <returns>
 /// <see langword=""true""/> if <paramref name=""left""/> and <paramref name=""right""/> are
 /// <em>not</em> equal; otherwise, <see langword=""false""/>.
 /// </returns>
-public static bool operator !=(IsValidResult left, IsValidResult right)
-{{
-	return !(left == right);
-}}");
+public static bool operator !=(IsValidResult left, IsValidResult right) => !(left == right);");
 
             return this;
         }
         public MacroRecordSourceBuilder AddIsValidResultEquals()
         {
-            if(_validatedFieldInstructions.Count == 0)
-            {
-                return this;
-            }
-
             _builder.Append(
 @"/// <inheritdoc/>
-public override bool Equals(object obj)
-{
-	return obj is IsValidResult result && Equals(result);
-}
+public override bool Equals(object obj) =>
+    obj is IsValidResult instance && Equals(instance);
 /// <inheritdoc/>
-public bool Equals(IsValidResult other) =>
-(")
-                .ForEach(_validatedFieldInstructions, ", ", (b, f) =>
-                    b.Append(f.Attribute.Name).Append("IsInvalid, ")
+public bool Equals(IsValidResult other) =>")
+                .ForEach(_fieldInstructions, String.Empty, (b, f) =>
+                    b.Append(f.Attribute.Name).Append("IsInvalid == other.")
+                    .Append(f.Attribute.Name).AppendLine("IsInvalid &&"))
+                .ForEach(_fieldInstructions, " &&" + Environment.NewLine, (b, f) =>
+                    b.Append(f.Attribute.Name).Append("Error == other.")
                     .Append(f.Attribute.Name).Append("Error"))
-                .Append(").Equals((")
-                .ForEach(_validatedFieldInstructions, ", ", (b, f) =>
-                    b.Append("other.").Append(f.Attribute.Name).Append("IsInvalid, ")
-                    .Append("other.").Append(f.Attribute.Name).Append("Error"))
-                .Append("));");
+                .Append(';');
 
             return this;
         }
         public MacroRecordSourceBuilder AddIsValidResultGetHashcode()
         {
-            if(_validatedFieldInstructions.Count == 0)
-            {
-                return this;
-            }
-
             _builder.Append(
 @"/// <inheritdoc/>
 public override int GetHashCode() =>
 (")
-                .ForEach(_validatedFieldInstructions, ", ", (b, f) =>
+                .ForEach(_fieldInstructions, ", ", (b, f) =>
                     b.Append(f.Attribute.Name).Append("IsInvalid, ")
                     .Append(f.Attribute.Name).Append("Error"))
                 .Append(").GetHashCode();");
@@ -1601,7 +1462,7 @@ private ref struct CustomEqualities
                 .Append("/// The equality of the <see cref=\"").Append(f.Attribute.Name).AppendLine("\"/> fields provided, or <see langword=\"null\"/>")
                 .AppendLine("/// if the default equality mechanism should be used.")
                 .AppendLine("/// </summary>")
-                .Append("public global::System.Nullable<global::System.Boolean> ").Append(f.Attribute.Name).Append("IsEqual;"))
+                .Append("public global::System.Nullable<bool> ").Append(f.Attribute.Name).Append("IsEqual;"))
             .Append(@"
         #endregion
         #region Equality & Hashing

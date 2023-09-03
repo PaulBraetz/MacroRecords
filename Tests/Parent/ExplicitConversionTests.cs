@@ -70,7 +70,7 @@ namespace RhoMicro.MacroRecords.Tests.Parent
 						}
 						""",
                         """
-						public static explicit operator TVO(System.Int32 in_Field1) => Create(in_Field1);
+						public static explicit operator TVO(int in_Field1) => Create(in_Field1);
 						"""
                     },
                     new Object[]
@@ -84,7 +84,7 @@ namespace RhoMicro.MacroRecords.Tests.Parent
                         }
                         """,
                         """
-						public static explicit operator TVO(System.Int32 in_Field1) => Create(in_Field1);
+						public static explicit operator TVO(int in_Field1) => Create(in_Field1);
 						"""
                     },
                     new Object[]
@@ -97,7 +97,9 @@ namespace RhoMicro.MacroRecords.Tests.Parent
                         {
                         }
                         """,
-                        String.Empty
+                        """
+						public static implicit operator TVO(int in_Field1) => Create(in_Field1);
+						"""
                     },
                     new Object[]
                     {
@@ -147,7 +149,7 @@ namespace RhoMicro.MacroRecords.Tests.Parent
 						}
 						""",
                         """
-						public static explicit operator TVO((System.Int32, System.String) values) => Create(values.Item1, values.Item2);
+						public static explicit operator TVO((int, string) values) => Create(values.Item1, values.Item2);
 						"""
                     },
                     new Object[]
@@ -162,7 +164,7 @@ namespace RhoMicro.MacroRecords.Tests.Parent
 						}
 						""",
                         """
-						public static explicit operator TVO((System.Int32, System.IComparable) values) => Create(values.Item1, values.Item2);
+						public static explicit operator TVO((int, global::System.IComparable) values) => Create(values.Item1, values.Item2);
 						"""
                     },
                     new Object[]
@@ -177,7 +179,7 @@ namespace RhoMicro.MacroRecords.Tests.Parent
 						}
 						""",
                         """
-						public static explicit operator TVO((System.IFormattable, System.IComparable) values) => Create(values.Item1, values.Item2);
+						public static explicit operator TVO((global::System.IFormattable, global::System.IComparable) values) => Create(values.Item1, values.Item2);
 						"""
                     },
                     new Object[]
@@ -192,7 +194,7 @@ namespace RhoMicro.MacroRecords.Tests.Parent
 						}
 						""",
                         """
-						public static explicit operator TVO((System.Int32, System.String) values) => Create(values.Item1, values.Item2);
+						public static explicit operator TVO((int, string) values) => Create(values.Item1, values.Item2);
 						"""
                     },
                     new Object[]
@@ -206,7 +208,9 @@ namespace RhoMicro.MacroRecords.Tests.Parent
 						{
 						}
 						""",
-                        String.Empty
+                        """
+						public static implicit operator TVO((int, string) values) => Create(values.Item1, values.Item2);
+						"""
                     },
                     new Object[]
                     {
@@ -233,7 +237,7 @@ namespace RhoMicro.MacroRecords.Tests.Parent
             var builder = Util.CreateBuilder(consumer);
 
             //Act
-            var actual = builder.AddExplicitTypeConversion().BuildCore();
+            var actual = builder.AddParentTypeConversion().BuildCore();
 
             //Assert
             Assertions.AreEquivalent(expected, actual);

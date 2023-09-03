@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RhoMicro.MacroRecords.Tests
+namespace RhoMicro.MacroRecords.Tests.Parent
 {
     [TestClass]
     public class DebuggerDisplayTests
@@ -27,7 +27,7 @@ namespace RhoMicro.MacroRecords.Tests
                         }
                         """,
                         """
-                        [System.Diagnostics.DebuggerDisplayAttribute("TVO")]
+                        [global::System.Diagnostics.DebuggerDisplayAttribute("TVO")]
                         """
                     },
                     new Object[]
@@ -40,7 +40,7 @@ namespace RhoMicro.MacroRecords.Tests
                         }
                         """,
                         """
-                        [System.Diagnostics.DebuggerDisplayAttribute("TVO")]
+                        [global::System.Diagnostics.DebuggerDisplayAttribute("TVO")]
                         """
                     },
                     new Object[]
@@ -68,7 +68,7 @@ namespace RhoMicro.MacroRecords.Tests
                         }
                         """,
                         """
-                        [System.Diagnostics.DebuggerDisplayAttribute("TVO")]
+                        [global::System.Diagnostics.DebuggerDisplayAttribute("TVO")]
                         """
                     },
                     new Object[]
@@ -84,7 +84,7 @@ namespace RhoMicro.MacroRecords.Tests
                         }
                         """,
                         """
-                        [System.Diagnostics.DebuggerDisplayAttribute("TVO(Field1 : {Field1})")]
+                        [global::System.Diagnostics.DebuggerDisplayAttribute("TVO(Field1 : {Field1})")]
                         """
                     },
                     new Object[]
@@ -103,7 +103,7 @@ namespace RhoMicro.MacroRecords.Tests
                         }
                         """,
                         """
-                        [System.Diagnostics.DebuggerDisplayAttribute("TVO(Field1 : {Field1}, Field2 : {Field2})")]
+                        [global::System.Diagnostics.DebuggerDisplayAttribute("TVO(Field1 : {Field1}, Field2 : {Field2})")]
                         """
                     },
                     new Object[]
@@ -124,7 +124,7 @@ namespace RhoMicro.MacroRecords.Tests
                         }
                         """,
                         """
-                        [System.Diagnostics.DebuggerDisplayAttribute("TVO")]
+                        [global::System.Diagnostics.DebuggerDisplayAttribute("TVO")]
                         """
                     },
                     new Object[]
@@ -144,7 +144,7 @@ namespace RhoMicro.MacroRecords.Tests
                         }
                         """,
                         """
-                        [System.Diagnostics.DebuggerDisplayAttribute("TVO(Field2 : {Field2})")]
+                        [global::System.Diagnostics.DebuggerDisplayAttribute("TVO(Field2 : {Field2})")]
                         """
                     },
                     new Object[]
@@ -164,7 +164,7 @@ namespace RhoMicro.MacroRecords.Tests
                         }
                         """,
                         """
-                        [System.Diagnostics.DebuggerDisplayAttribute("TVO(Field1 : {Field1})")]
+                        [global::System.Diagnostics.DebuggerDisplayAttribute("TVO(Field1 : {Field1})")]
                         """
                     },
                     new Object[]

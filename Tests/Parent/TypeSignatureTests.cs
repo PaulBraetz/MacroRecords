@@ -19,7 +19,7 @@
                         }
                         """,
                         """
-                        partial class TVO : IEquatable<TVO>
+                        partial class TVO : global::System.IEquatable<TVO>
                         """
                     },
                     new Object[]
@@ -32,7 +32,7 @@
                         }
                         """,
                         """
-                        partial class TVO : IEquatable<TVO>
+                        partial class TVO : global::System.IEquatable<TVO>
                         """
                     },
                     new Object[]
@@ -45,7 +45,7 @@
                         }
                         """,
                         """
-                        partial class TVO : IEquatable<TVO>
+                        partial class TVO : global::System.IEquatable<TVO>
                         """
                     },new Object[]
                     {
@@ -57,7 +57,7 @@
                         }
                         """,
                         """
-                        partial class TVO : IEquatable<TVO>
+                        partial class TVO : global::System.IEquatable<TVO>
                         """
                     },
                     new Object[]
@@ -70,7 +70,7 @@
                         }
                         """,
                         """
-                        partial class TVO : IEquatable<TVO>
+                        partial class TVO : global::System.IEquatable<TVO>
                         """
                     },
                     new Object[]
@@ -83,7 +83,7 @@
                         }
                         """,
                         """
-                        partial class TVO : IEquatable<TVO>
+                        partial class TVO : global::System.IEquatable<TVO>
                         """
                     },new Object[]
                     {
@@ -95,7 +95,7 @@
                         }
                         """,
                         """
-                        partial class TVO : IEquatable<TVO>
+                        partial class TVO : global::System.IEquatable<TVO>
                         """
                     },
                     new Object[]
@@ -108,7 +108,7 @@
                         }
                         """,
                         """
-                        partial class TVO : IEquatable<TVO>
+                        partial class TVO : global::System.IEquatable<TVO>
                         """
                     },
                     new Object[]
@@ -121,7 +121,7 @@
                         }
                         """,
                         """
-                        partial class TVO : IEquatable<TVO>
+                        partial class TVO : global::System.IEquatable<TVO>
                         """
                     },
                     new Object[]
@@ -134,7 +134,7 @@
                         }
                         """,
                         """
-                        partial struct TVO : IEquatable<TVO>
+                        partial struct TVO : global::System.IEquatable<TVO>
                         """
                     },
                     new Object[]
@@ -147,7 +147,7 @@
                         }
                         """,
                         """
-                        partial struct TVO : IEquatable<TVO>
+                        partial struct TVO : global::System.IEquatable<TVO>
                         """
                     }
                 };

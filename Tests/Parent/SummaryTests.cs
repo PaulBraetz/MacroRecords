@@ -23,7 +23,7 @@
                         /// <summary>
                         /// Testsummary
                         /// </summary>
-                        public readonly System.Object ObjField;
+                        public readonly object ObjField;
                         """
                     }
                 };

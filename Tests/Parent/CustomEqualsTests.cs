@@ -25,17 +25,16 @@ namespace RhoMicro.MacroRecords.Tests.Parent
                         readonly partial struct TVO {}
                         """,
                         """
-                        static partial void GetCustomEqualities(in TVO a, in TVO b, ref CustomEqualities equalities);
+                        partial void GetCustomEqualities(in TVO other, ref CustomEqualities equalities);
                         public bool Equals(TVO other)
                         {
-                            var self = this;
                             var equalities = new CustomEqualities();
-                            GetCustomEqualities(in self, in other, ref equalities);
+                            GetCustomEqualities(in other, ref equalities);
                             var result = (
                                 equalities.FieldIsEqual ?? 
-                                global::System.Collections.Generic.EqualityComparer<byte[]>.Default.Equals(self.Field, other.Field)) && 
+                                global::System.Collections.Generic.EqualityComparer<byte[]>.Default.Equals(this.Field, other.Field)) && 
                                 (equalities.Field2IsEqual ?? 
-                                global::System.Collections.Generic.EqualityComparer<string>.Default.Equals(self.Field2, other.Field2));
+                                global::System.Collections.Generic.EqualityComparer<string>.Default.Equals(this.Field2, other.Field2));
                             return result;
                         }
                         """

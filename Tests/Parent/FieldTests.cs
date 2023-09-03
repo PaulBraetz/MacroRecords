@@ -28,7 +28,7 @@ namespace RhoMicro.MacroRecords.Tests.Parent
                         }
                         """,
                         """
-                        public readonly System.IComparable Field1;
+                        public readonly global::System.IComparable Field1;
                         """
                     },
                     new Object[]
@@ -45,7 +45,7 @@ namespace RhoMicro.MacroRecords.Tests.Parent
                         }
                         """,
                         """
-                        public readonly ITestInterface Field;
+                        public readonly global::ITestInterface Field;
                         """
                     },
                     new Object[]
@@ -65,7 +65,7 @@ namespace RhoMicro.MacroRecords.Tests.Parent
                         }
                         """,
                         """
-                        public readonly TestNamespace.ITestInterface Field;
+                        public readonly global::TestNamespace.ITestInterface Field;
                         """
                     },
                     new Object[]
@@ -80,8 +80,8 @@ namespace RhoMicro.MacroRecords.Tests.Parent
                         }
                         """,
                         """
-                        public readonly System.Int32 Field1;
-                        public readonly System.IComparable Field2;
+                        public readonly int Field1;
+                        public readonly global::System.IComparable Field2;
                         """
                     },
                     new Object[]
@@ -96,8 +96,8 @@ namespace RhoMicro.MacroRecords.Tests.Parent
                         }
                         """,
                         """
-                        public readonly System.Int32 Field1;
-                        public readonly System.String Field2;
+                        public readonly int Field1;
+                        public readonly string Field2;
                         """
                     },
                     new Object[]
@@ -123,8 +123,8 @@ namespace RhoMicro.MacroRecords.Tests.Parent
                         }
                         """,
                         """
-                        public readonly System.Object ObjectField;
-                        public readonly System.String StringField;
+                        public readonly object ObjectField;
+                        public readonly string StringField;
                         """
                     },
                     new Object[]
@@ -140,7 +140,7 @@ namespace RhoMicro.MacroRecords.Tests.Parent
                         }
                         """,
                         """
-                        public readonly System.Int32 Field;
+                        public readonly int Field;
                         """
                     },
                     new Object[]
@@ -155,7 +155,7 @@ namespace RhoMicro.MacroRecords.Tests.Parent
                         }
                         """,
                         """
-                        public readonly System.Object Field;
+                        public readonly object Field;
                         """
                     }
                 };
